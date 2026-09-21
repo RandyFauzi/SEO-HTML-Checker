@@ -10,11 +10,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-        ]);
+        // Admin creation has been moved to an Artisan command for security.
+        // Run: php artisan make:admin
 
         $this->call(SeoRuleSeeder::class);
     }

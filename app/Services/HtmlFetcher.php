@@ -76,6 +76,11 @@ class HtmlFetcher
                     throw new Exception("HTTP Error: {$statusCode}");
                 }
 
+                $contentType = strtolower($response->getHeaderLine('Content-Type'));
+                if ($contentType && !str_contains($contentType, 'text/html')) {
+                    throw new Exception("Invalid Content-Type. Expected text/html, got: {$contentType}");
+                }
+
                 $body = $response->getBody();
                 $html = '';
                 $downloaded = 0;
@@ -87,6 +92,24 @@ class HtmlFetcher
 
                     if ($downloaded > self::MAX_SIZE) {
                         throw new Exception('Response size exceeds 5MB limit');
+                    }
+                }
+
+                // Detect and convert charset to UTF-8
+                $charset = 'UTF-8';
+                if (preg_match('/charset=([\w\-]+)/i', $contentType, $matches)) {
+                    $charset = strtoupper($matches[1]);
+                }
+
+                if ($charset !== 'UTF-8') {
+                    $html = @mb_convert_encoding($html, 'UTF-8', $charset);
+                } else {
+                    // Fallback to meta charset
+                    if (preg_match('/<meta[^>]+charset=[\'"]?([\w\-]+)[\'"]?/i', $html, $matches)) {
+                        $metaCharset = strtoupper($matches[1]);
+                        if ($metaCharset !== 'UTF-8' && $metaCharset !== 'UTF8') {
+                            $html = @mb_convert_encoding($html, 'UTF-8', $metaCharset);
+                        }
                     }
                 }
 

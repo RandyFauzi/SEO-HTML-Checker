@@ -86,31 +86,60 @@ class SeoRuleController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'json_file' => 'required|file|mimes:json',
+            'json_file' => 'required|file|mimetypes:application/json,text/plain|max:2048',
         ]);
 
         $content = file_get_contents($request->file('json_file')->getRealPath());
         $rules = json_decode($content, true);
 
-        if (! is_array($rules)) {
-            return back()->with('error', 'Invalid JSON format.');
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($rules)) {
+            return back()->with('error', 'Invalid JSON file format.');
         }
 
         $imported = 0;
-        foreach ($rules as $ruleData) {
-            if (isset($ruleData['name']) && isset($ruleData['rule_type'])) {
-                SeoRule::create([
-                    'name' => $ruleData['name'],
-                    'target_selector' => $ruleData['target_selector'] ?? null,
-                    'rule_type' => $ruleData['rule_type'],
-                    'expected_value' => $ruleData['expected_value'] ?? null,
-                    'severity' => $ruleData['severity'] ?? 'warning',
-                    'is_active' => $ruleData['is_active'] ?? true,
-                ]);
-                $imported++;
-            }
+        
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($rules, &$imported) {
+                $types = array_map(fn(\App\Enums\RuleType $t) => $t->value, \App\Enums\RuleType::cases());
+                
+                foreach ($rules as $ruleData) {
+                    if (empty($ruleData['name']) || empty($ruleData['rule_type'])) {
+                        throw new \Exception("Missing required fields (name, rule_type) in JSON.");
+                    }
+                    if (!in_array($ruleData['rule_type'], $types)) {
+                        throw new \Exception("Invalid rule_type: {$ruleData['rule_type']}");
+                    }
+
+                    SeoRule::create([
+                        'name' => $ruleData['name'],
+                        'target_selector' => $ruleData['target_selector'] ?? null,
+                        'rule_type' => $ruleData['rule_type'],
+                        'expected_value' => $ruleData['expected_value'] ?? null,
+                        'attribute' => $ruleData['attribute'] ?? null,
+                        'operator' => $ruleData['operator'] ?? null,
+                        'min_value' => $ruleData['min_value'] ?? null,
+                        'max_value' => $ruleData['max_value'] ?? null,
+                        'regex_pattern' => $ruleData['regex_pattern'] ?? null,
+                        'severity' => in_array($ruleData['severity'] ?? '', ['warning', 'error']) ? $ruleData['severity'] : 'warning',
+                        'is_active' => $ruleData['is_active'] ?? true,
+                    ]);
+                    $imported++;
+                }
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
         }
 
         return redirect()->route('admin.rules.index')->with('success', "Imported $imported rules successfully.");
+    }
+
+    public function export()
+    {
+        $rules = SeoRule::all()->makeHidden(['id', 'created_at', 'updated_at']);
+        
+        $fileName = 'seo_rules_export_' . date('Y_m_d_His') . '.json';
+        return response()->streamDownload(function () use ($rules) {
+            echo json_encode($rules, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }, $fileName, ['Content-Type' => 'application/json']);
     }
 }

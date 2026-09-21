@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [SeoCheckerController::class, 'index'])->name('seo.index');
-    Route::post('/', [SeoCheckerController::class, 'process'])->name('seo.process');
+    Route::post('/', [SeoCheckerController::class, 'process'])
+        ->name('seo.process')
+        ->middleware('throttle:10,1');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
@@ -23,4 +25,5 @@ Route::prefix('admin/rules')->name('admin.rules.')->middleware('auth')->group(fu
     Route::delete('/{rule}', [SeoRuleController::class, 'destroy'])->name('destroy');
     Route::patch('/{rule}/toggle', [SeoRuleController::class, 'toggle'])->name('toggle');
     Route::post('/import', [SeoRuleController::class, 'import'])->name('import');
+    Route::get('/export', [SeoRuleController::class, 'export'])->name('export');
 });
