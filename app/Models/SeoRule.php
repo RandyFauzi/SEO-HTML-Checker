@@ -27,6 +27,7 @@ class SeoRule extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'rule_type' => \App\Enums\RuleType::class,
     ];
 
     public function scopeActive($query)

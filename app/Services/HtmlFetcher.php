@@ -3,86 +3,110 @@
 namespace App\Services;
 
 use Exception;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 class HtmlFetcher
 {
     const MAX_SIZE = 5242880; // 5 MB
-
     const TIMEOUT = 10;
+    const MAX_REDIRECTS = 5;
 
-    /**
-     * Fetch multiple URLs concurrently.
-     * Returns an array of html bodies or exception messages, indexed by url.
-     */
     public function fetchConcurrent(array $urls): array
     {
-        // 1. SSRF Validation before fetching
-        $validatedUrls = [];
         $results = [];
 
         foreach ($urls as $url) {
-            try {
-                UrlSecurityValidator::validate($url);
-                $validatedUrls[] = $url;
-            } catch (Exception $e) {
-                $results[$url] = ['error' => $e->getMessage()];
-            }
-        }
-
-        if (empty($validatedUrls)) {
-            return $results;
-        }
-
-        // 2. Fetch via Http::pool with Concurrency limit
-        $concurrencyLimit = 5;
-        $responses = [];
-
-        foreach (array_chunk($validatedUrls, $concurrencyLimit) as $chunk) {
-            $chunkResponses = Http::pool(function (Pool $pool) use ($chunk) {
-                $requests = [];
-                foreach ($chunk as $url) {
-                    $requests[] = $pool->as($url)->withOptions([
-                        'allow_redirects' => false,
-                        'timeout' => self::TIMEOUT,
-                        'progress' => function ($downloadTotal, $downloadedBytes) {
-                            if ($downloadedBytes > self::MAX_SIZE) {
-                                throw new Exception('Response size exceeds 5MB limit');
-                            }
-                        },
-                    ])->get($url);
-                }
-
-                return $requests;
-            });
-            $responses = array_merge($responses, $chunkResponses);
-        }
-
-        // 3. Process Responses
-        foreach ($responses as $url => $response) {
-            if ($response instanceof Exception) {
-                $results[$url] = ['error' => $response->getMessage()];
-
-                continue;
-            }
-
-            if (! $response->successful()) {
-                // If it's a redirect, we could handle it here, but for concurrent pool
-                // handling manual redirects is complex. We will flag it as error for MVP
-                // or just say redirect not followed if we don't handle it in pool.
-                if ($response->isRedirect()) {
-                    $results[$url] = ['error' => 'Redirects are not followed in concurrent mode for security reasons.'];
-                } else {
-                    $results[$url] = ['error' => 'HTTP Error: '.$response->status()];
-                }
-
-                continue;
-            }
-
-            $results[$url] = ['html' => $response->body()];
+            $results[$url] = $this->fetchSingle($url);
         }
 
         return $results;
     }
+
+    private function fetchSingle(string $url): array
+    {
+        $redirects = [];
+        $currentUrl = $url;
+        $hops = 0;
+
+        $client = new Client([
+            'timeout' => self::TIMEOUT,
+            'allow_redirects' => false,
+            'stream' => true,
+        ]);
+
+        while ($hops <= self::MAX_REDIRECTS) {
+            try {
+                // SSRF Validation & IP Pinning
+                $ip = UrlSecurityValidator::validate($currentUrl);
+                
+                $parsed = parse_url($currentUrl);
+                $host = $parsed['host'];
+                $port = $parsed['port'] ?? ($parsed['scheme'] === 'https' ? 443 : 80);
+
+                $response = $client->request('GET', $currentUrl, [
+                    'curl' => [
+                        CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"]
+                    ]
+                ]);
+
+                $statusCode = $response->getStatusCode();
+
+                // Handle Redirect
+                if ($statusCode >= 300 && $statusCode < 400) {
+                    $redirects[] = $currentUrl;
+                    $location = $response->getHeaderLine('Location');
+                    if (!$location) {
+                        throw new Exception("Redirect status {$statusCode} without Location header");
+                    }
+                    
+                    // resolve relative URL
+                    if (!preg_match('~^https?://~i', $location)) {
+                        $base = rtrim(preg_replace('~/[^/]*$~', '', $currentUrl), '/');
+                        $location = str_starts_with($location, '/') 
+                            ? "{$parsed['scheme']}://{$host}{$location}"
+                            : "{$base}/{$location}";
+                    }
+                    
+                    $currentUrl = $location;
+                    $hops++;
+                    continue;
+                }
+
+                if ($statusCode !== 200) {
+                    throw new Exception("HTTP Error: {$statusCode}");
+                }
+
+                $body = $response->getBody();
+                $html = '';
+                $downloaded = 0;
+
+                while (!$body->eof()) {
+                    $chunk = $body->read(8192);
+                    $html .= $chunk;
+                    $downloaded += strlen($chunk);
+
+                    if ($downloaded > self::MAX_SIZE) {
+                        throw new Exception('Response size exceeds 5MB limit');
+                    }
+                }
+
+                return [
+                    'html' => $html,
+                    'redirects' => $redirects
+                ];
+
+            } catch (Exception $e) {
+                return [
+                    'error' => $e->getMessage(),
+                    'redirects' => $redirects
+                ];
+            }
+        }
+
+        return [
+            'error' => 'Too many redirects',
+            'redirects' => $redirects
+        ];
+    }
 }
+

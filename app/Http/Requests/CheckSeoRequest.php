@@ -13,21 +13,49 @@ class CheckSeoRequest extends FormRequest
 
     protected function prepareForValidation()
     {
+        $lpLines = $this->parseLines($this->lp_urls);
+        $ampLines = $this->parseLines($this->amp_urls);
+
+        // Make sure ampLines array has the same size as lpLines by padding with null if needed
+        $ampLines = array_pad($ampLines, count($lpLines), null);
+
+        $seenPairs = [];
+        $uniqueLp = [];
+        $uniqueAmp = [];
+
+        foreach ($lpLines as $i => $lp) {
+            $amp = $ampLines[$i] ?? null;
+            // Treat empty string as null
+            if ($amp === '') {
+                $amp = null;
+            }
+
+            if (!$lp) {
+                continue; // skip completely empty lines
+            }
+
+            $pairKey = $lp . '|' . ($amp ?? '');
+            if (!isset($seenPairs[$pairKey])) {
+                $seenPairs[$pairKey] = true;
+                $uniqueLp[] = $lp;
+                if ($amp !== null) {
+                    $uniqueAmp[] = $amp;
+                }
+            }
+        }
+
         $this->merge([
-            'lp_urls_array' => $this->cleanUrls($this->lp_urls),
-            'amp_urls_array' => $this->cleanUrls($this->amp_urls),
+            'lp_urls_array' => $uniqueLp,
+            'amp_urls_array' => $uniqueAmp,
         ]);
     }
 
-    private function cleanUrls($input): array
+    private function parseLines(?string $input): array
     {
         if (! $input) {
             return [];
         }
-        $lines = array_filter(array_map('trim', explode("\n", $input)));
-
-        // Remove duplicates and re-index
-        return array_values(array_unique($lines));
+        return array_map('trim', explode("\n", $input));
     }
 
     public function rules(): array

@@ -20,21 +20,31 @@ class SeoRuleController extends Controller
         return view('admin.rules.form', ['rule' => new SeoRule]);
     }
 
-    public function store(Request $request)
+    private function validateRule(Request $request)
     {
-        $data = $request->validate([
+        $types = array_map(fn(\App\Enums\RuleType $t) => $t->value, \App\Enums\RuleType::cases());
+        $typesStr = implode(',', $types);
+
+        return $request->validate([
             'name' => 'required|string|max:255',
             'target_selector' => 'nullable|string|max:255',
-            'rule_type' => 'required|string|in:exist,count,length_max,regex,compare_amp,json_ld,schema',
+            'rule_type' => 'required|string|in:' . $typesStr,
             'expected_value' => 'nullable|string',
+            'attribute' => 'nullable|string|max:255',
+            'operator' => 'nullable|string|max:50',
+            'min_value' => 'nullable|integer',
+            'max_value' => 'nullable|integer',
+            'regex_pattern' => 'nullable|string',
             'severity' => 'required|in:warning,error',
             'is_active' => 'boolean',
         ]);
+    }
 
+    public function store(Request $request)
+    {
+        $data = $this->validateRule($request);
         $data['is_active'] = $request->has('is_active');
-
         SeoRule::create($data);
-
         return redirect()->route('admin.rules.index')->with('success', 'Rule created successfully.');
     }
 
@@ -45,19 +55,9 @@ class SeoRuleController extends Controller
 
     public function update(Request $request, SeoRule $rule)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'target_selector' => 'nullable|string|max:255',
-            'rule_type' => 'required|string|in:exist,count,length_max,regex,compare_amp,json_ld,schema',
-            'expected_value' => 'nullable|string',
-            'severity' => 'required|in:warning,error',
-            'is_active' => 'boolean',
-        ]);
-
+        $data = $this->validateRule($request);
         $data['is_active'] = $request->has('is_active');
-
         $rule->update($data);
-
         return redirect()->route('admin.rules.index')->with('success', 'Rule updated successfully.');
     }
 

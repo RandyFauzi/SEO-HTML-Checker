@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\DTO\CheckResult;
+use App\Enums\CheckStatus;
+use App\Enums\RuleType;
 use App\Models\SeoRule;
 use App\Services\Rules\CompareAmpRuleEvaluator;
 use App\Services\Rules\CountRuleEvaluator;
@@ -21,48 +24,53 @@ class RuleEngine
     public function __construct()
     {
         $this->evaluators = [
-            'exist' => new ExistsRuleEvaluator,
-            'count' => new CountRuleEvaluator,
-            'length' => new LengthRuleEvaluator,
-            'length_max' => new LengthRuleEvaluator, // backward compatibility
-            'text_match' => new TextMatchRuleEvaluator,
-            'regex' => new RegexRuleEvaluator,
-            'compare_amp' => new CompareAmpRuleEvaluator,
-            'json_ld' => new JsonLdRuleEvaluator,
+            RuleType::Exist->value => new ExistsRuleEvaluator,
+            RuleType::Count->value => new CountRuleEvaluator,
+            RuleType::Length->value => new LengthRuleEvaluator,
+            RuleType::TextMatch->value => new TextMatchRuleEvaluator,
+            RuleType::Regex->value => new RegexRuleEvaluator,
+            RuleType::CompareAmp->value => new CompareAmpRuleEvaluator,
+            RuleType::JsonLd->value => new JsonLdRuleEvaluator,
         ];
     }
 
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
+    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): CheckResult
     {
         $type = $rule->rule_type;
+        $typeString = $type instanceof RuleType ? $type->value : $type;
 
-        if (! isset($this->evaluators[$type])) {
-            return [
-                'status' => 'warning',
-                'details' => "No evaluator found for rule type: {$type}",
-                'html_snippet' => null,
-            ];
+        if (! isset($this->evaluators[$typeString])) {
+            return new CheckResult(
+                $rule->name,
+                $type,
+                CheckStatus::Warning,
+                "No evaluator found for rule type: {$typeString}"
+            );
         }
 
         /** @var RuleEvaluatorInterface $evaluator */
-        $evaluator = $this->evaluators[$type];
+        $evaluator = $this->evaluators[$typeString];
 
         try {
             $result = $evaluator->evaluate($dom, $rule, $ampDom);
 
-            $status = $result['passed'] ? 'passed' : $rule->severity;
+            $status = $result['passed'] ? CheckStatus::Passed : CheckStatus::from($rule->severity);
 
-            return [
-                'status' => $status,
-                'details' => $result['details'],
-                'html_snippet' => $result['html_snippet'] ?? null,
-            ];
+            return new CheckResult(
+                $rule->name,
+                $type,
+                $status,
+                $result['details'],
+                $result['html_snippet'] ?? null
+            );
         } catch (Exception $e) {
-            return [
-                'status' => 'error',
-                'details' => 'Error evaluating rule: '.$e->getMessage(),
-                'html_snippet' => null,
-            ];
+            return new CheckResult(
+                $rule->name,
+                $type,
+                CheckStatus::Error,
+                'Error evaluating rule: '.$e->getMessage()
+            );
         }
     }
 }
+

@@ -27,7 +27,7 @@ class SeoRuleSeeder extends Seeder
         SeoRule::create([
             'name' => 'Title Length Max 60',
             'target_selector' => 'title',
-            'rule_type' => 'length_max',
+            'rule_type' => 'length',
             'expected_value' => '60',
             'severity' => 'warning',
         ]);
@@ -42,6 +42,7 @@ class SeoRuleSeeder extends Seeder
         SeoRule::create([
             'name' => 'Compare Meta Description with AMP',
             'target_selector' => 'meta[name="description"]',
+            'attribute' => 'content',
             'rule_type' => 'compare_amp',
             'severity' => 'error',
         ]);

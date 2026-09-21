@@ -14,6 +14,13 @@ trait NodeExtractorTrait
      */
     protected function extractContent(Crawler $node, SeoRule $rule): string
     {
+        $nodeName = strtolower($node->nodeName());
+        $voidElements = ['meta', 'link', 'img', 'base'];
+
+        if (in_array($nodeName, $voidElements) && empty($rule->attribute)) {
+            throw new \Exception("Rule menarget elemen <{$nodeName}> tapi field 'attribute' kosong.");
+        }
+
         if (! empty($rule->attribute)) {
             return trim($node->attr($rule->attribute) ?? '');
         }

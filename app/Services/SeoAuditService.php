@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\DTO\UrlAuditResult;
 use App\Models\SeoRule;
+use App\Enums\RuleType;
 use Symfony\Component\DomCrawler\Crawler;
 
 class SeoAuditService
@@ -17,12 +19,14 @@ class SeoAuditService
         $this->engine = $engine;
     }
 
+    /**
+     * @return UrlAuditResult[]
+     */
     public function audit(array $lpUrls, array $ampUrls = []): array
     {
         $activeRules = SeoRule::active()->get();
-        $compareRules = $activeRules->where('rule_type', 'compare_amp');
 
-        // Ensure both sets of URLs are unique across the whole fetching pool
+        // Unique fetch pool
         $allUrlsToFetch = array_unique(array_filter(array_merge($lpUrls, $ampUrls)));
 
         // Fetch concurrently
@@ -31,17 +35,20 @@ class SeoAuditService
         $results = [];
 
         foreach ($lpUrls as $index => $lpUrl) {
-            $results[$index] = [
-                'lp_url' => $lpUrl,
-                'amp_url' => $ampUrls[$index] ?? null,
-                'error' => null,
-                'checks' => [],
-            ];
+            $ampUrl = $ampUrls[$index] ?? null;
+            $checks = [];
+            $errorMessage = null;
+
+            // Redirect chain (if any)
+            $redirectChain = [];
+            if (isset($fetchResults[$lpUrl]['redirects'])) {
+                $redirectChain = $fetchResults[$lpUrl]['redirects'];
+            }
 
             // Check if LP fetch failed
             if (isset($fetchResults[$lpUrl]['error'])) {
-                $results[$index]['error'] = 'LP Error: '.$fetchResults[$lpUrl]['error'];
-
+                $errorMessage = 'LP Error: '.$fetchResults[$lpUrl]['error'];
+                $results[] = new UrlAuditResult($lpUrl, $ampUrl, $errorMessage, $checks, $redirectChain);
                 continue;
             }
 
@@ -49,11 +56,10 @@ class SeoAuditService
             $lpCrawler = new Crawler($lpHtml);
 
             $ampCrawler = null;
-            $ampUrl = $ampUrls[$index] ?? null;
             if ($ampUrl) {
                 if (isset($fetchResults[$ampUrl]['error'])) {
-                    $results[$index]['error'] = 'AMP Error: '.$fetchResults[$ampUrl]['error'];
-
+                    $errorMessage = 'AMP Error: '.$fetchResults[$ampUrl]['error'];
+                    $results[] = new UrlAuditResult($lpUrl, $ampUrl, $errorMessage, $checks, $redirectChain);
                     continue;
                 }
                 $ampHtml = $fetchResults[$ampUrl]['html'] ?? '';
@@ -62,21 +68,17 @@ class SeoAuditService
 
             // Run evaluations
             foreach ($activeRules as $rule) {
-                if ($rule->rule_type === 'compare_amp' && ! $ampCrawler) {
+                if ($rule->rule_type === RuleType::CompareAmp && ! $ampCrawler) {
                     continue; // Skip if no AMP URL provided
                 }
 
-                $evalResult = $this->engine->evaluate($lpCrawler, $rule, $ampCrawler);
-
-                $results[$index]['checks'][] = [
-                    'rule' => $rule->name,
-                    'status' => $evalResult['status'],
-                    'details' => $evalResult['details'],
-                    'html_snippet' => $evalResult['html_snippet'],
-                ];
+                $checks[] = $this->engine->evaluate($lpCrawler, $rule, $ampCrawler);
             }
+
+            $results[] = new UrlAuditResult($lpUrl, $ampUrl, null, $checks, $redirectChain);
         }
 
         return $results;
     }
 }
+

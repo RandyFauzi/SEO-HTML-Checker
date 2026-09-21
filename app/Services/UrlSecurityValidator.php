@@ -38,9 +38,17 @@ class UrlSecurityValidator
             throw new Exception('Could not parse hostname.');
         }
 
+        // Explicit deny list for hostnames
+        if (in_array(strtolower($host), ['metadata.google.internal'])) {
+            throw new Exception("Hostname $host is explicitly blocked.");
+        }
+
+        $resolvedIp = null;
+
         // Check if the host itself is an IP address
         if (filter_var($host, FILTER_VALIDATE_IP)) {
             self::checkIpAllowed($host);
+            $resolvedIp = $host;
         } else {
             // 5. Resolve DNS and protect against SSRF via DNS rebinding / local domains
             $records = dns_get_record($host, DNS_A + DNS_AAAA);
@@ -49,16 +57,17 @@ class UrlSecurityValidator
             }
 
             foreach ($records as $record) {
-                if (isset($record['ip'])) {
-                    self::checkIpAllowed($record['ip']);
-                }
-                if (isset($record['ipv6'])) {
-                    self::checkIpAllowed($record['ipv6']);
+                $ip = $record['ip'] ?? $record['ipv6'] ?? null;
+                if ($ip) {
+                    self::checkIpAllowed($ip);
+                    if ($resolvedIp === null) {
+                        $resolvedIp = $ip; // pick the first safe IP
+                    }
                 }
             }
         }
 
-        return $url;
+        return $resolvedIp;
     }
 
     /**
@@ -81,6 +90,26 @@ class UrlSecurityValidator
         // Extra block for 0.0.0.0
         if ($ip === '0.0.0.0' || $ip === '::') {
             throw new Exception("Invalid IP address ($ip).");
+        }
+
+        // IPv4-mapped IPv6 (::ffff:127.0.0.1)
+        if (stripos($ip, '::ffff:') === 0) {
+            throw new Exception("IPv4-mapped IPv6 address ($ip) is not allowed.");
+        }
+
+        // IPv6 ULA (fd00::/8 and fc00::/7)
+        if (stripos($ip, 'fd') === 0 || stripos($ip, 'fc') === 0) {
+            throw new Exception("IPv6 Unique Local Address ($ip) is not allowed.");
+        }
+
+        // CGNAT (100.64.0.0/10)
+        // Convert IP to long to check the range
+        $ipLong = ip2long($ip);
+        if ($ipLong !== false) {
+            // 100.64.0.0 is 1681915904, 100.127.255.255 is 1686110207
+            if ($ipLong >= 1681915904 && $ipLong <= 1686110207) {
+                throw new Exception("CGNAT IP address ($ip) is not allowed.");
+            }
         }
     }
 }
