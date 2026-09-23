@@ -2,7 +2,46 @@
     <x-slot name="title">SEO Checker</x-slot>
     <x-slot name="header">SEO HTML Checker</x-slot>
 
-    <div class="max-w-6xl mx-auto" x-data="{ hasCompareRule: {{ $hasCompareRule ? 'true' : 'false' }} }">
+@php
+    $initialRows = [];
+    $oldLp = old('lp_urls');
+    if ($oldLp) {
+        $lpLines = array_map('trim', explode("\n", $oldLp));
+        $ampLines = array_map('trim', explode("\n", old('amp_urls') ?? ''));
+        foreach ($lpLines as $i => $lp) {
+            if ($lp) {
+                $initialRows[] = [
+                    'lp' => $lp,
+                    'amp' => $ampLines[$i] ?? ''
+                ];
+            }
+        }
+    }
+    if (empty($initialRows)) {
+        $initialRows[] = ['lp' => '', 'amp' => ''];
+    }
+@endphp
+
+    <div class="max-w-6xl mx-auto" 
+         x-data="{ 
+            hasCompareRule: {{ $hasCompareRule ? 'true' : 'false' }},
+            rows: {{ json_encode($initialRows) }},
+            submitting: false,
+            addRow() {
+                if (this.rows.length < 10) {
+                    this.rows.push({ lp: '', amp: '' });
+                }
+            },
+            removeRow(index) {
+                if (this.rows.length > 1) {
+                    this.rows.splice(index, 1);
+                }
+            },
+            syncTextareas() {
+                document.getElementById('lp_urls').value = this.rows.map(r => r.lp).join('\n');
+                document.getElementById('amp_urls').value = this.rows.map(r => r.amp).join('\n');
+            }
+         }">
         
         <div class="mb-8 flex items-center justify-between">
             <div>
@@ -21,35 +60,62 @@
             </div>
         @endif
 
-        <div class="bg-white shadow-lg shadow-slate-200/50 rounded-2xl border border-slate-100 p-8 mb-10 relative overflow-hidden">
+        <div class="bg-white/80 backdrop-blur-xl border border-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] rounded-[2.5rem] p-8 md:p-12 mb-10 relative overflow-hidden">
             <!-- Decorative gradient orb -->
             <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
 
-            <form action="{{ route('seo.process') }}" method="POST" class="relative z-10 space-y-8">
+            <form action="{{ route('seo.process') }}" method="POST" @submit="syncTextareas(); submitting = true" class="relative z-10">
                 @csrf
-                
-                <div class="grid grid-cols-1" :class="{ 'lg:grid-cols-2 gap-8': hasCompareRule }">
-                    <div class="space-y-3">
-                        <label for="lp_urls" class="flex items-center text-sm font-semibold text-slate-700">
-                            Landing Page URLs
-                            <span class="ml-2 text-xs font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Max 10</span>
-                        </label>
-                        <textarea name="lp_urls" id="lp_urls" rows="6" placeholder="https://example.com/page-1&#10;https://example.com/page-2" class="w-full border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 transition-all shadow-inner placeholder:text-slate-300" required>{{ old('lp_urls') }}</textarea>
-                    </div>
+                <textarea name="lp_urls" id="lp_urls" class="hidden"></textarea>
+                <textarea name="amp_urls" id="amp_urls" class="hidden"></textarea>
 
-                    <div x-show="hasCompareRule" x-cloak class="space-y-3">
-                        <label for="amp_urls" class="flex items-center text-sm font-semibold text-slate-700">
-                            AMP URLs
-                            <span class="ml-2 text-xs font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Optional, but required for AMP rules</span>
-                        </label>
-                        <textarea name="amp_urls" id="amp_urls" rows="6" placeholder="https://amp.example.com/page-1&#10;https://amp.example.com/page-2" class="w-full border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 transition-all shadow-inner placeholder:text-slate-300">{{ old('amp_urls') }}</textarea>
-                    </div>
+                <div class="space-y-4 mb-8">
+                    <template x-for="(row, index) in rows" :key="index">
+                        <div class="flex items-center gap-4 group">
+                            <!-- Input Wrapper -->
+                            <div class="flex-1 grid grid-cols-1 gap-4" :class="{ 'md:grid-cols-2': hasCompareRule }">
+                                <div>
+                                    <input type="url" x-model="row.lp" placeholder="Landing Page URL (e.g. https://example.com)" required
+                                        class="w-full bg-slate-100/50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
+                                </div>
+                                <div x-show="hasCompareRule" x-cloak>
+                                    <input type="url" x-model="row.amp" placeholder="AMP URL (Optional)"
+                                        class="w-full bg-slate-100/50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
+                                </div>
+                            </div>
+                            <!-- Delete Button -->
+                            <div class="w-12 flex justify-center">
+                                <button type="button" @click="removeRow(index)" x-show="rows.length > 1"
+                                    class="rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-all p-3 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                    title="Hapus baris">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
                 </div>
 
-                <div class="flex justify-end pt-4 border-t border-slate-100">
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300 flex items-center">
-                        <svg class="w-5 h-5 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Run Checker
+                <div class="flex items-center justify-between pt-6 border-t border-slate-100/60">
+                    <div>
+                        <button type="button" @click="addRow()" x-show="rows.length < 10"
+                            class="border border-slate-200 text-slate-600 px-5 py-2.5 rounded-full hover:bg-slate-50 hover:scale-105 transition-transform duration-300 text-sm font-medium flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Tambah URL
+                        </button>
+                    </div>
+
+                    <button type="submit" :disabled="submitting"
+                        class="bg-gradient-to-r from-blue-400 to-indigo-500 text-white font-semibold py-3.5 px-8 rounded-full shadow-md hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md">
+                        <template x-if="!submitting">
+                            <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </template>
+                        <template x-if="submitting">
+                            <svg class="animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </template>
+                        <span x-text="submitting ? 'Processing...' : 'Run Checker'"></span>
                     </button>
                 </div>
             </form>
@@ -170,8 +236,8 @@
                                                             @endif
                                                             
                                                             @if(!empty($check->htmlSnippet))
-                                                                <div class="mt-3 text-[11px] bg-slate-900 text-emerald-400 p-3.5 rounded-xl overflow-x-auto font-mono shadow-inner border border-slate-800">
-                                                                    <pre><code>{{ $check->htmlSnippet }}</code></pre>
+                                                                <div class="mt-3 text-[11px] bg-slate-900 text-emerald-400 p-3.5 rounded-xl overflow-hidden font-mono shadow-inner border border-slate-800">
+                                                                    <pre class="whitespace-pre-wrap break-all overflow-hidden"><code>{{ $check->htmlSnippet }}</code></pre>
                                                                 </div>
                                                             @endif
                                                         </td>
