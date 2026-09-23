@@ -47,7 +47,7 @@
                 </a>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-100">
+        {{-- <div class="p-4 border-t border-slate-100">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
@@ -55,7 +55,7 @@
                     Logout
                 </button>
             </form>
-        </div>
+        </div> --}}
     </aside>
 
     <!-- Main Content -->
@@ -69,13 +69,13 @@
                 <h1 class="text-xl font-semibold text-gray-800">{{ $header ?? '' }}</h1>
             </div>
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
+                {{-- <div class="flex items-center gap-2">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full border border-gray-200">
                     <div class="hidden sm:block text-sm">
                         <p class="font-semibold text-gray-700 leading-none">Administrator</p>
                         <p class="text-xs text-gray-500">admin@admin.com</p>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </header>
 
