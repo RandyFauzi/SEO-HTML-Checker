@@ -40,9 +40,9 @@
                     <div x-show="hasCompareRule" x-cloak class="space-y-3">
                         <label for="amp_urls" class="flex items-center text-sm font-semibold text-slate-700">
                             AMP URLs
-                            <span class="ml-2 text-xs font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Must match LP order</span>
+                            <span class="ml-2 text-xs font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Optional, but required for AMP rules</span>
                         </label>
-                        <textarea name="amp_urls" id="amp_urls" rows="6" placeholder="https://amp.example.com/page-1&#10;https://amp.example.com/page-2" class="w-full border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 transition-all shadow-inner placeholder:text-slate-300" :required="hasCompareRule">{{ old('amp_urls') }}</textarea>
+                        <textarea name="amp_urls" id="amp_urls" rows="6" placeholder="https://amp.example.com/page-1&#10;https://amp.example.com/page-2" class="w-full border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 transition-all shadow-inner placeholder:text-slate-300">{{ old('amp_urls') }}</textarea>
                     </div>
                 </div>
 
