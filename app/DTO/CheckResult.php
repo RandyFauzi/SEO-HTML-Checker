@@ -11,6 +11,7 @@ final readonly class CheckResult
         public string $ruleName,
         public RuleType $ruleType,
         public CheckStatus $status,
+        public ?string $category = null,
         public ?string $issue = null,
         public ?string $reason = null,
         public ?string $expected = null,

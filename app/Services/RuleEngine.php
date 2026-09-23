@@ -44,6 +44,7 @@ class RuleEngine
                 ruleName: $rule->name,
                 ruleType: $type,
                 status: CheckStatus::Warning,
+                category: $rule->category,
                 issue: "Evaluator not found",
                 reason: "No evaluator found for rule type: {$typeString}"
             );
@@ -61,6 +62,7 @@ class RuleEngine
                 ruleName: $rule->name,
                 ruleType: $type,
                 status: $status,
+                category: $rule->category,
                 issue: $result['issue'] ?? null,
                 reason: $result['reason'] ?? null,
                 expected: $result['expected'] ?? null,
@@ -74,6 +76,7 @@ class RuleEngine
                 ruleName: $rule->name,
                 ruleType: $type,
                 status: CheckStatus::Error,
+                category: $rule->category,
                 issue: "Evaluation Error",
                 reason: 'Error evaluating rule: '.$e->getMessage()
             );
