@@ -37,9 +37,13 @@
         <div class="flex-1 overflow-y-auto py-6">
             <div class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Main Menu</div>
             <nav class="space-y-1.5">
-                <a href="{{ route('seo.index') }}" class="sidebar-item flex items-center px-4 py-2.5 {{ request()->routeIs('seo.*') ? 'sidebar-item-active' : '' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('seo.*') ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <a href="{{ route('dashboard') }}" class="sidebar-item flex items-center px-4 py-2.5 {{ request()->routeIs('dashboard') ? 'sidebar-item-active' : '' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('dashboard') ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     Dashboard
+                </a>
+                <a href="{{ route('seo.index') }}" class="sidebar-item flex items-center px-4 py-2.5 {{ request()->routeIs('seo.*') ? 'sidebar-item-active' : '' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('seo.*') ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Run Checker
                 </a>
                 <a href="{{ route('admin.rules.index') }}" class="sidebar-item flex items-center px-4 py-2.5 {{ request()->routeIs('admin.rules.*') ? 'sidebar-item-active' : '' }}">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.rules.*') ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
@@ -96,9 +100,13 @@
                 </div>
                 <div class="flex-1 overflow-y-auto py-4">
                     <nav class="space-y-1">
-                        <a href="{{ route('seo.index') }}" class="sidebar-item flex items-center px-6 py-3 {{ request()->routeIs('seo.*') ? 'sidebar-item-active' : '' }}">
+                        <a href="{{ route('dashboard') }}" class="sidebar-item flex items-center px-6 py-3 {{ request()->routeIs('dashboard') ? 'sidebar-item-active' : '' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                             Dashboard
+                        </a>
+                        <a href="{{ route('seo.index') }}" class="sidebar-item flex items-center px-6 py-3 {{ request()->routeIs('seo.*') ? 'sidebar-item-active' : '' }}">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Run Checker
                         </a>
                         <a href="{{ route('admin.rules.index') }}" class="sidebar-item flex items-center px-6 py-3 {{ request()->routeIs('admin.rules.*') ? 'sidebar-item-active' : '' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>

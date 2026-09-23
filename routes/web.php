@@ -5,8 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SeoCheckerController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [SeoCheckerController::class, 'index'])->name('seo.index');
-Route::post('/', [SeoCheckerController::class, 'process'])
+Route::get('/', function () {
+    return view('dashboard.index');
+})->name('dashboard');
+
+Route::get('/checker', [SeoCheckerController::class, 'index'])->name('seo.index');
+Route::post('/checker', [SeoCheckerController::class, 'process'])
     ->name('seo.process')
     ->middleware('throttle:10,1');
 
