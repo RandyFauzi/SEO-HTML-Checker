@@ -31,7 +31,6 @@ class HtmlFetcher
         $client = new Client([
             'timeout' => self::TIMEOUT,
             'allow_redirects' => false,
-            'stream' => true,
         ]);
 
         while ($hops <= self::MAX_REDIRECTS) {
@@ -46,7 +45,12 @@ class HtmlFetcher
                 $response = $client->request('GET', $currentUrl, [
                     'curl' => [
                         CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"]
-                    ]
+                    ],
+                    'progress' => function ($downloadTotal, $downloadedBytes) {
+                        if ($downloadedBytes > self::MAX_SIZE) {
+                            throw new Exception('Response size exceeds 5MB limit');
+                        }
+                    }
                 ]);
 
                 $statusCode = $response->getStatusCode();
@@ -81,19 +85,7 @@ class HtmlFetcher
                     throw new Exception("Invalid Content-Type. Expected text/html, got: {$contentType}");
                 }
 
-                $body = $response->getBody();
-                $html = '';
-                $downloaded = 0;
-
-                while (!$body->eof()) {
-                    $chunk = $body->read(8192);
-                    $html .= $chunk;
-                    $downloaded += strlen($chunk);
-
-                    if ($downloaded > self::MAX_SIZE) {
-                        throw new Exception('Response size exceeds 5MB limit');
-                    }
-                }
+                $html = (string) $response->getBody();
 
                 // Detect and convert charset to UTF-8
                 $charset = 'UTF-8';
