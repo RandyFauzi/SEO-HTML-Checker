@@ -11,28 +11,34 @@ class CompareAmpRuleEvaluator implements RuleEvaluatorInterface
 
     public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
     {
+        $config = $rule->config ?? [];
+        $selector = $config['selector'] ?? '';
+        $attribute = $config['attribute'] ?? null;
+
         if (! $ampDom) {
             return [
-                'passed' => false,
-                'issue' => 'DOM AMP tidak tersedia',
-                'reason' => 'Untuk membandingkan rule ini, URL AMP wajib disertakan saat melakukan pengecekan.',
-                'expected' => 'Terdapat halaman AMP',
-                'actual' => 'Hanya LP yang di-scan',
-                'selector' => $rule->target_selector,
-                'attribute' => null,
+                'passed' => true, // We don't want it to fail
+                'skipped' => true, // custom flag we handle in RuleEngine
+                'issue' => 'Skipped',
+                'reason' => 'No AMP URL was provided for this audit.',
+                'expected' => null,
+                'actual' => 'Skipped',
+                'selector' => $selector,
+                'attribute' => $attribute,
                 'html_snippet' => null,
             ];
         }
 
-        $selector = $rule->target_selector;
         $lpNodes = $dom->filter($selector);
         $ampNodes = $ampDom->filter($selector);
+
+        $rule->setAttribute('attribute', $attribute);
 
         $lpValue = $lpNodes->count() > 0 ? $this->extractContent($lpNodes->first(), $rule) : null;
         $ampValue = $ampNodes->count() > 0 ? $this->extractContent($ampNodes->first(), $rule) : null;
 
-        $lpSnippet = $lpNodes->count() > 0 ? $lpNodes->first()->outerHtml() : 'N/A';
-        $ampSnippet = $ampNodes->count() > 0 ? $ampNodes->first()->outerHtml() : 'N/A';
+        $lpSnippet = $lpNodes->count() > 0 ? substr($lpNodes->first()->outerHtml(), 0, 150) : 'N/A';
+        $ampSnippet = $ampNodes->count() > 0 ? substr($ampNodes->first()->outerHtml(), 0, 150) : 'N/A';
 
         $passed = ($lpValue === $ampValue && $lpValue !== null);
 
@@ -41,11 +47,11 @@ class CompareAmpRuleEvaluator implements RuleEvaluatorInterface
 
         if (!$passed) {
             if ($lpValue === null || $ampValue === null) {
-                $issue = "Elemen tidak ditemukan di salah satu versi.";
-                $reason = "Elemen `{$selector}` wajib ada di LP maupun AMP untuk diperbandingkan.";
+                $issue = $rule->issue_message ?? "Elemen tidak ditemukan di salah satu versi.";
+                $reason = $rule->reason_template ?? "Elemen wajib ada di LP maupun AMP untuk diperbandingkan.";
             } else {
-                $issue = "Konten {$rule->name} berbeda antara LP dan AMP.";
-                $reason = "Rule mewajibkan konten ini harus sama persis (identik) di kedua versi halaman.";
+                $issue = $rule->issue_message ?? "Konten {$rule->name} berbeda antara LP dan AMP.";
+                $reason = $rule->reason_template ?? "Rule mewajibkan konten ini harus sama persis (identik) di kedua versi halaman.";
             }
         }
 
@@ -56,7 +62,7 @@ class CompareAmpRuleEvaluator implements RuleEvaluatorInterface
             'expected' => "LP dan AMP memiliki konten yang identik",
             'actual' => $passed ? "Identik" : "LP: '" . ($lpValue ?? 'null') . "' | AMP: '" . ($ampValue ?? 'null') . "'",
             'selector' => $selector,
-            'attribute' => $rule->attribute,
+            'attribute' => $attribute,
             'html_snippet' => "LP:\n{$lpSnippet}\n\nAMP:\n{$ampSnippet}",
         ];
     }

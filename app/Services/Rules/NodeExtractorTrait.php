@@ -17,12 +17,14 @@ trait NodeExtractorTrait
         $nodeName = strtolower($node->nodeName());
         $voidElements = ['meta', 'link', 'img', 'base'];
 
-        if (in_array($nodeName, $voidElements) && empty($rule->attribute)) {
+        $attribute = $rule->config['attribute'] ?? $rule->attribute ?? null;
+
+        if (in_array($nodeName, $voidElements) && empty($attribute)) {
             throw new \Exception("Rule menarget elemen <{$nodeName}> tapi field 'attribute' kosong.");
         }
 
-        if (! empty($rule->attribute)) {
-            return trim($node->attr($rule->attribute) ?? '');
+        if (! empty($attribute)) {
+            return trim($node->attr($attribute) ?? '');
         }
 
         return trim($node->text());

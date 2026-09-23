@@ -11,27 +11,45 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
 
     public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
     {
-        $nodes = $dom->filter($rule->target_selector);
+        $config = $rule->config ?? [];
+        $selector = $config['selector'] ?? '';
+        $attribute = $config['attribute'] ?? null;
+        
+        if (empty($selector)) {
+            return [
+                'passed' => false,
+                'issue' => "Selector kosong",
+                'reason' => "Rule tidak memiliki selector konfigurasi.",
+                'selector' => $selector,
+            ];
+        }
+
+        $nodes = $dom->filter($selector);
 
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
                 'issue' => 'Elemen tidak ditemukan.',
-                'reason' => "Tidak ada elemen yang cocok dengan selector `{$rule->target_selector}`.",
+                'reason' => "Tidak ada elemen yang cocok dengan selector `{$selector}`.",
                 'expected' => 'Elemen harus ada',
                 'actual' => 'Elemen tidak ditemukan',
-                'selector' => $rule->target_selector,
-                'attribute' => $rule->attribute,
+                'selector' => $selector,
+                'attribute' => $attribute,
                 'html_snippet' => null,
             ];
         }
 
-        $htmlSnippet = $nodes->first()->outerHtml();
+        $htmlSnippet = substr($nodes->first()->outerHtml(), 0, 500);
+        
+        // Trait will read from $rule->config automatically
         $text = $this->extractContent($nodes->first(), $rule);
-        $length = mb_strlen($text);
+        
+        $length = mb_strlen(trim($text));
 
-        $operator = $rule->operator ?? '<=';
-        $expectedValue = (int) ($rule->expected_value ?? $rule->max_value ?? 0);
+        $operator = $config['operator'] ?? '<=';
+        $expectedValue = (int) ($config['expected'] ?? $config['max'] ?? 0);
+        $min = (int) ($config['min'] ?? 0);
+        $max = (int) ($config['max'] ?? 0);
 
         $passed = match ($operator) {
             '>' => $length > $expectedValue,
@@ -39,29 +57,27 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
             '<' => $length < $expectedValue,
             '<=' => $length <= $expectedValue,
             '=' => $length === $expectedValue,
-            'between' => $length >= (int) $rule->min_value && $length <= (int) $rule->max_value,
+            'between' => $length >= $min && $length <= $max,
             default => $length <= $expectedValue,
         };
 
         $operatorString = $operator === 'between' 
-            ? "{$rule->min_value} - {$rule->max_value} karakter" 
+            ? "{$min} - {$max} karakter" 
             : "{$operator} {$expectedValue} karakter";
 
         $issue = null;
         $reason = null;
 
         if (!$passed) {
+            $issue = $rule->issue_message ?? "Panjang {$rule->name} tidak sesuai.";
             if ($operator === 'between') {
-                if ($length < $rule->min_value) {
-                    $issue = "Panjang {$rule->name} terlalu pendek.";
-                    $reason = "Panjang berada di bawah minimum batas rule.";
+                if ($length < $min) {
+                    $reason = $rule->reason_template ?? "Panjang teks terlalu pendek.";
                 } else {
-                    $issue = "Panjang {$rule->name} terlalu panjang.";
-                    $reason = "Panjang melebihi batas maksimum rule.";
+                    $reason = $rule->reason_template ?? "Panjang teks melebihi batas maksimum.";
                 }
             } else {
-                $issue = "Panjang {$rule->name} tidak sesuai.";
-                $reason = "Panjang aktual tidak memenuhi syarat `{$operator} {$expectedValue}`.";
+                $reason = $rule->reason_template ?? "Panjang aktual tidak memenuhi syarat `{$operator} {$expectedValue}`.";
             }
         }
 
@@ -71,8 +87,8 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
             'reason' => $reason,
             'expected' => $operatorString,
             'actual' => "{$length} karakter",
-            'selector' => $rule->target_selector,
-            'attribute' => $rule->attribute,
+            'selector' => $selector,
+            'attribute' => $attribute,
             'html_snippet' => $htmlSnippet,
         ];
     }

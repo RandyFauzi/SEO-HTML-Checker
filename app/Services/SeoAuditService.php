@@ -68,10 +68,6 @@ class SeoAuditService
 
             // Run evaluations
             foreach ($activeRules as $rule) {
-                if ($rule->rule_type === RuleType::CompareAmp && ! $ampCrawler) {
-                    continue; // Skip if no AMP URL provided
-                }
-
                 $checks[] = $this->engine->evaluate($lpCrawler, $rule, $ampCrawler);
             }
 

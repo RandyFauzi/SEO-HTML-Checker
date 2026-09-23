@@ -23,6 +23,7 @@ Route::prefix('admin/rules')->name('admin.rules.')->group(function () {
     Route::get('/', [SeoRuleController::class, 'index'])->name('index');
     Route::get('/create', [SeoRuleController::class, 'create'])->name('create');
     Route::post('/', [SeoRuleController::class, 'store'])->name('store');
+    Route::post('/test', [SeoRuleController::class, 'test'])->name('test');
     Route::get('/{rule}/edit', [SeoRuleController::class, 'edit'])->name('edit');
     Route::put('/{rule}', [SeoRuleController::class, 'update'])->name('update');
     Route::delete('/{rule}', [SeoRuleController::class, 'destroy'])->name('destroy');

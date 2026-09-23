@@ -8,8 +8,8 @@
                 <h2 class="text-2xl font-bold text-gray-900">SEO Check Rules</h2>
                 <p class="text-sm text-gray-500 mt-1">Manage all the rules used to check landing pages.</p>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('admin.rules.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-sm transition-colors flex items-center">
+            <div class="flex w-full md:w-auto">
+                <a href="{{ route('admin.rules.create') }}" class="w-full md:w-auto justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-2 px-4 rounded-xl shadow-sm transition-colors flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Add New Rule
                 </a>
@@ -29,14 +29,15 @@
         @endif
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-            <div class="overflow-x-auto">
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full text-left text-sm whitespace-nowrap">
                     <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase tracking-wider text-xs font-semibold">
                         <tr>
-                            <th class="px-6 py-4">ID</th>
+                            <th class="px-6 py-4">Code</th>
                             <th class="px-6 py-4">Name</th>
                             <th class="px-6 py-4">Type</th>
-                            <th class="px-6 py-4">Selector</th>
+                            <th class="px-6 py-4">Category</th>
                             <th class="px-6 py-4">Severity</th>
                             <th class="px-6 py-4 text-center">Status</th>
                             <th class="px-6 py-4 text-right">Actions</th>
@@ -45,12 +46,12 @@
                     <tbody class="divide-y divide-gray-100 text-gray-700">
                         @forelse($rules as $rule)
                             <tr class="hover:bg-gray-50 transition-colors group">
-                                <td class="px-6 py-4 text-gray-500">#{{ $rule->id }}</td>
+                                <td class="px-6 py-4 text-gray-500 font-mono text-xs">{{ $rule->code ?: '#'.$rule->id }}</td>
                                 <td class="px-6 py-4 font-semibold text-gray-900">{{ $rule->name }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">{{ $rule->rule_type }}</span>
+                                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">{{ $rule->rule_type->value ?? $rule->rule_type }}</span>
                                 </td>
-                                <td class="px-6 py-4"><code class="text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded text-xs border border-pink-100">{{ $rule->target_selector ?: '-' }}</code></td>
+                                <td class="px-6 py-4"><span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded text-xs border border-indigo-100">{{ $rule->category }}</span></td>
                                 <td class="px-6 py-4">
                                     <span class="px-2.5 py-1 rounded-md text-xs font-semibold border {{ $rule->severity === 'error' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
                                         {{ ucfirst($rule->severity) }}
@@ -73,7 +74,6 @@
                                                 .then(data => {
                                                     this.isActive = data.is_active;
                                                     this.loading = false;
-                                                    window.dispatchEvent(new CustomEvent('notify', { detail: 'Status updated!' }));
                                                 })
                                                 .catch(() => this.loading = false);
                                             }
@@ -99,14 +99,73 @@
                         @empty
                             <tr>
                                 <td colspan="7" class="px-6 py-12 text-center text-gray-500 bg-gray-50">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     <p class="text-base font-medium text-gray-900">No rules found</p>
-                                    <p class="text-sm text-gray-500 mt-1">Get started by creating a new rule or importing from JSON.</p>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="md:hidden divide-y divide-gray-100">
+                @forelse($rules as $rule)
+                    <div class="p-4 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-xs font-mono text-gray-500 mb-1">{{ $rule->code ?: '#'.$rule->id }}</div>
+                                <div class="font-bold text-gray-900 text-base leading-tight">{{ $rule->name }}</div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border {{ $rule->severity === 'error' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
+                                {{ $rule->severity }}
+                            </span>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded border border-gray-200">{{ $rule->rule_type->value ?? $rule->rule_type }}</span>
+                            <span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded border border-indigo-100">{{ $rule->category }}</span>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-50 mt-2">
+                            <div x-data="{ 
+                                    isActive: {{ $rule->is_active ? 'true' : 'false' }}, 
+                                    loading: false,
+                                    toggleStatus() {
+                                        this.loading = true;
+                                        fetch('{{ route('admin.rules.toggle', $rule) }}', {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'Accept': 'application/json'
+                                            }
+                                        }).then(res => res.json()).then(data => {
+                                            this.isActive = data.is_active;
+                                            this.loading = false;
+                                        }).catch(() => this.loading = false);
+                                    }
+                                }">
+                                <button @click="toggleStatus" 
+                                        :disabled="loading"
+                                        :class="isActive ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'"
+                                        class="px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-colors w-20 text-center shadow-sm border">
+                                    <span x-show="!loading" x-text="isActive ? 'Active' : 'Inactive'"></span>
+                                    <span x-show="loading" class="animate-pulse">...</span>
+                                </button>
+                            </div>
+                            
+                            <div class="flex space-x-3 text-sm">
+                                <a href="{{ route('admin.rules.edit', $rule) }}" class="text-blue-600 font-medium">Edit</a>
+                                <form action="{{ route('admin.rules.destroy', $rule) }}" method="POST" onsubmit="return confirm('Delete rule?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 font-medium">Del</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center text-gray-500">No rules found</div>
+                @endforelse
             </div>
         </div>
 

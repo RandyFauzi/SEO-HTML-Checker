@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Admin Dashboard' }}</title>
+    <link rel="icon" href="{{ asset('Logo.ico') }}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>[x-cloak] { display: none !important; }</style>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -28,9 +29,7 @@
     <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 hidden md:flex flex-col">
         <div class="h-16 flex items-center px-6 border-b border-slate-100">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
+                <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-9 h-9 object-contain drop-shadow-sm">
                 <span class="text-xl font-bold text-slate-800 tracking-tight">Checker</span>
             </div>
         </div>
@@ -89,9 +88,7 @@
             <div x-show="sidebarOpen" x-transition:enter="transition ease-in-out duration-300 transform" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300 transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="relative flex-1 flex flex-col max-w-xs w-full bg-white border-r">
                 <div class="h-16 flex items-center px-6 border-b border-gray-100 justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
+                        <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-8 h-8 object-contain drop-shadow-sm">
                         <span class="text-xl font-bold text-gray-900">Checker</span>
                     </div>
                     <button @click="sidebarOpen = false" class="text-gray-500 hover:text-gray-700">
@@ -118,9 +115,28 @@
         </div>
 
         <!-- Content Area -->
-        <div class="flex-1 overflow-y-auto p-6 md:p-8">
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-32 md:pb-8">
             {{ $slot }}
         </div>
+        <!-- Mobile Bottom Navigation (Glassmorphism) -->
+        <nav class="md:hidden fixed bottom-6 left-4 right-4 z-50 bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] rounded-full px-8 py-3 flex justify-between items-center">
+            <!-- Menu 1: Home -->
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'text-indigo-600' : 'text-slate-400' }} hover:text-indigo-600 transition-colors p-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            </a>
+            
+            <!-- Menu 2: Tengah (Action Button) -->
+            <div class="relative">
+                <a href="{{ route('seo.index') }}" class="absolute left-1/2 -translate-x-1/2 -top-11 w-14 h-14 bg-gradient-to-tr from-lime-400 to-green-300 shadow-lg shadow-lime-300/50 flex items-center justify-center text-white rounded-full hover:scale-105 transition-transform">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                </a>
+            </div>
+
+            <!-- Menu 3: Rules -->
+            <a href="{{ route('admin.rules.index') }}" class="{{ request()->routeIs('admin.rules.*') ? 'text-indigo-600' : 'text-slate-400' }} hover:text-indigo-600 transition-colors p-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            </a>
+        </nav>
     </main>
 
 </body>

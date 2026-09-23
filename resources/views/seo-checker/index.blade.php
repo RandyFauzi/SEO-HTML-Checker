@@ -60,7 +60,7 @@
             </div>
         @endif
 
-        <div class="bg-white/80 backdrop-blur-xl border border-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] rounded-[2.5rem] p-8 md:p-12 mb-10 relative overflow-hidden">
+        <div class="bg-white/80 backdrop-blur-xl border border-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] rounded-3xl md:rounded-[2.5rem] p-5 sm:p-8 md:p-12 mb-10 relative overflow-hidden">
             <!-- Decorative gradient orb -->
             <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
 
@@ -71,41 +71,46 @@
 
                 <div class="space-y-4 mb-8">
                     <template x-for="(row, index) in rows" :key="index">
-                        <div class="flex items-center gap-4 group">
+                        <div class="flex items-start sm:items-center gap-3 sm:gap-4 group">
+                            <!-- Number Indicator -->
+                            <div class="w-6 h-6 sm:w-8 sm:h-8 mt-3 sm:mt-0 shrink-0 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm shadow-inner border border-slate-200">
+                                <span x-text="index + 1"></span>
+                            </div>
+
                             <!-- Input Wrapper -->
-                            <div class="flex-1 grid grid-cols-1 gap-4" :class="{ 'md:grid-cols-2': hasCompareRule }">
+                            <div class="flex-1 grid grid-cols-1 gap-3 sm:gap-4" :class="{ 'md:grid-cols-2': hasCompareRule }">
                                 <div>
                                     <input type="url" x-model="row.lp" placeholder="Landing Page URL (e.g. https://example.com)" required
-                                        class="w-full bg-slate-100/50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
+                                        class="w-full bg-slate-100/50 border-none rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
                                 </div>
                                 <div x-show="hasCompareRule" x-cloak>
                                     <input type="url" x-model="row.amp" placeholder="AMP URL (Optional)"
-                                        class="w-full bg-slate-100/50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
+                                        class="w-full bg-slate-100/50 border-none rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
                                 </div>
                             </div>
                             <!-- Delete Button -->
-                            <div class="w-12 flex justify-center">
+                            <div class="w-8 sm:w-12 mt-2 sm:mt-0 flex justify-center">
                                 <button type="button" @click="removeRow(index)" x-show="rows.length > 1"
-                                    class="rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-all p-3 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                    class="rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-all p-2 sm:p-3 sm:opacity-0 group-hover:opacity-100 focus:opacity-100"
                                     title="Hapus baris">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
                         </div>
                     </template>
                 </div>
 
-                <div class="flex items-center justify-between pt-6 border-t border-slate-100/60">
-                    <div>
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100/60">
+                    <div class="w-full sm:w-auto">
                         <button type="button" @click="addRow()" x-show="rows.length < 10"
-                            class="border border-slate-200 text-slate-600 px-5 py-2.5 rounded-full hover:bg-slate-50 hover:scale-105 transition-transform duration-300 text-sm font-medium flex items-center gap-2">
+                            class="w-full sm:w-auto justify-center border border-slate-200 text-slate-600 px-5 py-3 sm:py-2.5 rounded-full hover:bg-slate-50 hover:scale-105 transition-transform duration-300 text-sm font-medium flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                             Tambah URL
                         </button>
                     </div>
 
                     <button type="submit" :disabled="submitting"
-                        class="bg-gradient-to-r from-blue-400 to-indigo-500 text-white font-semibold py-3.5 px-8 rounded-full shadow-md hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md">
+                        class="w-full sm:w-auto justify-center bg-gradient-to-r from-blue-400 to-indigo-500 text-white font-semibold py-3 sm:py-3.5 px-8 rounded-full shadow-md hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md">
                         <template x-if="!submitting">
                             <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </template>

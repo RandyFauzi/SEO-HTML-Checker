@@ -11,26 +11,39 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
 
     public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
     {
-        $nodes = $dom->filter($rule->target_selector);
+        $config = $rule->config ?? [];
+        $selector = $config['selector'] ?? '';
+        $attribute = $config['attribute'] ?? null;
+
+        if (empty($selector)) {
+            return [
+                'passed' => false,
+                'issue' => "Selector kosong",
+                'reason' => "Rule tidak memiliki selector konfigurasi.",
+                'selector' => $selector,
+            ];
+        }
+
+        $nodes = $dom->filter($selector);
 
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
                 'issue' => 'Elemen tidak ditemukan.',
-                'reason' => "Tidak ada elemen yang cocok dengan selector `{$rule->target_selector}`.",
+                'reason' => "Tidak ada elemen yang cocok dengan selector `{$selector}`.",
                 'expected' => 'Elemen harus ada',
                 'actual' => 'Elemen tidak ditemukan',
-                'selector' => $rule->target_selector,
-                'attribute' => $rule->attribute,
+                'selector' => $selector,
+                'attribute' => $attribute,
                 'html_snippet' => null,
             ];
         }
 
-        $htmlSnippet = $nodes->first()->outerHtml();
+        $htmlSnippet = substr($nodes->first()->outerHtml(), 0, 500);
         $text = $this->extractContent($nodes->first(), $rule);
 
-        $operator = strtolower($rule->operator ?? 'contains');
-        $expected = $rule->expected_value ?? $rule->value ?? '';
+        $operator = strtolower($config['operator'] ?? 'contains');
+        $expected = $config['expected_value'] ?? $config['expected'] ?? '';
 
         // Case-insensitive comparisons for simplicity
         $textLower = strtolower($text);
@@ -49,8 +62,8 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
         $reason = null;
 
         if (!$passed) {
-            $issue = "Teks {$rule->name} tidak sesuai ekspektasi.";
-            $reason = "Nilai yang diekstrak tidak memenuhi kondisi `{$operator}` terhadap `{$expected}`.";
+            $issue = $rule->issue_message ?? "Teks {$rule->name} tidak sesuai ekspektasi.";
+            $reason = $rule->reason_template ?? "Nilai yang diekstrak tidak memenuhi kondisi `{$operator}` terhadap `{$expected}`.";
         }
 
         return [
@@ -59,8 +72,8 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
             'reason' => $reason,
             'expected' => "{$operator} '{$expected}'",
             'actual' => mb_strimwidth($text, 0, 50, '...'),
-            'selector' => $rule->target_selector,
-            'attribute' => $rule->attribute,
+            'selector' => $selector,
+            'attribute' => $attribute,
             'html_snippet' => $htmlSnippet,
         ];
     }

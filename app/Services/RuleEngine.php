@@ -6,6 +6,7 @@ use App\DTO\CheckResult;
 use App\Enums\CheckStatus;
 use App\Enums\RuleType;
 use App\Models\SeoRule;
+use App\Services\Rules\AttributeRuleEvaluator;
 use App\Services\Rules\CompareAmpRuleEvaluator;
 use App\Services\Rules\CountRuleEvaluator;
 use App\Services\Rules\ExistsRuleEvaluator;
@@ -31,6 +32,8 @@ class RuleEngine
             RuleType::Regex->value => new RegexRuleEvaluator,
             RuleType::CompareAmp->value => new CompareAmpRuleEvaluator,
             RuleType::JsonLd->value => new JsonLdRuleEvaluator,
+            RuleType::Attribute->value => new AttributeRuleEvaluator,
+            RuleType::Special->value => new \App\Services\Rules\SpecialRuleEvaluator,
         ];
     }
 
@@ -56,7 +59,11 @@ class RuleEngine
         try {
             $result = $evaluator->evaluate($dom, $rule, $ampDom);
 
-            $status = $result['passed'] ? CheckStatus::Passed : CheckStatus::from($rule->severity);
+            if (isset($result['skipped']) && $result['skipped']) {
+                $status = CheckStatus::Skipped;
+            } else {
+                $status = $result['passed'] ? CheckStatus::Passed : CheckStatus::from($rule->severity);
+            }
 
             return new CheckResult(
                 ruleName: $rule->name,

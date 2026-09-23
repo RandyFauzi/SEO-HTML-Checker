@@ -9,11 +9,26 @@ class CountRuleEvaluator implements RuleEvaluatorInterface
 {
     public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
     {
-        $nodes = $dom->filter($rule->target_selector);
+        $config = $rule->config ?? [];
+        $selector = $config['selector'] ?? '';
+        
+        if (empty($selector)) {
+            return [
+                'passed' => false,
+                'issue' => "Selector kosong",
+                'reason' => "Rule tidak memiliki selector konfigurasi.",
+                'selector' => $selector,
+            ];
+        }
+
+        $nodes = $dom->filter($selector);
         $actual = $nodes->count();
 
-        $expected = (int) ($rule->expected_value ?? $rule->min_value ?? 0);
-        $operator = $rule->operator ?? '=';
+        $expected = (int) ($config['expected'] ?? $config['min'] ?? 0);
+        $operator = $config['operator'] ?? '=';
+
+        $min = (int) ($config['min'] ?? 0);
+        $max = (int) ($config['max'] ?? 0);
 
         $passed = match ($operator) {
             '>' => $actual > $expected,
@@ -21,27 +36,27 @@ class CountRuleEvaluator implements RuleEvaluatorInterface
             '<' => $actual < $expected,
             '<=' => $actual <= $expected,
             '!=' => $actual !== $expected,
-            'between' => $actual >= (int) $rule->min_value && $actual <= (int) $rule->max_value,
+            'between' => $actual >= $min && $actual <= $max,
             default => $actual === $expected,
         };
 
         $operatorString = $operator === 'between' 
-            ? "{$rule->min_value} - {$rule->max_value} elemen" 
+            ? "{$min} - {$max} elemen" 
             : "{$operator} {$expected} elemen";
 
         $issue = null;
         $reason = null;
 
         if (!$passed) {
-            $issue = "Jumlah elemen {$rule->name} tidak sesuai.";
-            $reason = "Rule menetapkan jumlah harus {$operatorString}, tetapi ditemukan {$actual} elemen.";
+            $issue = $rule->issue_message ?? "Jumlah elemen {$rule->name} tidak sesuai.";
+            $reason = $rule->reason_template ?? "Rule menetapkan jumlah harus {$operatorString}, tetapi ditemukan {$actual} elemen.";
         }
         
         $snippets = [];
         if ($actual > 0) {
             foreach ($nodes as $node) {
-                if (count($snippets) < 3) { // Show up to 3 for context
-                    $snippets[] = $node->ownerDocument->saveHTML($node);
+                if (count($snippets) < 3) {
+                    $snippets[] = substr($node->ownerDocument->saveHTML($node), 0, 150);
                 }
             }
         }
@@ -52,7 +67,7 @@ class CountRuleEvaluator implements RuleEvaluatorInterface
             'reason' => $reason,
             'expected' => $operatorString,
             'actual' => "{$actual} elemen",
-            'selector' => $rule->target_selector,
+            'selector' => $selector,
             'attribute' => null,
             'html_snippet' => !empty($snippets) ? implode("\n", $snippets) : null,
         ];

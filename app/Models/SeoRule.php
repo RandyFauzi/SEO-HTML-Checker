@@ -11,14 +11,11 @@ class SeoRule extends Model
         'name',
         'description',
         'category',
-        'target_selector',
-        'attribute',
-        'operator',
-        'expected_value',
         'rule_type',
-        'min_value',
-        'max_value',
-        'regex_pattern',
+        'config',
+        'issue_message',
+        'reason_template',
+        'recommendation',
         'severity',
         'is_active',
         'sort_order',
@@ -27,6 +24,7 @@ class SeoRule extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'config' => 'array',
         'rule_type' => \App\Enums\RuleType::class,
     ];
 
