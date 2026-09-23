@@ -16,7 +16,12 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
-                'details' => 'Selector not found for text match.',
+                'issue' => 'Elemen tidak ditemukan.',
+                'reason' => "Tidak ada elemen yang cocok dengan selector `{$rule->target_selector}`.",
+                'expected' => 'Elemen harus ada',
+                'actual' => 'Elemen tidak ditemukan',
+                'selector' => $rule->target_selector,
+                'attribute' => $rule->attribute,
                 'html_snippet' => null,
             ];
         }
@@ -40,9 +45,22 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
             default => str_contains($textLower, $expectedLower),
         };
 
+        $issue = null;
+        $reason = null;
+
+        if (!$passed) {
+            $issue = "Teks {$rule->name} tidak sesuai ekspektasi.";
+            $reason = "Nilai yang diekstrak tidak memenuhi kondisi `{$operator}` terhadap `{$expected}`.";
+        }
+
         return [
             'passed' => $passed,
-            'details' => $passed ? "Matched condition '{$operator}' with '{$expected}'." : "Did not match condition '{$operator}' with '{$expected}'.",
+            'issue' => $issue,
+            'reason' => $reason,
+            'expected' => "{$operator} '{$expected}'",
+            'actual' => mb_strimwidth($text, 0, 50, '...'),
+            'selector' => $rule->target_selector,
+            'attribute' => $rule->attribute,
             'html_snippet' => $htmlSnippet,
         ];
     }

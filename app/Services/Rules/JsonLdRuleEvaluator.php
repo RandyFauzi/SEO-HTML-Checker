@@ -14,7 +14,12 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
         if ($jsonNodes->count() === 0) {
             return [
                 'passed' => false,
-                'details' => 'No application/ld+json script found.',
+                'issue' => 'Script JSON-LD tidak ditemukan.',
+                'reason' => 'Halaman tidak memiliki tag `<script type="application/ld+json">`.',
+                'expected' => 'Terdapat JSON-LD',
+                'actual' => 'Tidak ditemukan',
+                'selector' => 'script[type="application/ld+json"]',
+                'attribute' => null,
                 'html_snippet' => null,
             ];
         }
@@ -39,22 +44,15 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
             $data = json_decode($jsonText, true);
 
             if (is_array($data)) {
-                // If no specific path is given, we could fail or fallback to a basic search.
-                // But path-based is strongly recommended.
                 if (empty($jsonPath)) {
-                    // Fallback basic exact search string if no path
                     if (str_contains(strtolower($jsonText), $expected)) {
                         $foundMatch = true;
                         $firstSnippet = $node->outerHtml();
                     }
-
                     return;
                 }
 
-                // data_get allows wildcard extraction e.g. '@graph.*.@type'
                 $extracted = data_get($data, $jsonPath);
-
-                // data_get could return an array if wildcard is used
                 $valuesToCheck = is_array($extracted) ? $extracted : [$extracted];
 
                 foreach ($valuesToCheck as $val) {
@@ -83,12 +81,24 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
             }
         });
 
-        $pathMsg = empty($jsonPath) ? '' : " at path '{$jsonPath}'";
+        $pathMsg = empty($jsonPath) ? 'JSON text' : "Path `{$jsonPath}`";
+        $issue = null;
+        $reason = null;
+
+        if (!$foundMatch) {
+            $issue = "Data JSON-LD tidak sesuai spesifikasi SEO.";
+            $reason = "Tidak ada satu pun blok JSON-LD di mana {$pathMsg} memenuhi syarat `{$operator} '{$expected}'`.";
+        }
 
         return [
             'passed' => $foundMatch,
-            'details' => $foundMatch ? "JSON-LD matched condition '{$operator}' with '{$expected}'{$pathMsg}." : "JSON-LD did not match condition '{$operator}' with '{$expected}'{$pathMsg}.",
-            'html_snippet' => $firstSnippet,
+            'issue' => $issue,
+            'reason' => $reason,
+            'expected' => "{$operator} '{$expected}'",
+            'actual' => $foundMatch ? 'Sesuai ekspektasi' : 'Tidak sesuai',
+            'selector' => 'script[type="application/ld+json"]',
+            'attribute' => empty($jsonPath) ? null : $jsonPath,
+            'html_snippet' => mb_strimwidth($firstSnippet, 0, 500, '...'),
         ];
     }
 }

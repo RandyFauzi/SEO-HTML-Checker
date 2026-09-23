@@ -16,7 +16,12 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
-                'details' => 'Selector not found for length check.',
+                'issue' => 'Elemen tidak ditemukan.',
+                'reason' => "Tidak ada elemen yang cocok dengan selector `{$rule->target_selector}`.",
+                'expected' => 'Elemen harus ada',
+                'actual' => 'Elemen tidak ditemukan',
+                'selector' => $rule->target_selector,
+                'attribute' => $rule->attribute,
                 'html_snippet' => null,
             ];
         }
@@ -26,23 +31,48 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
         $length = mb_strlen($text);
 
         $operator = $rule->operator ?? '<=';
-        $expected = (int) ($rule->expected_value ?? $rule->max_value ?? 0);
+        $expectedValue = (int) ($rule->expected_value ?? $rule->max_value ?? 0);
 
         $passed = match ($operator) {
-            '>' => $length > $expected,
-            '>=' => $length >= $expected,
-            '<' => $length < $expected,
-            '<=' => $length <= $expected,
-            '=' => $length === $expected,
+            '>' => $length > $expectedValue,
+            '>=' => $length >= $expectedValue,
+            '<' => $length < $expectedValue,
+            '<=' => $length <= $expectedValue,
+            '=' => $length === $expectedValue,
             'between' => $length >= (int) $rule->min_value && $length <= (int) $rule->max_value,
-            default => $length <= $expected,
+            default => $length <= $expectedValue,
         };
 
-        $operatorString = $operator === 'between' ? "between {$rule->min_value} and {$rule->max_value}" : "{$operator} {$expected}";
+        $operatorString = $operator === 'between' 
+            ? "{$rule->min_value} - {$rule->max_value} karakter" 
+            : "{$operator} {$expectedValue} karakter";
+
+        $issue = null;
+        $reason = null;
+
+        if (!$passed) {
+            if ($operator === 'between') {
+                if ($length < $rule->min_value) {
+                    $issue = "Panjang {$rule->name} terlalu pendek.";
+                    $reason = "Panjang berada di bawah minimum batas rule.";
+                } else {
+                    $issue = "Panjang {$rule->name} terlalu panjang.";
+                    $reason = "Panjang melebihi batas maksimum rule.";
+                }
+            } else {
+                $issue = "Panjang {$rule->name} tidak sesuai.";
+                $reason = "Panjang aktual tidak memenuhi syarat `{$operator} {$expectedValue}`.";
+            }
+        }
 
         return [
             'passed' => $passed,
-            'details' => "Length is {$length} (Expected: {$operatorString}).",
+            'issue' => $issue,
+            'reason' => $reason,
+            'expected' => $operatorString,
+            'actual' => "{$length} karakter",
+            'selector' => $rule->target_selector,
+            'attribute' => $rule->attribute,
             'html_snippet' => $htmlSnippet,
         ];
     }

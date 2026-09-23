@@ -41,10 +41,11 @@ class RuleEngine
 
         if (! isset($this->evaluators[$typeString])) {
             return new CheckResult(
-                $rule->name,
-                $type,
-                CheckStatus::Warning,
-                "No evaluator found for rule type: {$typeString}"
+                ruleName: $rule->name,
+                ruleType: $type,
+                status: CheckStatus::Warning,
+                issue: "Evaluator not found",
+                reason: "No evaluator found for rule type: {$typeString}"
             );
         }
 
@@ -57,18 +58,24 @@ class RuleEngine
             $status = $result['passed'] ? CheckStatus::Passed : CheckStatus::from($rule->severity);
 
             return new CheckResult(
-                $rule->name,
-                $type,
-                $status,
-                $result['details'],
-                $result['html_snippet'] ?? null
+                ruleName: $rule->name,
+                ruleType: $type,
+                status: $status,
+                issue: $result['issue'] ?? null,
+                reason: $result['reason'] ?? null,
+                expected: $result['expected'] ?? null,
+                actual: $result['actual'] ?? null,
+                selector: $result['selector'] ?? null,
+                attribute: $result['attribute'] ?? null,
+                htmlSnippet: $result['html_snippet'] ?? null
             );
         } catch (Exception $e) {
             return new CheckResult(
-                $rule->name,
-                $type,
-                CheckStatus::Error,
-                'Error evaluating rule: '.$e->getMessage()
+                ruleName: $rule->name,
+                ruleType: $type,
+                status: CheckStatus::Error,
+                issue: "Evaluation Error",
+                reason: 'Error evaluating rule: '.$e->getMessage()
             );
         }
     }

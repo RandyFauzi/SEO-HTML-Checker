@@ -126,7 +126,49 @@
                                                             @endif
                                                         </td>
                                                         <td class="px-6 py-4 text-slate-600">
-                                                            <div class="mb-1 leading-relaxed">{{ $check->details }}</div>
+                                                            @if($check->status->value !== 'passed')
+                                                                @php
+                                                                    $isWarning = $check->status->value === 'warning';
+                                                                    $bgClass = $isWarning ? 'bg-amber-50/50' : 'bg-red-50/50';
+                                                                    $borderClass = $isWarning ? 'border-amber-100' : 'border-red-100';
+                                                                @endphp
+                                                                <div class="mb-3 space-y-2 text-sm {{ $bgClass }} p-4 rounded-xl border {{ $borderClass }}">
+                                                                    @if($check->issue)
+                                                                        <div><span class="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-0.5">Masalah</span> <span class="text-slate-800">{{ $check->issue }}</span></div>
+                                                                    @endif
+                                                                    <div class="grid grid-cols-2 gap-4 pt-2">
+                                                                        @if($check->expected)
+                                                                            <div><span class="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-0.5">Expected</span> <span class="text-slate-800">{{ $check->expected }}</span></div>
+                                                                        @endif
+                                                                        @if($check->actual)
+                                                                            <div><span class="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-0.5">Actual</span> <span class="text-slate-800">{{ $check->actual }}</span></div>
+                                                                        @endif
+                                                                    </div>
+                                                                    @if($check->selector)
+                                                                        <div class="pt-2">
+                                                                            <span class="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-0.5">Lokasi</span> 
+                                                                            <code class="text-xs bg-white border border-slate-200 px-1.5 py-0.5 rounded text-indigo-600">{{ $check->selector }}</code>
+                                                                            @if($check->attribute)
+                                                                                <span class="text-xs text-slate-500"> Attribute: </span><code class="text-xs bg-white border border-slate-200 px-1.5 py-0.5 rounded text-indigo-600">{{ $check->attribute }}</code>
+                                                                            @endif
+                                                                        </div>
+                                                                    @endif
+                                                                    @if($check->reason)
+                                                                        <div class="pt-2"><span class="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-0.5">Alasan</span> <span class="text-slate-600">{{ $check->reason }}</span></div>
+                                                                    @endif
+                                                                </div>
+                                                            @else
+                                                                <div class="mb-1 leading-relaxed text-sm">
+                                                                    <span class="font-bold text-slate-700 text-[10px] uppercase tracking-wider block mb-1">Status: Sesuai Ekspektasi</span>
+                                                                    @if($check->expected)
+                                                                        <div class="text-xs text-slate-500">Expected: {{ $check->expected }}</div>
+                                                                    @endif
+                                                                    @if($check->actual)
+                                                                        <div class="text-xs font-medium text-emerald-600 mt-0.5">Actual: {{ $check->actual }}</div>
+                                                                    @endif
+                                                                </div>
+                                                            @endif
+                                                            
                                                             @if(!empty($check->htmlSnippet))
                                                                 <div class="mt-3 text-[11px] bg-slate-900 text-emerald-400 p-3.5 rounded-xl overflow-x-auto font-mono shadow-inner border border-slate-800">
                                                                     <pre><code>{{ $check->htmlSnippet }}</code></pre>

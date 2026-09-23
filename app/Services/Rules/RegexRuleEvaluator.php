@@ -16,7 +16,12 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
-                'details' => 'Selector not found for regex check.',
+                'issue' => 'Elemen tidak ditemukan.',
+                'reason' => "Tidak ada elemen yang cocok dengan selector `{$rule->target_selector}`.",
+                'expected' => 'Elemen harus ada',
+                'actual' => 'Elemen tidak ditemukan',
+                'selector' => $rule->target_selector,
+                'attribute' => $rule->attribute,
                 'html_snippet' => null,
             ];
         }
@@ -28,7 +33,12 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
         if (strlen($text) > 50000) {
             return [
                 'passed' => false,
-                'details' => 'Content too large for regex evaluation (Security limit).',
+                'issue' => 'Konten terlalu besar.',
+                'reason' => 'Konten melebihi 50,000 karakter, evaluasi regex dibatalkan untuk mencegah CPU spike.',
+                'expected' => '< 50000 karakter',
+                'actual' => strlen($text) . ' karakter',
+                'selector' => $rule->target_selector,
+                'attribute' => $rule->attribute,
                 'html_snippet' => $htmlSnippet,
             ];
         }
@@ -38,7 +48,12 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
         if (empty($regex)) {
             return [
                 'passed' => false,
-                'details' => 'No regex pattern provided.',
+                'issue' => 'Pattern Regex kosong.',
+                'reason' => 'Rule mewajibkan regex tapi field pattern/expected_value tidak diisi.',
+                'expected' => 'Pattern regex valid',
+                'actual' => 'Kosong',
+                'selector' => $rule->target_selector,
+                'attribute' => $rule->attribute,
                 'html_snippet' => $htmlSnippet,
             ];
         }
@@ -57,7 +72,12 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
             if ($result === false) {
                 return [
                     'passed' => false,
-                    'details' => 'Regex execution failed or pattern is invalid.',
+                    'issue' => 'Eksekusi Regex gagal.',
+                    'reason' => 'Pattern Regex invalid atau terjadi catastrophic backtracking.',
+                    'expected' => 'Regex berhasil dieksekusi',
+                    'actual' => 'Error/Timeout',
+                    'selector' => $rule->target_selector,
+                    'attribute' => $rule->attribute,
                     'html_snippet' => $htmlSnippet,
                 ];
             }
@@ -71,7 +91,12 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
 
         return [
             'passed' => $passed,
-            'details' => $passed ? 'Matched regex.' : 'Did not match regex.',
+            'issue' => $passed ? null : "Konten tidak cocok dengan pola regex.",
+            'reason' => $passed ? null : "Teks yang diekstrak tidak memenuhi pola regex yang ditentukan.",
+            'expected' => "Cocok dengan: {$regex}",
+            'actual' => mb_strimwidth($text, 0, 50, '...'),
+            'selector' => $rule->target_selector,
+            'attribute' => $rule->attribute,
             'html_snippet' => $htmlSnippet,
         ];
     }

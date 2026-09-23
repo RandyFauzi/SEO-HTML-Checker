@@ -25,12 +25,36 @@ class CountRuleEvaluator implements RuleEvaluatorInterface
             default => $actual === $expected,
         };
 
-        $operatorString = $operator === 'between' ? "between {$rule->min_value} and {$rule->max_value}" : "{$operator} {$expected}";
+        $operatorString = $operator === 'between' 
+            ? "{$rule->min_value} - {$rule->max_value} elemen" 
+            : "{$operator} {$expected} elemen";
+
+        $issue = null;
+        $reason = null;
+
+        if (!$passed) {
+            $issue = "Jumlah elemen {$rule->name} tidak sesuai.";
+            $reason = "Rule menetapkan jumlah harus {$operatorString}, tetapi ditemukan {$actual} elemen.";
+        }
+        
+        $snippets = [];
+        if ($actual > 0) {
+            foreach ($nodes as $node) {
+                if (count($snippets) < 3) { // Show up to 3 for context
+                    $snippets[] = $node->ownerDocument->saveHTML($node);
+                }
+            }
+        }
 
         return [
             'passed' => $passed,
-            'details' => "Expected count {$operatorString}, found {$actual}.",
-            'html_snippet' => $actual > 0 ? $nodes->first()->outerHtml() : null,
+            'issue' => $issue,
+            'reason' => $reason,
+            'expected' => $operatorString,
+            'actual' => "{$actual} elemen",
+            'selector' => $rule->target_selector,
+            'attribute' => null,
+            'html_snippet' => !empty($snippets) ? implode("\n", $snippets) : null,
         ];
     }
 }
