@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SEO HTML Checker</title>
+    <x-favicon />
     <!-- Use Tailwind CSS via CDN for quick styling as requested -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -52,9 +53,12 @@
         
         <!-- Left Side: Branding & Info -->
         <div class="w-full md:w-1/2 flex flex-col justify-center text-center md:text-left">
-            <h1 class="text-5xl md:text-6xl font-extrabold text-blue-900 tracking-tight mb-4" style="font-family: 'Inter', sans-serif;">
-                SEO <br class="hidden md:block" />Checker
-            </h1>
+            <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
+                <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-md">
+                <h1 class="text-5xl md:text-6xl font-extrabold text-blue-900 tracking-tight" style="font-family: 'Inter', sans-serif;">
+                    SEO <br class="hidden md:block" />Checker
+                </h1>
+            </div>
             <p class="text-lg text-blue-800/80 mb-8 max-w-md mx-auto md:mx-0">
                 Advanced HTML Analysis & Optimization. Log in to manage SEO rules and monitor performance.
             </p>

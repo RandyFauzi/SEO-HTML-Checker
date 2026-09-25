@@ -55,7 +55,7 @@ class SeoRuleController extends Controller
         $data['is_active'] = $request->has('is_active');
         
         SeoRule::create($data);
-        return redirect()->route('admin.rules.index')->with('success', 'Rule created successfully.');
+        return redirect()->route('admin.rules.index')->with('success', 'Aturan berhasil dibuat.');
     }
 
     public function edit(SeoRule $rule)
@@ -70,13 +70,13 @@ class SeoRuleController extends Controller
         $data['is_active'] = $request->has('is_active');
         
         $rule->update($data);
-        return redirect()->route('admin.rules.index')->with('success', 'Rule updated successfully.');
+        return redirect()->route('admin.rules.index')->with('success', 'Aturan berhasil diperbarui.');
     }
 
     public function destroy(SeoRule $rule)
     {
         $rule->delete();
-        return redirect()->route('admin.rules.index')->with('success', 'Rule deleted successfully.');
+        return redirect()->route('admin.rules.index')->with('success', 'Aturan berhasil dihapus.');
     }
 
     public function toggle(Request $request, SeoRule $rule)
@@ -87,10 +87,10 @@ class SeoRuleController extends Controller
             return response()->json([
                 'success' => true,
                 'is_active' => $rule->is_active,
-                'message' => 'Rule status toggled.',
+                'message' => 'Status aturan diubah.',
             ]);
         }
-        return redirect()->route('admin.rules.index')->with('success', 'Rule status toggled.');
+        return redirect()->route('admin.rules.index')->with('success', 'Status aturan diubah.');
     }
 
     // New Endpoint: Rule Preview / Test
@@ -141,7 +141,7 @@ class SeoRuleController extends Controller
         $rules = json_decode($content, true);
 
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($rules)) {
-            return back()->with('error', 'Invalid JSON file format.');
+            return back()->with('error', 'Format file JSON tidak valid.');
         }
 
         $imported = 0;
@@ -174,10 +174,10 @@ class SeoRuleController extends Controller
                 }
             });
         } catch (\Exception $e) {
-            return back()->with('error', 'Import failed: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengimpor: ' . $e->getMessage());
         }
 
-        return redirect()->route('admin.rules.index')->with('success', "Imported $imported rules successfully.");
+        return redirect()->route('admin.rules.index')->with('success', "Berhasil mengimpor $imported aturan.");
     }
 
     public function export()

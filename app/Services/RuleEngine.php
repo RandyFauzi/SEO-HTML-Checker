@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\AuditContext;
 use App\DTO\CheckResult;
 use App\Enums\CheckStatus;
 use App\Enums\RuleType;
@@ -12,9 +13,12 @@ use App\Services\Rules\CountRuleEvaluator;
 use App\Services\Rules\ExistsRuleEvaluator;
 use App\Services\Rules\JsonLdRuleEvaluator;
 use App\Services\Rules\LengthRuleEvaluator;
+use App\Services\Rules\LinkRuleEvaluator;
 use App\Services\Rules\RegexRuleEvaluator;
 use App\Services\Rules\RuleEvaluatorInterface;
+use App\Services\Rules\SpecialRuleEvaluator;
 use App\Services\Rules\TextMatchRuleEvaluator;
+use App\Services\Rules\UrlRuleEvaluator;
 use Exception;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -33,12 +37,28 @@ class RuleEngine
             RuleType::CompareAmp->value => new CompareAmpRuleEvaluator,
             RuleType::JsonLd->value => new JsonLdRuleEvaluator,
             RuleType::Attribute->value => new AttributeRuleEvaluator,
-            RuleType::Special->value => new \App\Services\Rules\SpecialRuleEvaluator,
+            RuleType::Special->value => new SpecialRuleEvaluator,
+            RuleType::UrlMatch->value => new UrlRuleEvaluator,
+            RuleType::Link->value => new LinkRuleEvaluator,
         ];
     }
 
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): CheckResult
+    public function evaluate(Crawler|AuditContext $domOrContext, SeoRule $rule, ?Crawler $ampDom = null, ?AuditContext $context = null): CheckResult
     {
+        if ($domOrContext instanceof AuditContext) {
+            $context = $domOrContext;
+            $dom = $context->dom;
+            $ampDom = $context->ampDom ?? $ampDom;
+        } else {
+            $dom = $domOrContext;
+            $context = $context ?? new AuditContext(
+                dom: $dom,
+                originalUrl: '',
+                finalUrl: '',
+                ampDom: $ampDom
+            );
+        }
+
         $type = $rule->rule_type;
         $typeString = $type instanceof RuleType ? $type->value : $type;
 
@@ -48,7 +68,7 @@ class RuleEngine
                 ruleType: $type,
                 status: CheckStatus::Warning,
                 category: $rule->category,
-                issue: "Evaluator not found",
+                issue: 'Evaluator not found',
                 reason: "No evaluator found for rule type: {$typeString}"
             );
         }
@@ -57,7 +77,7 @@ class RuleEngine
         $evaluator = $this->evaluators[$typeString];
 
         try {
-            $result = $evaluator->evaluate($dom, $rule, $ampDom);
+            $result = $evaluator->evaluate($dom, $rule, $ampDom, $context);
 
             if (isset($result['skipped']) && $result['skipped']) {
                 $status = CheckStatus::Skipped;
@@ -84,10 +104,9 @@ class RuleEngine
                 ruleType: $type,
                 status: CheckStatus::Error,
                 category: $rule->category,
-                issue: "Evaluation Error",
+                issue: 'Evaluation Error',
                 reason: 'Error evaluating rule: '.$e->getMessage()
             );
         }
     }
 }
-

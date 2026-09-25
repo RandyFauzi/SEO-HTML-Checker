@@ -2,6 +2,7 @@
 
 namespace App\Services\Rules;
 
+use App\DTO\AuditContext;
 use App\Models\SeoRule;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -9,17 +10,17 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
 {
     use NodeExtractorTrait;
 
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
+    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null, ?AuditContext $context = null): array
     {
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? '';
         $attribute = $config['attribute'] ?? null;
-        
+
         if (empty($selector)) {
             return [
                 'passed' => false,
-                'issue' => "Selector kosong",
-                'reason' => "Rule tidak memiliki selector konfigurasi.",
+                'issue' => 'Selector kosong',
+                'reason' => 'Rule tidak memiliki selector konfigurasi.',
                 'selector' => $selector,
             ];
         }
@@ -40,10 +41,10 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
         }
 
         $htmlSnippet = substr($nodes->first()->outerHtml(), 0, 500);
-        
+
         // Trait will read from $rule->config automatically
         $text = $this->extractContent($nodes->first(), $rule);
-        
+
         $length = mb_strlen(trim($text));
 
         $operator = $config['operator'] ?? '<=';
@@ -61,20 +62,20 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
             default => $length <= $expectedValue,
         };
 
-        $operatorString = $operator === 'between' 
-            ? "{$min} - {$max} karakter" 
+        $operatorString = $operator === 'between'
+            ? "{$min} - {$max} karakter"
             : "{$operator} {$expectedValue} karakter";
 
         $issue = null;
         $reason = null;
 
-        if (!$passed) {
+        if (! $passed) {
             $issue = $rule->issue_message ?? "Panjang {$rule->name} tidak sesuai.";
             if ($operator === 'between') {
                 if ($length < $min) {
-                    $reason = $rule->reason_template ?? "Panjang teks terlalu pendek.";
+                    $reason = $rule->reason_template ?? 'Panjang teks terlalu pendek.';
                 } else {
-                    $reason = $rule->reason_template ?? "Panjang teks melebihi batas maksimum.";
+                    $reason = $rule->reason_template ?? 'Panjang teks melebihi batas maksimum.';
                 }
             } else {
                 $reason = $rule->reason_template ?? "Panjang aktual tidak memenuhi syarat `{$operator} {$expectedValue}`.";

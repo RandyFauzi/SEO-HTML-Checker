@@ -1,65 +1,4 @@
-@php
-    $initialRows = [];
-    $oldLpUrls = old('lp_urls');
-    $oldAmpUrls = old('amp_urls');
-    
-    if ($oldLpUrls) {
-        $lpLines = explode("\n", $oldLpUrls);
-        $ampLines = $oldAmpUrls ? explode("\n", $oldAmpUrls) : [];
-        foreach ($lpLines as $i => $lp) {
-            $initialRows[] = [
-                'lp' => trim($lp),
-                'amp' => isset($ampLines[$i]) ? trim($ampLines[$i]) : ''
-            ];
-        }
-    }
-    if (empty($initialRows)) {
-        $initialRows[] = ['lp' => '', 'amp' => ''];
-    }
-@endphp
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SEO Checker</title>
-    <x-favicon />
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
-</head>
-<body class="bg-gradient-to-br from-slate-50 via-gray-100 to-purple-50 min-h-screen relative overflow-x-hidden antialiased text-slate-800">
-    <!-- Header/Navbar -->
-    <header class="absolute top-0 w-full p-6 flex justify-between items-center z-20">
-        <div class="flex items-center gap-2">
-            <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-8 h-8 object-contain">
-            <span class="font-extrabold text-xl tracking-tight text-slate-800">SEO Checker</span>
-        </div>
-        <div>
-            @auth
-                <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-slate-600 hover:text-purple-600 px-4 py-2">Panel Admin</a>
-            @else
-                <a href="{{ route('login') }}" class="text-sm font-bold text-purple-600 bg-white border border-purple-200 px-5 py-2.5 rounded-full hover:bg-purple-50 transition-colors shadow-sm">Masuk</a>
-            @endauth
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-20">
-        <!-- Hero Section -->
-        <div class="text-center max-w-3xl mx-auto mb-10">
-            <h1 class="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-                SEO Checker
-            </h1>
-            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-                Masukkan URL domain atau website untuk menjalankan audit SEO. Temukan masalah teknikal dan optimasi on-page, lalu dapatkan laporan lengkap cara memperbaikinya.
-            </p>
-        </div>
-
-        <div class="w-full max-w-6xl mx-auto" 
+<div class="max-w-6xl mx-auto" 
          x-data="{ 
             hasCompareRule: {{ $hasCompareRule ? 'true' : 'false' }},
             rows: {{ json_encode($initialRows) }},
@@ -80,7 +19,12 @@
             }
          }">
         
-        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Run SEO Audit</h2>
+                <p class="text-sm text-slate-500 mt-2 font-medium">Check multiple URLs against your active SEO rules and identify improvements instantly.</p>
+            </div>
+        </div>
 
         @if($errors->any())
             <div class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl relative mb-8 shadow-sm text-sm font-medium">
@@ -112,11 +56,11 @@
                             <!-- Input Wrapper -->
                             <div class="flex-1 grid grid-cols-1 gap-3 sm:gap-4" :class="{ 'md:grid-cols-2': hasCompareRule }">
                                 <div>
-                                    <input type="url" x-model="row.lp" placeholder="URL Landing Page (Contoh: https://example.com)" required
+                                    <input type="url" x-model="row.lp" placeholder="Landing Page URL (e.g. https://example.com)" required
                                         class="w-full bg-slate-100/50 border-none rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
                                 </div>
                                 <div x-show="hasCompareRule" x-cloak>
-                                    <input type="url" x-model="row.amp" placeholder="URL AMP (Opsional)"
+                                    <input type="url" x-model="row.amp" placeholder="AMP URL (Optional)"
                                         class="w-full bg-slate-100/50 border-none rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
                                 </div>
                             </div>
@@ -152,15 +96,8 @@
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                         </template>
-                        <span x-text="submitting ? 'Memproses...' : 'Jalankan Audit'"></span>
+                        <span x-text="submitting ? 'Processing...' : 'Run Checker'"></span>
                     </button>
                 </div>
             </form>
         </div>
-
-        <div class="w-full max-w-6xl mx-auto mt-10 pb-20 text-left">
-            @include('seo-checker.results')
-        </div>
-    </main>
-</body>
-</html>

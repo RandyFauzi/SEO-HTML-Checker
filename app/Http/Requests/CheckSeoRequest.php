@@ -33,6 +33,14 @@ class CheckSeoRequest extends FormRequest
             if (!$lp) {
                 continue; // skip completely empty lines
             }
+            
+            if (!preg_match('~^(?:f|ht)tps?://~i', $lp)) {
+                $lp = 'https://' . $lp;
+            }
+            
+            if ($amp && !preg_match('~^(?:f|ht)tps?://~i', $amp)) {
+                $amp = 'https://' . $amp;
+            }
 
             $pairKey = $lp . '|' . ($amp ?? '');
             if (!isset($seenPairs[$pairKey])) {

@@ -82,7 +82,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'title',
                     'operator' => '>',
-                    'expected' => 0
+                    'expected' => 0,
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Tag <title> kosong.',
@@ -98,14 +98,14 @@ class SeoRuleSeeder extends Seeder
                     'selector' => 'title',
                     'operator' => 'between',
                     'min' => 30,
-                    'max' => 60
+                    'max' => 60,
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Panjang title melebihi atau kurang dari rekomendasi.',
                 'reason_template' => 'Disarankan 30-60 karakter agar tidak terpotong di hasil pencarian.',
                 'recommendation' => 'Sesuaikan panjang judul halaman antara 30-60 karakter.',
             ],
-            
+
             // ==================
             // Metadata (Description)
             // ==================
@@ -128,7 +128,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'meta[name="description"]',
                     'attribute' => 'content',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Meta description kosong.',
@@ -145,7 +145,7 @@ class SeoRuleSeeder extends Seeder
                     'attribute' => 'content',
                     'operator' => 'between',
                     'min' => 120,
-                    'max' => 160
+                    'max' => 160,
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Panjang meta description tidak optimal.',
@@ -177,7 +177,7 @@ class SeoRuleSeeder extends Seeder
                     'selector' => 'meta[name="robots"]',
                     'attribute' => 'content',
                     'condition' => 'not_contains',
-                    'expected_value' => 'noindex'
+                    'expected_value' => 'noindex',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Halaman ini memiliki arahan noindex.',
@@ -207,7 +207,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'link[rel="canonical"]',
                     'operator' => '=',
-                    'expected' => 1
+                    'expected' => 1,
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Terdapat lebih dari satu tag canonical, atau tidak ada.',
@@ -222,7 +222,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'link[rel="canonical"]',
                     'attribute' => 'href',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Canonical tag kehilangan atribut href atau kosong.',
@@ -252,7 +252,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'h1',
                     'operator' => '=',
-                    'expected' => 1
+                    'expected' => 1,
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Multiple H1 headings were found.',
@@ -267,7 +267,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'h1',
                     'operator' => '>',
-                    'expected' => 0
+                    'expected' => 0,
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Tag <h1> kosong.',
@@ -280,7 +280,7 @@ class SeoRuleSeeder extends Seeder
                 'category' => 'Headings',
                 'rule_type' => 'special',
                 'config' => [
-                    'special_type' => 'h2_hierarchy'
+                    'special_type' => 'h2_hierarchy',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Heading hierarchy skips H2.',
@@ -299,7 +299,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'html',
                     'attribute' => 'lang',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Atribut lang pada tag <html> tidak dideklarasikan.',
@@ -338,7 +338,7 @@ class SeoRuleSeeder extends Seeder
                 'category' => 'Structured Data',
                 'rule_type' => 'json_ld',
                 'config' => [
-                    'check_type' => 'valid'
+                    'check_type' => 'valid',
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Sintaks JSON-LD tidak valid.',
@@ -352,7 +352,7 @@ class SeoRuleSeeder extends Seeder
                 'rule_type' => 'json_ld',
                 'config' => [
                     'check_type' => 'has_context',
-                    'expected' => 'https://schema.org'
+                    'expected' => 'https://schema.org',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'JSON-LD tidak memiliki @context https://schema.org.',
@@ -365,7 +365,7 @@ class SeoRuleSeeder extends Seeder
                 'category' => 'Structured Data',
                 'rule_type' => 'json_ld',
                 'config' => [
-                    'check_type' => 'has_type'
+                    'check_type' => 'has_type',
                 ],
                 'severity' => 'error',
                 'issue_message' => 'JSON-LD kehilangan deklarasi @type.',
@@ -384,7 +384,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'meta[property="og:title"]',
                     'attribute' => 'content',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Tag og:title tidak ditemukan atau kosong.',
@@ -399,7 +399,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'meta[property="og:description"]',
                     'attribute' => 'content',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Tag og:description tidak ditemukan atau kosong.',
@@ -414,7 +414,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'meta[property="og:image"]',
                     'attribute' => 'content',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Tag og:image tidak ditemukan atau kosong.',
@@ -429,7 +429,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'meta[property="og:url"]',
                     'attribute' => 'content',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Tag og:url tidak ditemukan atau kosong.',
@@ -444,7 +444,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'meta[property="og:type"]',
                     'attribute' => 'content',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Tag og:type tidak ditemukan atau kosong.',
@@ -463,7 +463,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'img',
                     'attribute' => 'alt',
-                    'condition' => 'exists'
+                    'condition' => 'exists',
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Beberapa gambar kehilangan atribut alt sepenuhnya.',
@@ -478,7 +478,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'img',
                     'attribute' => 'alt',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Beberapa gambar memiliki atribut alt kosong.',
@@ -497,7 +497,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'a',
                     'attribute' => 'href',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Beberapa tautan memiliki atribut href kosong (href="").',
@@ -513,12 +513,74 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'a[href="#"]',
                     'operator' => '=',
-                    'expected' => 0
+                    'expected' => 0,
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Ditemukan tautan dengan href="#".',
                 'reason_template' => 'Penggunaan href="#" buruk bagi aksesibilitas dan SEO. Sebaiknya gunakan elemen <button>.',
                 'recommendation' => 'Ganti tag <a> dengan <button> untuk interaksi UI yang tidak mengubah URL.',
+            ],
+            [
+                'code' => 'LINK_HREF_EXISTS',
+                'name' => 'Links Have Href Attribute',
+                'category' => 'Links',
+                'rule_type' => 'link',
+                'config' => [
+                    'condition' => 'href_exists',
+                    'selector' => 'a',
+                ],
+                'severity' => 'warning',
+                'issue_message' => 'Ditemukan tag <a> tanpa atribut href.',
+                'reason_template' => 'Tag <a> tanpa href bukan merupakan hyperlink yang valid.',
+                'recommendation' => 'Pastikan setiap tag <a> memiliki atribut href.',
+            ],
+            [
+                'code' => 'LINK_TARGET_BLANK_REL',
+                'name' => 'Target Blank Links Use Noopener',
+                'category' => 'Links',
+                'rule_type' => 'link',
+                'config' => [
+                    'condition' => 'target_blank_rel',
+                    'expected' => 'noopener',
+                ],
+                'severity' => 'warning',
+                'issue_message' => 'Link target="_blank" tidak menyertakan rel="noopener".',
+                'reason_template' => 'Membuka jendela baru tanpa rel="noopener" rentan terhadap eksploitasi tabnabbing.',
+                'recommendation' => 'Tambahkan rel="noopener" atau rel="noreferrer" pada link target="_blank".',
+            ],
+
+            // ==================
+            // URL Rules
+            // ==================
+            [
+                'code' => 'PAGE_HTTPS',
+                'name' => 'Page Uses HTTPS Protocol',
+                'category' => 'Technical',
+                'rule_type' => 'url_match',
+                'config' => [
+                    'target' => 'page_url',
+                    'condition' => 'protocol',
+                    'operator' => 'equals',
+                    'expected' => 'https',
+                ],
+                'severity' => 'warning',
+                'issue_message' => 'Halaman tidak disajikan melalui protokol aman HTTPS.',
+                'reason_template' => 'HTTPS adalah standar keamanan web modern dan sinyal peringkat pencarian.',
+                'recommendation' => 'Migrasikan URL dan server untuk selalu menggunakan HTTPS.',
+            ],
+            [
+                'code' => 'CANONICAL_SELF_REFERENCE',
+                'name' => 'Canonical Matches Current Page URL',
+                'category' => 'Metadata',
+                'rule_type' => 'url_match',
+                'config' => [
+                    'target' => 'canonical_match',
+                    'condition' => 'canonical_match',
+                ],
+                'severity' => 'warning',
+                'issue_message' => 'Canonical URL tidak cocok dengan URL halaman saat ini.',
+                'reason_template' => 'Jika halaman ini adalah versi utama, canonical sebaiknya menunjuk ke URL ini sendiri (self-referencing).',
+                'recommendation' => 'Periksa apakah canonical sengaja menunjuk ke halaman lain atau terjadi kesalahan URL.',
             ],
 
             // ==================
@@ -544,7 +606,7 @@ class SeoRuleSeeder extends Seeder
                 'config' => [
                     'selector' => 'link[rel="alternate"][hreflang]',
                     'attribute' => 'href',
-                    'condition' => 'not_empty'
+                    'condition' => 'not_empty',
                 ],
                 'severity' => 'error',
                 'issue_message' => 'Tag hreflang kehilangan atribut href.',
@@ -573,7 +635,7 @@ class SeoRuleSeeder extends Seeder
                 'rule_type' => 'compare_amp',
                 'config' => [
                     'selector' => 'meta[name="description"]',
-                    'attribute' => 'content'
+                    'attribute' => 'content',
                 ],
                 'severity' => 'warning',
                 'issue_message' => 'Meta description LP dan AMP tidak identik.',
@@ -583,7 +645,7 @@ class SeoRuleSeeder extends Seeder
         ];
 
         // Remove the incorrect DOCTYPE_EXISTS entry that was placed above but left empty/incorrect.
-        $filteredRules = array_filter($rules, fn($r) => $r['code'] !== 'DOCTYPE_EXISTS');
+        $filteredRules = array_filter($rules, fn ($r) => $r['code'] !== 'DOCTYPE_EXISTS');
 
         $i = 0;
         foreach ($filteredRules as $rule) {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Rules;
 
+use App\DTO\AuditContext;
 use App\Models\SeoRule;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -9,7 +10,7 @@ class CompareAmpRuleEvaluator implements RuleEvaluatorInterface
 {
     use NodeExtractorTrait;
 
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
+    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null, ?AuditContext $context = null): array
     {
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? '';
@@ -45,13 +46,13 @@ class CompareAmpRuleEvaluator implements RuleEvaluatorInterface
         $issue = null;
         $reason = null;
 
-        if (!$passed) {
+        if (! $passed) {
             if ($lpValue === null || $ampValue === null) {
-                $issue = $rule->issue_message ?? "Elemen tidak ditemukan di salah satu versi.";
-                $reason = $rule->reason_template ?? "Elemen wajib ada di LP maupun AMP untuk diperbandingkan.";
+                $issue = $rule->issue_message ?? 'Elemen tidak ditemukan di salah satu versi.';
+                $reason = $rule->reason_template ?? 'Elemen wajib ada di LP maupun AMP untuk diperbandingkan.';
             } else {
                 $issue = $rule->issue_message ?? "Konten {$rule->name} berbeda antara LP dan AMP.";
-                $reason = $rule->reason_template ?? "Rule mewajibkan konten ini harus sama persis (identik) di kedua versi halaman.";
+                $reason = $rule->reason_template ?? 'Rule mewajibkan konten ini harus sama persis (identik) di kedua versi halaman.';
             }
         }
 
@@ -59,8 +60,8 @@ class CompareAmpRuleEvaluator implements RuleEvaluatorInterface
             'passed' => $passed,
             'issue' => $issue,
             'reason' => $reason,
-            'expected' => "LP dan AMP memiliki konten yang identik",
-            'actual' => $passed ? "Identik" : "LP: '" . ($lpValue ?? 'null') . "' | AMP: '" . ($ampValue ?? 'null') . "'",
+            'expected' => 'LP dan AMP memiliki konten yang identik',
+            'actual' => $passed ? 'Identik' : "LP: '".($lpValue ?? 'null')."' | AMP: '".($ampValue ?? 'null')."'",
             'selector' => $selector,
             'attribute' => $attribute,
             'html_snippet' => "LP:\n{$lpSnippet}\n\nAMP:\n{$ampSnippet}",

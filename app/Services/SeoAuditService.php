@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\DTO\AuditContext;
 use App\DTO\UrlAuditResult;
 use App\Models\SeoRule;
-use App\Enums\RuleType;
 use Symfony\Component\DomCrawler\Crawler;
 
 class SeoAuditService
@@ -49,6 +49,7 @@ class SeoAuditService
             if (isset($fetchResults[$lpUrl]['error'])) {
                 $errorMessage = 'LP Error: '.$fetchResults[$lpUrl]['error'];
                 $results[] = new UrlAuditResult($lpUrl, $ampUrl, $errorMessage, $checks, $redirectChain);
+
                 continue;
             }
 
@@ -60,15 +61,29 @@ class SeoAuditService
                 if (isset($fetchResults[$ampUrl]['error'])) {
                     $errorMessage = 'AMP Error: '.$fetchResults[$ampUrl]['error'];
                     $results[] = new UrlAuditResult($lpUrl, $ampUrl, $errorMessage, $checks, $redirectChain);
+
                     continue;
                 }
                 $ampHtml = $fetchResults[$ampUrl]['html'] ?? '';
                 $ampCrawler = new Crawler($ampHtml);
             }
 
+            $finalUrl = $fetchResults[$lpUrl]['final_url'] ?? $lpUrl;
+
+            $context = new AuditContext(
+                dom: $lpCrawler,
+                originalUrl: $lpUrl,
+                finalUrl: $finalUrl,
+                ampDom: $ampCrawler,
+                ampUrl: $ampUrl,
+                httpStatus: 200,
+                contentType: 'text/html',
+                redirectChain: $redirectChain,
+            );
+
             // Run evaluations
             foreach ($activeRules as $rule) {
-                $checks[] = $this->engine->evaluate($lpCrawler, $rule, $ampCrawler);
+                $checks[] = $this->engine->evaluate($context, $rule);
             }
 
             $results[] = new UrlAuditResult($lpUrl, $ampUrl, null, $checks, $redirectChain);
@@ -77,4 +92,3 @@ class SeoAuditService
         return $results;
     }
 }
-

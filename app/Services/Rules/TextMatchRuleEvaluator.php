@@ -2,6 +2,7 @@
 
 namespace App\Services\Rules;
 
+use App\DTO\AuditContext;
 use App\Models\SeoRule;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -9,7 +10,7 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
 {
     use NodeExtractorTrait;
 
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
+    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null, ?AuditContext $context = null): array
     {
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? '';
@@ -18,8 +19,8 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
         if (empty($selector)) {
             return [
                 'passed' => false,
-                'issue' => "Selector kosong",
-                'reason' => "Rule tidak memiliki selector konfigurasi.",
+                'issue' => 'Selector kosong',
+                'reason' => 'Rule tidak memiliki selector konfigurasi.',
                 'selector' => $selector,
             ];
         }
@@ -61,7 +62,7 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
         $issue = null;
         $reason = null;
 
-        if (!$passed) {
+        if (! $passed) {
             $issue = $rule->issue_message ?? "Teks {$rule->name} tidak sesuai ekspektasi.";
             $reason = $rule->reason_template ?? "Nilai yang diekstrak tidak memenuhi kondisi `{$operator}` terhadap `{$expected}`.";
         }

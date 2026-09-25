@@ -2,16 +2,17 @@
 
 namespace App\Services\Rules;
 
+use App\DTO\AuditContext;
 use App\Models\SeoRule;
 use Symfony\Component\DomCrawler\Crawler;
 
 class JsonLdRuleEvaluator implements RuleEvaluatorInterface
 {
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
+    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null, ?AuditContext $context = null): array
     {
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? 'script[type="application/ld+json"]';
-        
+
         $jsonNodes = $dom->filter($selector);
 
         if ($jsonNodes->count() === 0) {
@@ -29,7 +30,7 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
 
         // Sub-rule types: valid, has_type, has_context
         $checkType = $config['check_type'] ?? 'valid'; // 'valid', 'has_type', 'has_context', 'match'
-        
+
         $foundMatch = false;
         $firstSnippet = '';
         $invalidReason = '';
@@ -47,26 +48,30 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
             $data = json_decode($jsonText, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $invalidReason = 'Format JSON tidak valid: ' . json_last_error_msg();
+                $invalidReason = 'Format JSON tidak valid: '.json_last_error_msg();
+
                 return; // Not valid
             }
 
-            if (!is_array($data)) {
+            if (! is_array($data)) {
                 $invalidReason = 'JSON bukan berupa array/object.';
+
                 return;
             }
 
             if ($checkType === 'valid') {
                 $foundMatch = true;
+
                 return;
             }
 
             if ($checkType === 'has_type') {
                 $expected = $config['expected'] ?? null;
                 $type = data_get($data, '@type');
-                if ($type && (!$expected || (is_array($type) ? in_array($expected, $type) : $type === $expected))) {
+                if ($type && (! $expected || (is_array($type) ? in_array($expected, $type) : $type === $expected))) {
                     $foundMatch = true;
                 }
+
                 return;
             }
 
@@ -76,6 +81,7 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
                 if ($context === $expected) {
                     $foundMatch = true;
                 }
+
                 return;
             }
 
@@ -88,6 +94,7 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
                     if (str_contains(strtolower($jsonText), $expected)) {
                         $foundMatch = true;
                     }
+
                     return;
                 }
 
@@ -95,7 +102,9 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
                 $valuesToCheck = is_array($extracted) ? $extracted : [$extracted];
 
                 foreach ($valuesToCheck as $val) {
-                    if ($val === null) continue;
+                    if ($val === null) {
+                        continue;
+                    }
                     $valLower = strtolower((string) $val);
                     $matched = match ($operator) {
                         'equals', '=' => $valLower === $expected,
@@ -117,9 +126,9 @@ class JsonLdRuleEvaluator implements RuleEvaluatorInterface
         $issue = null;
         $reason = null;
 
-        if (!$foundMatch) {
+        if (! $foundMatch) {
             $issue = $rule->issue_message ?? "Data JSON-LD tidak sesuai dengan pengecekan `{$checkType}`.";
-            $reason = $rule->reason_template ?? ($invalidReason ?: "Tidak ada satu pun blok JSON-LD yang memenuhi kriteria.");
+            $reason = $rule->reason_template ?? ($invalidReason ?: 'Tidak ada satu pun blok JSON-LD yang memenuhi kriteria.');
         }
 
         return [

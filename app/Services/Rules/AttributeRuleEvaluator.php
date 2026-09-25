@@ -2,29 +2,30 @@
 
 namespace App\Services\Rules;
 
+use App\DTO\AuditContext;
 use App\Models\SeoRule;
 use Symfony\Component\DomCrawler\Crawler;
 
 class AttributeRuleEvaluator implements RuleEvaluatorInterface
 {
-    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null): array
+    public function evaluate(Crawler $dom, SeoRule $rule, ?Crawler $ampDom = null, ?AuditContext $context = null): array
     {
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? '';
         $attribute = $config['attribute'] ?? '';
-        
+
         if (empty($selector) || empty($attribute)) {
             return [
                 'passed' => false,
-                'issue' => "Selector atau Attribute kosong",
-                'reason' => "Rule tidak memiliki selector/attribute konfigurasi.",
+                'issue' => 'Selector atau Attribute kosong',
+                'reason' => 'Rule tidak memiliki selector/attribute konfigurasi.',
                 'selector' => $selector,
                 'attribute' => $attribute,
             ];
         }
 
         $nodes = $dom->filter($selector);
-        
+
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
@@ -40,36 +41,46 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
 
         $condition = $config['condition'] ?? 'exists'; // exists, not_empty, equals, contains, regex
         $expectedValue = $config['expected_value'] ?? null;
-        
+
         $passed = true;
         $failedNodes = [];
         $firstSnippet = null;
-        
+
         foreach ($nodes as $index => $node) {
             $crawlerNode = new Crawler($node);
             $attrValue = $crawlerNode->attr($attribute);
-            
+
             $nodePassed = true;
-            
+
             if ($attrValue === null) {
                 // Attribute does not exist at all
                 $nodePassed = false;
             } else {
                 switch ($condition) {
                     case 'not_empty':
-                        if (trim($attrValue) === '') $nodePassed = false;
+                        if (trim($attrValue) === '') {
+                            $nodePassed = false;
+                        }
                         break;
                     case 'equals':
-                        if ($attrValue !== $expectedValue) $nodePassed = false;
+                        if ($attrValue !== $expectedValue) {
+                            $nodePassed = false;
+                        }
                         break;
                     case 'contains':
-                        if (stripos($attrValue, $expectedValue) === false) $nodePassed = false;
+                        if (stripos($attrValue, $expectedValue) === false) {
+                            $nodePassed = false;
+                        }
                         break;
                     case 'not_contains':
-                        if (stripos($attrValue, $expectedValue) !== false) $nodePassed = false;
+                        if (stripos($attrValue, $expectedValue) !== false) {
+                            $nodePassed = false;
+                        }
                         break;
                     case 'regex':
-                        if (!preg_match($expectedValue, $attrValue)) $nodePassed = false;
+                        if (! preg_match($expectedValue, $attrValue)) {
+                            $nodePassed = false;
+                        }
                         break;
                     case 'exists':
                     default:
@@ -78,7 +89,7 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
                 }
             }
 
-            if (!$nodePassed) {
+            if (! $nodePassed) {
                 $passed = false;
                 if (count($failedNodes) < 3) {
                     $failedNodes[] = substr($crawlerNode->outerHtml(), 0, 150);
@@ -92,9 +103,9 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
         $issue = null;
         $reason = null;
 
-        if (!$passed) {
+        if (! $passed) {
             $issue = $rule->issue_message ?? "Atribut `{$attribute}` tidak ditemukan pada elemen {$rule->name}.";
-            $reason = $rule->reason_template ?? "Rule mewajibkan keberadaan atribut ini pada setiap elemen target.";
+            $reason = $rule->reason_template ?? 'Rule mewajibkan keberadaan atribut ini pada setiap elemen target.';
         }
 
         $expectedText = match ($condition) {
@@ -111,10 +122,10 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
             'issue' => $issue,
             'reason' => $reason,
             'expected' => $expectedText,
-            'actual' => $passed ? "Sesuai ketentuan" : "Tidak sesuai (pada beberapa elemen)",
+            'actual' => $passed ? 'Sesuai ketentuan' : 'Tidak sesuai (pada beberapa elemen)',
             'selector' => $selector,
             'attribute' => $attribute,
-            'html_snippet' => !$passed && !empty($failedNodes) ? implode("\n", $failedNodes) : $firstSnippet,
+            'html_snippet' => ! $passed && ! empty($failedNodes) ? implode("\n", $failedNodes) : $firstSnippet,
         ];
     }
 }

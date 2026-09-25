@@ -13,4 +13,6 @@ enum RuleType: string
     case CompareAmp = 'compare_amp';
     case JsonLd = 'json_ld';
     case Special = 'special';
+    case UrlMatch = 'url_match';
+    case Link = 'link';
 }
