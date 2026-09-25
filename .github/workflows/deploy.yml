@@ -30,6 +30,9 @@ jobs:
         run: |
           npm ci
           npm run build
+          mkdir public_html
+          cp -R public/* public_html/
+          cp public/.htaccess public_html/ || true
 
       - name: Sync files to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
