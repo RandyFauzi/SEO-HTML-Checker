@@ -35,6 +35,10 @@ if ($zip->open($zipFile) === TRUE) {
         $status = $kernel->call('migrate', ['--force' => true]);
         echo $kernel->output();
 
+        echo "\n--- MENERJEMAHKAN ATURAN ---\n";
+        $kernel->call('rules:translate');
+        echo $kernel->output();
+
         echo "\n--- MEMBERSIHKAN CACHE ---\n";
         $kernel->call('optimize:clear');
         echo $kernel->output();

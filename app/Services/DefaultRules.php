@@ -12,7 +12,7 @@ class DefaultRules
             // ==================
             [
                 'code' => 'TITLE_EXISTS',
-                'name' => 'Title Tag Exists',
+                'name' => 'Tag Title Ada',
                 'category' => 'General',
                 'rule_type' => 'exist',
                 'config' => ['selector' => 'title'],
@@ -23,7 +23,7 @@ class DefaultRules
             ],
             [
                 'code' => 'TITLE_LENGTH',
-                'name' => 'Title Tag Length is Optimal',
+                'name' => 'Panjang Title Optimal',
                 'category' => 'General',
                 'rule_type' => 'length',
                 'config' => [
@@ -38,7 +38,7 @@ class DefaultRules
             ],
             [
                 'code' => 'TITLE_COUNT',
-                'name' => 'Only One Title Tag',
+                'name' => 'Hanya Satu Tag Title',
                 'category' => 'General',
                 'rule_type' => 'count',
                 'config' => [
@@ -53,7 +53,7 @@ class DefaultRules
             ],
             [
                 'code' => 'META_DESC_EXISTS',
-                'name' => 'Meta Description Exists',
+                'name' => 'Meta Description Ada',
                 'category' => 'General',
                 'rule_type' => 'exist',
                 'config' => ['selector' => 'meta[name="description"]'],
@@ -64,7 +64,7 @@ class DefaultRules
             ],
             [
                 'code' => 'META_DESC_LENGTH',
-                'name' => 'Meta Description Length is Optimal',
+                'name' => 'Panjang Meta Description Optimal',
                 'category' => 'General',
                 'rule_type' => 'attribute',
                 'config' => [
@@ -81,7 +81,7 @@ class DefaultRules
             ],
             [
                 'code' => 'META_VIEWPORT',
-                'name' => 'Viewport Meta Tag Exists',
+                'name' => 'Tag Viewport Ada',
                 'category' => 'Technical',
                 'rule_type' => 'exist',
                 'config' => ['selector' => 'meta[name="viewport"]'],
@@ -92,7 +92,7 @@ class DefaultRules
             ],
             [
                 'code' => 'CANONICAL_EXISTS',
-                'name' => 'Canonical Tag Exists',
+                'name' => 'Tag Canonical Ada',
                 'category' => 'Metadata',
                 'rule_type' => 'exist',
                 'config' => ['selector' => 'link[rel="canonical"]'],
@@ -103,7 +103,7 @@ class DefaultRules
             ],
             [
                 'code' => 'H1_EXISTS',
-                'name' => 'H1 Tag Exists',
+                'name' => 'Tag H1 Ada',
                 'category' => 'Content',
                 'rule_type' => 'exist',
                 'config' => ['selector' => 'h1'],
@@ -114,7 +114,7 @@ class DefaultRules
             ],
             [
                 'code' => 'H1_COUNT',
-                'name' => 'Only One H1 Tag',
+                'name' => 'Hanya Satu Tag H1',
                 'category' => 'Content',
                 'rule_type' => 'count',
                 'config' => [
@@ -174,7 +174,7 @@ class DefaultRules
             ],
             [
                 'code' => 'LINK_HASH_ONLY',
-                'name' => 'Avoid Hash Only Links',
+                'name' => 'Hindari Link dengan Hash (#) Saja',
                 'category' => 'Links',
                 'rule_type' => 'count',
                 'config' => [
@@ -189,7 +189,7 @@ class DefaultRules
             ],
             [
                 'code' => 'LINK_HREF_EXISTS',
-                'name' => 'Links Have Href Attribute',
+                'name' => 'Link Memiliki Atribut Href',
                 'category' => 'Links',
                 'rule_type' => 'link',
                 'config' => [
@@ -203,7 +203,7 @@ class DefaultRules
             ],
             [
                 'code' => 'LINK_TARGET_BLANK_REL',
-                'name' => 'Target Blank Links Use Noopener',
+                'name' => 'Link Target Blank Menggunakan Noopener',
                 'category' => 'Links',
                 'rule_type' => 'link',
                 'config' => [
@@ -217,7 +217,7 @@ class DefaultRules
             ],
             [
                 'code' => 'PAGE_HTTPS',
-                'name' => 'Page Uses HTTPS Protocol',
+                'name' => 'Halaman Menggunakan HTTPS',
                 'category' => 'Technical',
                 'rule_type' => 'url_match',
                 'config' => [
@@ -233,7 +233,7 @@ class DefaultRules
             ],
             [
                 'code' => 'CANONICAL_SELF_REFERENCE',
-                'name' => 'Canonical Matches Current Page URL',
+                'name' => 'Canonical Sesuai URL Halaman',
                 'category' => 'Metadata',
                 'rule_type' => 'url_match',
                 'config' => [
@@ -247,7 +247,7 @@ class DefaultRules
             ],
             [
                 'code' => 'HREFLANG_EXISTS',
-                'name' => 'Hreflang Exists',
+                'name' => 'Tag Hreflang Ada',
                 'category' => 'International',
                 'rule_type' => 'exist',
                 'config' => ['selector' => 'link[rel="alternate"][hreflang]'],
@@ -259,7 +259,7 @@ class DefaultRules
             ],
             [
                 'code' => 'HREFLANG_HAS_HREF',
-                'name' => 'Hreflang Has Href',
+                'name' => 'Tag Hreflang Memiliki Href',
                 'category' => 'International',
                 'rule_type' => 'attribute',
                 'config' => [
@@ -274,7 +274,7 @@ class DefaultRules
             ],
             [
                 'code' => 'AMP_TITLE_MATCH',
-                'name' => 'Title matches AMP',
+                'name' => 'Title Sama dengan AMP',
                 'category' => 'AMP',
                 'rule_type' => 'compare_amp',
                 'config' => ['selector' => 'title'],
@@ -285,7 +285,7 @@ class DefaultRules
             ],
             [
                 'code' => 'AMP_DESC_MATCH',
-                'name' => 'Meta Desc matches AMP',
+                'name' => 'Meta Description Sama dengan AMP',
                 'category' => 'AMP',
                 'rule_type' => 'compare_amp',
                 'config' => [
@@ -302,7 +302,7 @@ class DefaultRules
             // ==================
             [
                 'code' => 'GTAG_VALID',
-                'name' => 'GTAG matches Brand ID',
+                'name' => 'GTAG Sesuai dengan ID Brand',
                 'category' => 'Technical',
                 'rule_type' => 'gtag',
                 'config' => [],
@@ -313,7 +313,7 @@ class DefaultRules
             ],
             [
                 'code' => 'ALTERNATE_AMP_VALID',
-                'name' => 'Valid AMP Alternate Link',
+                'name' => 'Link Alternate AMP Valid',
                 'category' => 'AMP',
                 'rule_type' => 'alternate',
                 'config' => [
