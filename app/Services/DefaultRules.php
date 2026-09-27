@@ -297,6 +297,34 @@ class DefaultRules
                 'reason_template' => 'Konsistensi metadata sangat disarankan.',
                 'recommendation' => 'Samakan isi atribut content pada halaman utama dan AMP.',
             ],
+            // ==================
+            // Validation & GTAG
+            // ==================
+            [
+                'code' => 'GTAG_VALID',
+                'name' => 'GTAG matches Brand ID',
+                'category' => 'Technical',
+                'rule_type' => 'gtag',
+                'config' => [],
+                'severity' => 'error',
+                'issue_message' => 'gtag tidak sesuai',
+                'reason_template' => 'GTAG ID dari brand Anda tidak ditemukan di dalam HTML.',
+                'recommendation' => 'Pastikan ID GTAG yang terdaftar di menu Brands ada di dalam HTML halaman ini.',
+            ],
+            [
+                'code' => 'ALTERNATE_AMP_VALID',
+                'name' => 'Valid AMP Alternate Link',
+                'category' => 'AMP',
+                'rule_type' => 'alternate',
+                'config' => [
+                    'rel_type' => 'amphtml',
+                    'target_type' => 'amp'
+                ],
+                'severity' => 'error',
+                'issue_message' => 'link rel amphtml tidak ditemukan atau tidak sesuai',
+                'reason_template' => 'Halaman utama harus menunjuk ke URL AMP yang benar menggunakan <link rel="amphtml">.',
+                'recommendation' => 'Tambahkan atau perbaiki tag <link rel="amphtml" href="..."> agar mengarah persis ke URL AMP.',
+            ],
         ];
     }
     
