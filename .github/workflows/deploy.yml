@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install NPM Dependencies & Build
+      - name: Install NPM Dependencies, Build, and ZIP
         run: |
           npm ci
           npm run build
@@ -34,25 +34,26 @@ jobs:
           mkdir deploy_package/seo-app
           rsync -av --exclude 'deploy_package' --exclude 'public' --exclude '.git' --exclude '.github' ./ deploy_package/seo-app/
           rsync -av public/ deploy_package/
+          
+          # Bungkus jadi 1 file ZIP
+          cd deploy_package
+          zip -rq ../deploy.zip .
+          cd ..
+          
+          # Siapkan folder khusus untuk FTP upload
+          mkdir ftp_upload
+          mv deploy.zip ftp_upload/
 
-      - name: Sync files to cPanel via FTP
+      - name: Upload ZIP via FTP (Super Cepat)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          local-dir: deploy_package/
+          local-dir: ftp_upload/
           server-dir: public_html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            .env
-            .env.example
-            seo-app/tests/**
-            seo-app/storage/logs/**
-            seo-app/storage/framework/cache/**
-            seo-app/storage/framework/sessions/**
-            seo-app/storage/framework/views/**
-            seo-app/README.md
+
+      - name: Trigger Auto-Unzip di Server
+        run: |
+          curl -sS "https://seochecker.my.id/deploy-unzip.php?token=RAHASIA_SUPER_KUAT_123"
