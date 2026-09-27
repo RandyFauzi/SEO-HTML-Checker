@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SeoRule extends Model
 {
     protected $fillable = [
+        'user_id',
         'code',
         'name',
         'description',
@@ -31,5 +32,10 @@ class SeoRule extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)->orderBy('sort_order', 'asc');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

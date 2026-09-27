@@ -84,6 +84,10 @@
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.rules.*') ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     SEO Rules
                 </a>
+                <a href="{{ route('admin.brands.index') }}" class="sidebar-item flex items-center px-4 py-3 {{ request()->routeIs('admin.brands.*') ? 'sidebar-item-active' : '' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.brands.*') ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    Brands & GTAG
+                </a>
             </nav>
         </div>
         <div class="p-6 border-t border-white/50">
@@ -145,6 +149,10 @@
                         <a href="{{ route('admin.rules.index') }}" class="sidebar-item flex items-center px-6 py-3 {{ request()->routeIs('admin.rules.*') ? 'sidebar-item-active' : '' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             SEO Rules
+                        </a>
+                        <a href="{{ route('admin.brands.index') }}" class="sidebar-item flex items-center px-6 py-3 {{ request()->routeIs('admin.brands.*') ? 'sidebar-item-active' : '' }}">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            Brands & GTAG
                         </a>
                     </nav>
                 </div>

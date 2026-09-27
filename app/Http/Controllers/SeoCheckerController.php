@@ -17,7 +17,7 @@ class SeoCheckerController extends Controller
 
     public function index()
     {
-        $hasCompareRule = SeoRule::where('is_active', true)
+        $hasCompareRule = auth()->user()->rules()->where('is_active', true)
             ->where('rule_type', 'compare_amp')
             ->exists();
 
@@ -26,14 +26,15 @@ class SeoCheckerController extends Controller
 
     public function process(CheckSeoRequest $request)
     {
-        $hasCompareRule = SeoRule::where('is_active', true)
+        $hasCompareRule = auth()->user()->rules()->where('is_active', true)
             ->where('rule_type', 'compare_amp')
             ->exists();
 
         $lpUrls = $request->input('lp_urls_array');
         $ampUrls = $request->input('amp_urls_array') ?? [];
+        $activeRules = auth()->user()->rules()->active()->get();
 
-        $results = $this->auditService->audit($lpUrls, $ampUrls);
+        $results = $this->auditService->audit($lpUrls, $ampUrls, $activeRules);
 
         return view('seo-checker.index', compact('results', 'hasCompareRule'));
     }

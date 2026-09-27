@@ -15,4 +15,5 @@ enum RuleType: string
     case Special = 'special';
     case UrlMatch = 'url_match';
     case Link = 'link';
+    case Gtag = 'gtag';
 }

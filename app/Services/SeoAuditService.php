@@ -22,9 +22,9 @@ class SeoAuditService
     /**
      * @return UrlAuditResult[]
      */
-    public function audit(array $lpUrls, array $ampUrls = []): array
+    public function audit(array $lpUrls, array $ampUrls = [], $activeRules = null): array
     {
-        $activeRules = SeoRule::active()->get();
+        $activeRules = $activeRules ?? SeoRule::active()->get();
 
         // Unique fetch pool
         $allUrlsToFetch = array_unique(array_filter(array_merge($lpUrls, $ampUrls)));

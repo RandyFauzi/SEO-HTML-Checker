@@ -7,14 +7,6 @@ use App\Http\Controllers\SeoCheckerController;
 use Illuminate\Support\Facades\Route;
 
 // Public Public Facing
-Route::get('/', [SeoCheckerController::class, 'index'])->name('seo.index');
-Route::get('/checker', function () {
-    return redirect()->route('seo.index');
-});
-Route::post('/checker', [SeoCheckerController::class, 'process'])
-    ->name('seo.process')
-    ->middleware('throttle:10,1');
-
 Route::view('/tutorial', 'tutorial.index')->name('tutorial.index');
 
 // Authentication Routes
@@ -26,6 +18,14 @@ use App\Http\Controllers\Admin\DashboardController;
 
 // Protected Admin Panel
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [SeoCheckerController::class, 'index'])->name('seo.index');
+    Route::get('/checker', function () {
+        return redirect()->route('seo.index');
+    });
+    Route::post('/checker', [SeoCheckerController::class, 'process'])
+        ->name('seo.process')
+        ->middleware('throttle:10,1');
+        
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Super Admin: User Management
@@ -45,6 +45,13 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/{rule}/toggle', [SeoRuleController::class, 'toggle'])->name('toggle');
         Route::post('/import', [SeoRuleController::class, 'import'])->name('import');
         Route::get('/export', [SeoRuleController::class, 'export'])->name('export');
+    });
+
+    // Admin & Super Admin: Brands
+    Route::middleware('role:super_admin,admin')->prefix('admin/brands')->name('admin.brands.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\BrandController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\BrandController::class, 'store'])->name('store');
+        Route::delete('/{brand}', [\App\Http\Controllers\Admin\BrandController::class, 'destroy'])->name('destroy');
     });
 });
 

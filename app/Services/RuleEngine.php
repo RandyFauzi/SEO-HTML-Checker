@@ -40,6 +40,7 @@ class RuleEngine
             RuleType::Special->value => new SpecialRuleEvaluator,
             RuleType::UrlMatch->value => new UrlRuleEvaluator,
             RuleType::Link->value => new LinkRuleEvaluator,
+            RuleType::Gtag->value => new \App\Services\Rules\GtagRuleEvaluator,
         ];
     }
 

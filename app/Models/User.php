@@ -29,4 +29,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function rules()
+    {
+        return $this->hasMany(SeoRule::class);
+    }
+
+    public function brands()
+    {
+        return $this->hasMany(Brand::class);
+    }
 }

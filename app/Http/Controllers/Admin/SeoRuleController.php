@@ -12,7 +12,7 @@ class SeoRuleController extends Controller
 {
     public function index()
     {
-        $rules = SeoRule::orderBy('sort_order', 'asc')->orderBy('id', 'desc')->get();
+        $rules = auth()->user()->rules()->orderBy('sort_order', 'asc')->orderBy('id', 'desc')->get();
         return view('admin.rules.index', compact('rules'));
     }
 
@@ -54,7 +54,7 @@ class SeoRuleController extends Controller
         $data = $this->processRuleData($data);
         $data['is_active'] = $request->has('is_active');
         
-        SeoRule::create($data);
+        auth()->user()->rules()->create($data);
         return redirect()->route('admin.rules.index')->with('success', 'Aturan berhasil dibuat.');
     }
 
@@ -158,7 +158,7 @@ class SeoRuleController extends Controller
                         throw new \Exception("Invalid rule_type: {$ruleData['rule_type']}");
                     }
 
-                    SeoRule::create([
+                    auth()->user()->rules()->create([
                         'code' => $ruleData['code'] ?? null,
                         'name' => $ruleData['name'],
                         'category' => $ruleData['category'] ?? 'General',
@@ -182,7 +182,7 @@ class SeoRuleController extends Controller
 
     public function export()
     {
-        $rules = SeoRule::all()->makeHidden(['id', 'created_at', 'updated_at']);
+        $rules = auth()->user()->rules()->get()->makeHidden(['id', 'user_id', 'created_at', 'updated_at']);
         
         $fileName = 'seo_rules_export_' . date('Y_m_d_His') . '.json';
         return response()->streamDownload(function () use ($rules) {
