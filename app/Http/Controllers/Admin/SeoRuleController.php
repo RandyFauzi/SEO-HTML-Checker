@@ -14,11 +14,6 @@ class SeoRuleController extends Controller
     {
         $user = auth()->user();
         
-        // Auto-populate default rules if this user has 0 rules
-        if ($user->rules()->count() === 0) {
-            \App\Services\DefaultRules::populateFor($user);
-        }
-        
         $rules = $user->rules()->orderBy('sort_order', 'asc')->orderBy('id', 'desc')->get();
         return view('admin.rules.index', compact('rules'));
     }

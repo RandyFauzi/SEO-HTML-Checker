@@ -17,10 +17,6 @@ class SeoCheckerController extends Controller
 
     public function index()
     {
-        if (auth()->user()->rules()->count() === 0) {
-            \App\Services\DefaultRules::populateFor(auth()->user());
-        }
-
         $hasCompareRule = auth()->user()->rules()->where('is_active', true)
             ->whereIn('rule_type', ['compare_amp', 'alternate'])
             ->exists();
@@ -32,10 +28,6 @@ class SeoCheckerController extends Controller
 
     public function process(CheckSeoRequest $request)
     {
-        if (auth()->user()->rules()->count() === 0) {
-            \App\Services\DefaultRules::populateFor(auth()->user());
-        }
-
         $lpUrls = $request->input('lp_urls_array');
         $ampUrls = $request->input('amp_urls_array') ?? [];
         $activeRules = auth()->user()->rules()->active()->get();
