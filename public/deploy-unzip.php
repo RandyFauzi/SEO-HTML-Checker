@@ -33,7 +33,10 @@ if ($zip->open($zipFile) === TRUE) {
 
         $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
         $status = $kernel->call('migrate', ['--force' => true]);
-        
+        echo $kernel->output();
+
+        echo "\n--- MEMBERSIHKAN CACHE ---\n";
+        $kernel->call('optimize:clear');
         echo $kernel->output();
 
         if ($status === 0) {

@@ -11,10 +11,15 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $rulesCount = SeoRule::count();
-        $activeRulesCount = SeoRule::where('is_active', true)->count();
+        $rulesCount = auth()->user()->rules()->count();
+        $activeRulesCount = auth()->user()->rules()->where('is_active', true)->count();
         $usersCount = User::count();
         
-        return view('admin.dashboard.index', compact('rulesCount', 'activeRulesCount', 'usersCount'));
+        $recentRuns = \App\Models\AuditRun::where('user_id', auth()->id())
+            ->latest()
+            ->take(5)
+            ->get();
+        
+        return view('admin.dashboard.index', compact('rulesCount', 'activeRulesCount', 'usersCount', 'recentRuns'));
     }
 }

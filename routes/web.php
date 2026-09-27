@@ -57,5 +57,11 @@ Route::middleware(['auth'])->group(function () {
     // History
     Route::get('/admin/history', [\App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('admin.history.index');
     Route::get('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'show'])->name('admin.history.show');
+    
+    // Clear Cache
+    Route::get('/admin/clear-cache-force', function() {
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return "Cache Cleared";
+    });
 });
 
