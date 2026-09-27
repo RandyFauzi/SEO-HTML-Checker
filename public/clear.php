@@ -24,4 +24,3 @@ if (function_exists('opcache_reset')) {
     echo "OPcache dihapus.<br>";
 }
 echo "<strong>SELESAI! Silakan refresh dashboard Anda.</strong>";
-
