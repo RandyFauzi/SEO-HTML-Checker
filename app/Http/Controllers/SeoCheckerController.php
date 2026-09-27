@@ -25,7 +25,9 @@ class SeoCheckerController extends Controller
             ->whereIn('rule_type', ['compare_amp', 'alternate'])
             ->exists();
 
-        return view('seo-checker.index', compact('hasCompareRule'));
+        $results = session('results');
+
+        return view('seo-checker.index', compact('hasCompareRule', 'results'));
     }
 
     public function process(CheckSeoRequest $request)
@@ -33,10 +35,6 @@ class SeoCheckerController extends Controller
         if (auth()->user()->rules()->count() === 0) {
             \App\Services\DefaultRules::populateFor(auth()->user());
         }
-
-        $hasCompareRule = auth()->user()->rules()->where('is_active', true)
-            ->whereIn('rule_type', ['compare_amp', 'alternate'])
-            ->exists();
 
         $lpUrls = $request->input('lp_urls_array');
         $ampUrls = $request->input('amp_urls_array') ?? [];
@@ -67,6 +65,6 @@ class SeoCheckerController extends Controller
             ]);
         }
 
-        return view('seo-checker.index', compact('results', 'hasCompareRule'));
+        return redirect()->route('seo.index')->with('results', $results);
     }
 }
