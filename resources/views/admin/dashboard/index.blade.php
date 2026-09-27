@@ -14,21 +14,21 @@
                     <svg class="w-5 h-5 mr-2 text-indigo-500 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     <span class="font-bold text-sm">Total Audits</span>
                 </div>
-                <div class="text-4xl font-extrabold text-slate-800">--</div>
+                <div class="text-4xl font-extrabold text-slate-800">{{ number_format($totalAudits) }}</div>
             </div>
             <div class="glass-panel p-6 rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.02)] transition-all hover:-translate-y-1">
                 <div class="flex items-center text-slate-500 mb-2">
                     <svg class="w-5 h-5 mr-2 text-emerald-500 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="font-bold text-sm">Rules Passed</span>
                 </div>
-                <div class="text-4xl font-extrabold text-slate-800">--</div>
+                <div class="text-4xl font-extrabold text-emerald-600">{{ number_format($rulesPassed) }}</div>
             </div>
             <div class="glass-panel p-6 rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.02)] transition-all hover:-translate-y-1">
                 <div class="flex items-center text-slate-500 mb-2">
                     <svg class="w-5 h-5 mr-2 text-red-500 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="font-bold text-sm">Rules Failed</span>
                 </div>
-                <div class="text-4xl font-extrabold text-slate-800">--</div>
+                <div class="text-4xl font-extrabold text-red-600">{{ number_format($rulesFailed) }}</div>
             </div>
         </div>
 
