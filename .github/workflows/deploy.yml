@@ -43,6 +43,8 @@ jobs:
           # Siapkan folder khusus untuk FTP upload
           mkdir ftp_upload
           mv deploy.zip ftp_upload/
+          cp public/deploy-unzip.php ftp_upload/
+          cp public/clear.php ftp_upload/
 
       - name: Upload ZIP via FTP (Super Cepat)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
