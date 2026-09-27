@@ -110,12 +110,12 @@
                             </div>
 
                             <!-- Input Wrapper -->
-                            <div class="flex-1 grid grid-cols-1 gap-3 sm:gap-4" :class="{ 'md:grid-cols-2': hasCompareRule }">
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                                 <div>
                                     <input type="url" x-model="row.lp" placeholder="URL Landing Page (Contoh: https://example.com)" required
                                         class="w-full bg-slate-100/50 border-none rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
                                 </div>
-                                <div x-show="hasCompareRule" x-cloak>
+                                <div>
                                     <input type="url" x-model="row.amp" placeholder="URL AMP (Opsional)"
                                         class="w-full bg-slate-100/50 border-none rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 text-sm focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all shadow-inner placeholder:text-slate-400 text-slate-700 font-medium">
                                 </div>
