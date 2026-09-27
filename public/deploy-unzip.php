@@ -23,7 +23,30 @@ if ($zip->open($zipFile) === TRUE) {
     // Hapus file zip agar hosting tidak kepenuhan
     unlink($zipFile);
     
-    echo "BERHASIL: Web telah terupdate dalam sekejap!";
+    echo "BERHASIL: File ZIP telah diekstrak!\n";
+
+    // Boot Laravel untuk menjalankan migrasi
+    echo "--- MENJALANKAN MIGRASI DATABASE ---\n";
+    try {
+        require __DIR__.'/seo-app/vendor/autoload.php';
+        $app = require_once __DIR__.'/seo-app/bootstrap/app.php';
+
+        $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+        $status = $kernel->call('migrate', ['--force' => true]);
+        
+        echo $kernel->output();
+
+        if ($status === 0) {
+            echo "\nBERHASIL: Database berhasil di-update!\n";
+        } else {
+            http_response_code(500);
+            echo "\nGAGAL: Terjadi masalah saat migrasi database (Status Code: $status).\n";
+        }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo "\nGAGAL FATAL: " . $e->getMessage() . "\n";
+    }
+
 } else {
     http_response_code(500);
     echo "GAGAL: Tidak bisa mengekstrak ZIP.";
