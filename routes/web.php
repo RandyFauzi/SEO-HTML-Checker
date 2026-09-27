@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
 
     // History
     Route::get('/admin/history', [\App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('admin.history.index');
+    Route::delete('/admin/history-batch', [\App\Http\Controllers\Admin\HistoryController::class, 'batchDestroy'])->name('admin.history.batchDestroy');
     Route::get('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'show'])->name('admin.history.show');
     Route::delete('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'destroy'])->name('admin.history.destroy');
     
