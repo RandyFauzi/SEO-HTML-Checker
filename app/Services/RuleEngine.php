@@ -41,6 +41,7 @@ class RuleEngine
             RuleType::UrlMatch->value => new UrlRuleEvaluator,
             RuleType::Link->value => new LinkRuleEvaluator,
             RuleType::Gtag->value => new \App\Services\Rules\GtagRuleEvaluator,
+            RuleType::Alternate->value => new \App\Services\Rules\AlternateRuleEvaluator,
         ];
     }
 

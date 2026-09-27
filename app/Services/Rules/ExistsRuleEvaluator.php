@@ -29,8 +29,8 @@ class ExistsRuleEvaluator implements RuleEvaluatorInterface
         $reason = null;
 
         if (! $passed) {
-            $issue = $rule->issue_message ?? "Elemen {$rule->name} tidak ditemukan.";
-            $reason = $rule->reason_template ?? 'Rule mewajibkan keberadaan elemen ini, tetapi tidak ditemukan di dalam HTML.';
+            $issue = $rule->issue_message ?? strtolower($rule->name) . ' tidak ditemukan';
+            $reason = $rule->reason_template ?? 'Elemen ' . $selector . ' tidak ditemukan di HTML.';
         }
 
         return [

@@ -30,7 +30,7 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
         if ($nodes->count() === 0) {
             return [
                 'passed' => false,
-                'issue' => 'Elemen tidak ditemukan.',
+                'issue' => strtolower($rule->name) . ' tidak ditemukan',
                 'reason' => "Tidak ada elemen yang cocok dengan selector `{$selector}`.",
                 'expected' => 'Elemen harus ada',
                 'actual' => 'Elemen tidak ditemukan',
@@ -70,7 +70,7 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
         $reason = null;
 
         if (! $passed) {
-            $issue = $rule->issue_message ?? "Panjang {$rule->name} tidak sesuai.";
+            $issue = $rule->issue_message ?? "panjang " . strtolower($rule->name) . " tidak sesuai";
             if ($operator === 'between') {
                 if ($length < $min) {
                     $reason = $rule->reason_template ?? 'Panjang teks terlalu pendek.';

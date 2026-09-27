@@ -49,8 +49,8 @@ class CountRuleEvaluator implements RuleEvaluatorInterface
         $reason = null;
 
         if (! $passed) {
-            $issue = $rule->issue_message ?? "Jumlah elemen {$rule->name} tidak sesuai.";
-            $reason = $rule->reason_template ?? "Rule menetapkan jumlah harus {$operatorString}, tetapi ditemukan {$actual} elemen.";
+            $issue = $rule->issue_message ?? "jumlah " . strtolower($rule->name) . " tidak sesuai";
+            $reason = $rule->reason_template ?? "Ditemukan {$actual} elemen, seharusnya {$operatorString}.";
         }
 
         $snippets = [];

@@ -36,8 +36,8 @@ class GtagRuleEvaluator implements RuleEvaluatorInterface
         if (empty($foundGtags)) {
             return [
                 'passed' => false,
-                'issue' => 'No matching GTAG ID found',
-                'reason' => 'None of your configured GTAG IDs were found in the page source.',
+                'issue' => 'gtag tidak sesuai',
+                'reason' => 'GTAG ID dari brand Anda tidak ditemukan di dalam HTML.',
             ];
         }
 
