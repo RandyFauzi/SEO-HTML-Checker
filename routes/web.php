@@ -53,5 +53,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', [\App\Http\Controllers\Admin\BrandController::class, 'store'])->name('store');
         Route::delete('/{brand}', [\App\Http\Controllers\Admin\BrandController::class, 'destroy'])->name('destroy');
     });
+
+    // History
+    Route::get('/admin/history', [\App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('admin.history.index');
+    Route::get('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'show'])->name('admin.history.show');
 });
 

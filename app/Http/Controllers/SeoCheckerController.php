@@ -36,6 +36,29 @@ class SeoCheckerController extends Controller
 
         $results = $this->auditService->audit($lpUrls, $ampUrls, $activeRules);
 
+        // --- Save to History ---
+        $run = \App\Models\AuditRun::create([
+            'user_id' => auth()->id(),
+            'total_urls' => count($lpUrls),
+        ]);
+
+        foreach ($results as $result) {
+            \App\Models\AuditResult::create([
+                'audit_run_id' => $run->id,
+                'lp_url' => $result->lpUrl,
+                'amp_url' => $result->ampUrl,
+                'error_message' => $result->errorMessage,
+                'checks_data' => array_map(function($check) {
+                    return [
+                        'ruleName' => $check->ruleName,
+                        'status' => $check->status->value,
+                        'issue' => $check->issue,
+                        'actual' => $check->actual,
+                    ];
+                }, $result->checks),
+            ]);
+        }
+
         return view('seo-checker.index', compact('results', 'hasCompareRule'));
     }
 }
