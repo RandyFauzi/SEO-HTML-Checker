@@ -38,6 +38,11 @@ if ($zip->open($zipFile) === TRUE) {
         echo "\n--- MEMBERSIHKAN CACHE ---\n";
         $kernel->call('optimize:clear');
         echo $kernel->output();
+        
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+            echo "OPcache berhasil di-reset.\n";
+        }
 
         if ($status === 0) {
             echo "\nBERHASIL: Database berhasil di-update!\n";
