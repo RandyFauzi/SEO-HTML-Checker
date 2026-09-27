@@ -26,4 +26,15 @@ class HistoryController extends Controller
         $run->load('results');
         return view('admin.history.show', ['history' => $run]);
     }
+
+    public function destroy(AuditRun $run)
+    {
+        if ((int) $run->user_id !== (int) auth()->id()) {
+            abort(403);
+        }
+        
+        $run->delete();
+        
+        return redirect()->route('admin.history.index')->with('success', 'Riwayat berhasil dihapus.');
+    }
 }

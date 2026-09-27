@@ -11,6 +11,16 @@
             </div>
             <p class="text-slate-500 ml-9">Dijalankan pada: {{ $history->created_at->format('d M Y, H:i') }}</p>
         </div>
+        <div>
+            <form action="{{ route('admin.history.destroy', $history) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus riwayat ini?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="inline-flex items-center gap-2 text-red-600 font-semibold hover:text-white bg-red-50 hover:bg-red-500 px-4 py-2 rounded-xl transition-all shadow-sm hover:shadow-md border border-red-100 hover:border-red-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Hapus Riwayat
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="space-y-6 relative z-10">
