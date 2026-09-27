@@ -86,6 +86,12 @@ class SeoRuleController extends Controller
         return redirect()->route('admin.rules.index')->with('success', 'Aturan berhasil dihapus.');
     }
 
+    public function destroyAll()
+    {
+        auth()->user()->rules()->delete();
+        return redirect()->route('admin.rules.index')->with('success', 'Semua aturan berhasil dihapus.');
+    }
+
     public function toggle(Request $request, SeoRule $rule)
     {
         $rule->update(['is_active' => ! $rule->is_active]);

@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/test', [SeoRuleController::class, 'test'])->name('test');
         Route::get('/{rule}/edit', [SeoRuleController::class, 'edit'])->name('edit');
         Route::put('/{rule}', [SeoRuleController::class, 'update'])->name('update');
+        Route::delete('/destroy-all', [SeoRuleController::class, 'destroyAll'])->name('destroyAll');
         Route::delete('/{rule}', [SeoRuleController::class, 'destroy'])->name('destroy');
         Route::patch('/{rule}/toggle', [SeoRuleController::class, 'toggle'])->name('toggle');
         Route::post('/import', [SeoRuleController::class, 'import'])->name('import');

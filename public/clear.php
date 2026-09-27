@@ -23,4 +23,5 @@ if (function_exists('opcache_reset')) {
     opcache_reset();
     echo "OPcache dihapus.<br>";
 }
+header("X-LiteSpeed-Purge: *");
 echo "<strong>SELESAI! Silakan refresh dashboard Anda.</strong>";
