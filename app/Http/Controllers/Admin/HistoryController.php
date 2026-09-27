@@ -17,13 +17,13 @@ class HistoryController extends Controller
         return view('admin.history.index', compact('runs'));
     }
 
-    public function show(AuditRun $history)
+    public function show(AuditRun $run)
     {
-        if ($history->user_id !== auth()->id()) {
+        if ((int) $run->user_id !== (int) auth()->id()) {
             abort(403);
         }
         
-        $history->load('results');
-        return view('admin.history.show', compact('history'));
+        $run->load('results');
+        return view('admin.history.show', ['history' => $run]);
     }
 }
