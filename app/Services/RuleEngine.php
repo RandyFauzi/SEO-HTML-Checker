@@ -42,6 +42,7 @@ class RuleEngine
             RuleType::Link->value => new LinkRuleEvaluator,
             RuleType::Gtag->value => new \App\Services\Rules\GtagRuleEvaluator,
             RuleType::Alternate->value => new \App\Services\Rules\AlternateRuleEvaluator,
+            RuleType::AnchorHrefAllowlist->value => new \App\Services\Rules\AnchorHrefAllowlistRuleEvaluator,
         ];
     }
 

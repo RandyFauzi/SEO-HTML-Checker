@@ -17,4 +17,5 @@ enum RuleType: string
     case Link = 'link';
     case Gtag = 'gtag';
     case Alternate = 'alternate';
+    case AnchorHrefAllowlist = 'anchor_href_allowlist';
 }
