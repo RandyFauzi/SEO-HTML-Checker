@@ -21,7 +21,50 @@ class SeoCheckerController extends Controller
             ->whereIn('rule_type', ['compare_amp', 'alternate'])
             ->exists();
 
-        $results = session('results');
+        $sessionResults = session('results');
+        $results = null;
+
+        if (is_array($sessionResults)) {
+            // Reconstruct the objects in case the session driver (like Redis/JSON) returns associative arrays
+            $results = array_map(function ($result) {
+                // If it's already the right object, return it
+                if ($result instanceof \App\DTO\UrlAuditResult) {
+                    return $result;
+                }
+                
+                // Convert to array for processing
+                $data = json_decode(json_encode($result), true);
+                
+                $checks = [];
+                foreach ($data['checks'] ?? [] as $c) {
+                    // Handle enums safely
+                    $ruleTypeVal = is_string($c['ruleType']) ? $c['ruleType'] : ($c['ruleType']['value'] ?? $c['ruleType'] ?? 'exist');
+                    $statusVal = is_string($c['status']) ? $c['status'] : ($c['status']['value'] ?? $c['status'] ?? 'error');
+                    
+                    $checks[] = new \App\DTO\CheckResult(
+                        ruleName: $c['ruleName'] ?? '',
+                        ruleType: \App\Enums\RuleType::tryFrom($ruleTypeVal) ?? \App\Enums\RuleType::Exist,
+                        status: \App\Enums\CheckStatus::tryFrom($statusVal) ?? \App\Enums\CheckStatus::Error,
+                        category: $c['category'] ?? null,
+                        issue: $c['issue'] ?? null,
+                        reason: $c['reason'] ?? null,
+                        expected: $c['expected'] ?? null,
+                        actual: $c['actual'] ?? null,
+                        selector: $c['selector'] ?? null,
+                        attribute: $c['attribute'] ?? null,
+                        htmlSnippet: $c['htmlSnippet'] ?? null,
+                    );
+                }
+
+                return new \App\DTO\UrlAuditResult(
+                    lpUrl: $data['lpUrl'] ?? '',
+                    ampUrl: $data['ampUrl'] ?? null,
+                    errorMessage: $data['errorMessage'] ?? null,
+                    checks: $checks,
+                    redirectChain: $data['redirectChain'] ?? [],
+                );
+            }, $sessionResults);
+        }
 
         return view('seo-checker.index', compact('hasCompareRule', 'results'));
     }
