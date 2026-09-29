@@ -172,8 +172,8 @@ class HtmlFetcher
                     ];
                 }
             );
-        } catch (Exception $e) {
-            return Create::promiseFor([
+        } catch (\Throwable $e) {
+            return \GuzzleHttp\Promise\Create::promiseFor([
                 'error' => $this->formatErrorMessage($e),
                 'redirects' => $redirects,
             ]);
@@ -203,17 +203,19 @@ class HtmlFetcher
             }
         }
 
-        if ($e instanceof Exception) {
+        if ($e instanceof \Throwable) {
             $msg = $e->getMessage();
-            // Truncate at the first newline if it's too long
-            $msg = strtok($msg, "\n");
-            // Also trim long string
-            if (strlen($msg) > 150) {
-                $msg = substr($msg, 0, 147) . '...';
+            if (empty($msg)) {
+                $msg = get_class($e);
+            } else {
+                $msg = strtok($msg, "\n");
+                if (strlen($msg) > 150) {
+                    $msg = substr($msg, 0, 147) . '...';
+                }
             }
             return 'Gagal memuat URL: ' . $msg;
         }
 
-        return 'Gagal memuat URL: Error tidak diketahui.';
+        return 'Gagal memuat URL: Error tidak diketahui. (Type: ' . (is_object($e) ? get_class($e) : gettype($e)) . ')';
     }
 }
