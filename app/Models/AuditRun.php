@@ -25,4 +25,9 @@ class AuditRun extends Model
     {
         return $this->hasMany(AuditResult::class);
     }
+
+    public function remediations()
+    {
+        return $this->hasMany(AuditRemediation::class);
+    }
 }
