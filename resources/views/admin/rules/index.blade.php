@@ -252,21 +252,32 @@
                     <h3 class="text-xl font-extrabold text-slate-800">Impor Aturan (Format JSON)</h3>
                     <p class="text-sm text-slate-500 mb-5 mt-1 font-medium">Unggah file JSON untuk memasukkan banyak aturan SEO sekaligus.</p>
                     
-                    <form action="{{ route('admin.rules.import') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                    <form action="{{ route('admin.rules.import') }}" method="POST" enctype="multipart/form-data" class="space-y-5" x-data="{ fileName: '' }">
                         @csrf
-                        <div class="flex items-center justify-center w-full">
-                            <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-indigo-200/60 border-dashed rounded-[1.5rem] cursor-pointer bg-white/30 backdrop-blur-sm hover:bg-white/60 transition-all duration-300">
+                        <div class="flex items-center justify-center w-full relative">
+                            <label for="dropzone-file" :class="fileName ? 'border-green-400 bg-green-50/50' : 'border-indigo-200/60 bg-white/30'" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-[1.5rem] cursor-pointer backdrop-blur-sm hover:bg-white/60 transition-all duration-300">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <svg class="w-8 h-8 mb-2 text-indigo-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                                    </svg>
-                                    <p class="mb-1 text-sm text-slate-600"><span class="font-bold">Klik untuk unggah</span> atau seret file ke sini</p>
-                                    <p class="text-xs text-slate-400 font-medium">Hanya menerima file JSON</p>
+                                    <template x-if="!fileName">
+                                        <div class="flex flex-col items-center">
+                                            <svg class="w-8 h-8 mb-2 text-indigo-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                            </svg>
+                                            <p class="mb-1 text-sm text-slate-600"><span class="font-bold">Klik untuk unggah</span> atau seret file ke sini</p>
+                                            <p class="text-xs text-slate-400 font-medium">Hanya menerima file JSON</p>
+                                        </div>
+                                    </template>
+                                    <template x-if="fileName">
+                                        <div class="flex flex-col items-center">
+                                            <svg class="w-8 h-8 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <p class="text-sm font-bold text-green-700" x-text="fileName"></p>
+                                            <p class="text-xs text-green-600 mt-1">File siap diunggah</p>
+                                        </div>
+                                    </template>
                                 </div>
-                                <input id="dropzone-file" type="file" name="json_file" accept=".json" required class="hidden" />
+                                <input id="dropzone-file" type="file" name="json_file" accept=".json" required class="hidden" @change="fileName = $event.target.files[0].name" />
                             </label>
                         </div>
-                        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-2xl shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        <button type="submit" :disabled="!fileName" :class="!fileName ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-xl'" class="w-full bg-slate-800 text-white font-bold py-3 px-4 rounded-2xl shadow-lg transition-all duration-300">
                             Unggah & Simpan Aturan
                         </button>
                     </form>
