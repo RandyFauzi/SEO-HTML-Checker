@@ -47,13 +47,10 @@ Daftar TIPE_ATURAN dan contoh config-nya:
 Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Jawab HANYA dengan JSON.
 EOF;
 
-        $model = env('OPENAI_RULE_BUILDER_MODEL', 'gpt-4o-mini');
+        $model = env('OPENAI_RULE_BUILDER_MODEL', 'gpt-6-astra');
         
-        $messages = [
-            ['role' => 'system', 'content' => $systemPrompt],
-            ['role' => 'user', 'content' => $userPrompt],
-        ];
+        $prompt = $systemPrompt . "\n\nPermintaan user: " . $userPrompt;
 
-        return $this->client->generateStructuredOutput($model, $messages, []);
+        return $this->client->generateStructuredOutput($model, $prompt);
     }
 }
