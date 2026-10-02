@@ -26,7 +26,22 @@ class OpenAIClientService
             ]);
 
         if ($response->failed()) {
-            throw new RuntimeException("OpenAI API Error: " . $response->body());
+            $status = $response->status();
+            $errorBody = $response->json();
+            
+            if ($status === 429) {
+                $errorCode = $errorBody['error']['code'] ?? '';
+                if ($errorCode === 'insufficient_quota' || str_contains(strtolower($response->body()), 'quota')) {
+                    throw new RuntimeException("Saldo (Credit) OpenAI Anda telah habis atau limit tercapai. Silakan isi ulang saldo di dashboard OpenAI.");
+                }
+                throw new RuntimeException("OpenAI sedang sibuk (Rate Limit). Silakan coba beberapa saat lagi.");
+            }
+            
+            if ($status === 401) {
+                throw new RuntimeException("API Key OpenAI tidak valid. Periksa kembali konfigurasi OPENAI_API_KEY Anda.");
+            }
+
+            throw new RuntimeException("OpenAI API Error: " . ($errorBody['error']['message'] ?? $response->body()));
         }
 
         $data = $response->json();
