@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [SeoRuleController::class, 'index'])->name('index');
         Route::get('/create', [SeoRuleController::class, 'create'])->name('create');
         Route::post('/', [SeoRuleController::class, 'store'])->name('store');
+        Route::post('/ai-generate', [SeoRuleController::class, 'generateViaAi'])->name('ai-generate');
         Route::post('/test', [SeoRuleController::class, 'test'])->name('test');
         Route::get('/{rule}/edit', [SeoRuleController::class, 'edit'])->name('edit');
         Route::put('/{rule}', [SeoRuleController::class, 'update'])->name('update');

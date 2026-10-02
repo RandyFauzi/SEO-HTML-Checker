@@ -27,12 +27,7 @@ class OpenAIClientService
                 'model' => $model,
                 'messages' => $messages,
                 'response_format' => [
-                    'type' => 'json_schema',
-                    'json_schema' => [
-                        'name' => 'response_schema',
-                        'schema' => $jsonSchema,
-                        'strict' => true,
-                    ]
+                    'type' => 'json_object'
                 ],
                 'temperature' => 0.1,
             ]);

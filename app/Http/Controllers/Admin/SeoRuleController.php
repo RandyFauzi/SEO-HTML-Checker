@@ -139,6 +139,24 @@ class SeoRuleController extends Controller
         ]);
     }
 
+    public function generateViaAi(Request $request, \App\Services\AI\RuleGeneratorService $aiService)
+    {
+        $request->validate(['prompt' => 'required|string|max:1000']);
+        
+        try {
+            $ruleData = $aiService->generate($request->prompt);
+            return response()->json([
+                'success' => true,
+                'data' => $ruleData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function import(Request $request)
     {
         $request->validate([
