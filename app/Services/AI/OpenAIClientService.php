@@ -17,7 +17,8 @@ class OpenAIClientService
             throw new RuntimeException('OPENAI_API_KEY belum dikonfigurasi.');
         }
 
-        $response = Http::withToken($apiKey)
+        $response = Http::withoutVerifying()
+            ->withToken($apiKey)
             ->acceptJson()
             ->timeout(60)
             ->post($baseUrl . '/responses', [
