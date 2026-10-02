@@ -19,5 +19,6 @@ final readonly class CheckResult
         public ?string $selector = null,
         public ?string $attribute = null,
         public ?string $htmlSnippet = null,
+        public ?int $ruleId = null,
     ) {}
 }

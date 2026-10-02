@@ -212,10 +212,70 @@
                                                                         </div>
                                                                     @endif
 
-                                                                    <!-- HTML Snippet Evidence -->
+                                                                    <!-- HTML Snippet Evidence and AI Remediation -->
                                                                     @if(!empty($check->htmlSnippet))
-                                                                        <div class="mt-4 text-[11px] bg-slate-900 text-emerald-400 p-4 rounded-xl overflow-hidden font-mono shadow-inner border border-slate-800">
-                                                                            <pre class="whitespace-pre-wrap break-all overflow-hidden leading-relaxed"><code>{{ $check->htmlSnippet }}</code></pre>
+                                                                        <div x-data="{
+                                                                            aiLoading: false,
+                                                                            aiFixed: null,
+                                                                            aiError: null,
+                                                                            remediate() {
+                                                                                this.aiLoading = true;
+                                                                                this.aiError = null;
+                                                                                fetch('{{ route('admin.remediations.generate') }}', {
+                                                                                    method: 'POST',
+                                                                                    headers: {
+                                                                                        'Content-Type': 'application/json',
+                                                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                                        'Accept': 'application/json'
+                                                                                    },
+                                                                                    body: JSON.stringify({
+                                                                                        rule_id: {{ $check->ruleId ?? 'null' }},
+                                                                                        run_id: {{ $auditRun->id ?? 'null' }},
+                                                                                        html_snippet: `{{ str_replace('`', '\`', $check->htmlSnippet) }}`,
+                                                                                        issue: `{{ str_replace('`', '\`', $check->issue) }}`,
+                                                                                        expected: `{{ str_replace('`', '\`', $check->expected) }}`
+                                                                                    })
+                                                                                })
+                                                                                .then(res => res.json())
+                                                                                .then(data => {
+                                                                                    this.aiLoading = false;
+                                                                                    if (data.success) {
+                                                                                        this.aiFixed = data.fixed;
+                                                                                    } else {
+                                                                                        this.aiError = data.message;
+                                                                                    }
+                                                                                })
+                                                                                .catch(err => {
+                                                                                    this.aiLoading = false;
+                                                                                    this.aiError = 'Terjadi kesalahan jaringan atau server.';
+                                                                                });
+                                                                            }
+                                                                        }">
+                                                                            <div class="mt-4 text-[11px] bg-slate-900 text-slate-300 p-4 rounded-xl overflow-hidden font-mono shadow-inner border border-slate-800">
+                                                                                <div class="flex justify-between items-center mb-2 border-b border-slate-700 pb-2">
+                                                                                    <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">HTML Ditemukan</span>
+                                                                                    @if(!$isPassed && $check->ruleId)
+                                                                                    <button @click="remediate()" :disabled="aiLoading || aiFixed" class="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-[10px] font-bold py-1 px-3 rounded shadow transition-all flex items-center">
+                                                                                        <svg x-show="aiLoading" class="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                                                        <span x-text="aiLoading ? 'Memperbaiki...' : (aiFixed ? 'Sudah Diperbaiki' : '✨ Auto-Fix (AI)')"></span>
+                                                                                    </button>
+                                                                                    @endif
+                                                                                </div>
+                                                                                <pre class="whitespace-pre-wrap break-all overflow-hidden leading-relaxed text-red-400"><code>{{ $check->htmlSnippet }}</code></pre>
+                                                                            </div>
+                                                                            
+                                                                            <!-- AI Result Block -->
+                                                                            <div x-show="aiError" class="mt-3 text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-100 font-medium" x-text="aiError" style="display:none;"></div>
+                                                                            
+                                                                            <div x-show="aiFixed" class="mt-3 text-[11px] bg-slate-900 text-emerald-400 p-4 rounded-xl overflow-hidden font-mono shadow-inner border border-emerald-900/50 relative" style="display:none;">
+                                                                                <div class="flex justify-between items-center mb-2 border-b border-emerald-900/50 pb-2">
+                                                                                    <span class="text-emerald-500 font-bold uppercase tracking-wider text-[10px]">✨ Hasil Perbaikan AI</span>
+                                                                                    <button @click="navigator.clipboard.writeText(aiFixed); alert('HTML disalin!')" class="text-emerald-400 hover:text-white transition-colors flex items-center gap-1 bg-emerald-900/40 px-2 py-1 rounded">
+                                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg> Salin
+                                                                                    </button>
+                                                                                </div>
+                                                                                <pre class="whitespace-pre-wrap break-all overflow-hidden leading-relaxed"><code x-text="aiFixed"></code></pre>
+                                                                            </div>
                                                                         </div>
                                                                     @endif
 

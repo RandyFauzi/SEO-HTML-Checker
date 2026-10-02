@@ -49,6 +49,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export', [SeoRuleController::class, 'export'])->name('export');
     });
 
+    Route::middleware('role:super_admin,admin')->post('admin/remediations/generate', [\App\Http\Controllers\Admin\RemediationController::class, 'generate'])->name('admin.remediations.generate');
+
     // Admin & Super Admin: Brands
     Route::middleware('role:super_admin,admin')->prefix('admin/brands')->name('admin.brands.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\BrandController::class, 'index'])->name('index');

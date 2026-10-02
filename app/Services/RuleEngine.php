@@ -99,7 +99,7 @@ class RuleEngine
                 actual: $result['actual'] ?? null,
                 selector: $result['selector'] ?? null,
                 attribute: $result['attribute'] ?? null,
-                htmlSnippet: $result['html_snippet'] ?? null
+                htmlSnippet: $result['html_snippet'] ?? null, ruleId: $rule->id
             );
         } catch (Exception $e) {
             return new CheckResult(
