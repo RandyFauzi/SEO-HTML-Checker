@@ -59,22 +59,53 @@
                 <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Aturan Pengecekan SEO</h2>
                 <p class="text-sm text-slate-500 mt-1 font-medium">Kelola semua aturan yang digunakan untuk mengecek landing page.</p>
             </div>
-            <div class="flex flex-col md:flex-row w-full md:w-auto gap-3">
+            <div class="flex flex-col md:flex-row w-full md:w-auto gap-3 items-stretch md:items-center">
                 @if($rules->count() > 0)
                 <form action="{{ route('admin.rules.destroyAll') }}" method="POST" class="w-full md:w-auto">
                     @csrf
                     @method('DELETE')
                     <button type="button" 
                         @click="openConfirm('Hapus Semua Aturan SEO?', 'Peringatan: Aksi ini akan menghapus semua aturan SEO milik Anda secara permanen. Anda yakin ingin melanjutkannya?', $event.currentTarget.closest('form'), 'Ya, Hapus Semua')"
-                        class="w-full md:w-auto justify-center bg-red-50 hover:bg-red-500 text-red-600 hover:text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-sm hover:-translate-y-1 hover:shadow-md transition-all border border-red-100 hover:border-red-500 flex items-center">
+                        class="w-full md:w-auto justify-center bg-red-50 hover:bg-red-500 text-red-600 hover:text-white font-bold py-3 md:py-2.5 px-6 rounded-full shadow-sm hover:-translate-y-1 hover:shadow-md transition-all border border-red-100 hover:border-red-500 flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
                 </form>
                 @endif
+
+                <!-- Aurora Frosted Glass Button: Create Rules With AI -->
+                <button type="button" 
+                    @click="showAiModal = true" 
+                    class="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-[1px] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.22)] w-full md:w-auto">
+                    
+                    <!-- Glass Outline Highlight -->
+                    <span class="absolute inset-0 rounded-full bg-gradient-to-b from-white/90 via-white/40 to-white/70 p-[1px]"></span>
+
+                    <!-- Frosted Glass Pill Body -->
+                    <span class="relative flex w-full items-center justify-center gap-2.5 rounded-full bg-white/75 backdrop-blur-xl px-6 py-3 md:py-2.5 text-sm font-bold text-slate-800 transition-all duration-300 group-hover:bg-white/85 group-hover:text-slate-900 border border-white/70 shadow-[inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.03)] overflow-hidden">
+                        
+                        <!-- Aurora Glow 1: Sky / Cyan Light Diffusion -->
+                        <span class="absolute -top-3 right-6 h-12 w-16 rounded-full bg-sky-400/60 blur-lg transition-all duration-500 group-hover:h-16 group-hover:w-20 group-hover:bg-sky-400/80 group-hover:scale-110"></span>
+                        
+                        <!-- Aurora Glow 2: Deep Indigo / Violet Diffusion -->
+                        <span class="absolute -top-2 right-14 h-10 w-14 rounded-full bg-indigo-500/50 blur-md transition-all duration-500 group-hover:scale-125 group-hover:bg-indigo-500/70"></span>
+                        
+                        <!-- Aurora Glow 3: Warm Peach / Rose Accent -->
+                        <span class="absolute -bottom-2 right-3 h-8 w-12 rounded-full bg-rose-400/50 blur-md transition-all duration-500 group-hover:scale-125"></span>
+
+                        <!-- AI Sparkle Icon -->
+                        <svg class="relative z-10 h-4 w-4 text-indigo-600 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L14.2 7.8L20 10L14.2 12.2L12 18L9.8 12.2L4 10L9.8 7.8L12 2Z" />
+                            <path d="M19 16L20.1 18.9L23 20L20.1 21.1L19 24L17.9 21.1L15 20L17.9 18.9L19 16Z" opacity="0.75"/>
+                        </svg>
+
+                        <!-- Text -->
+                        <span class="relative z-10 tracking-tight text-slate-800 font-extrabold group-hover:text-indigo-950 transition-colors">Create Rules With AI</span>
+                    </span>
+                </button>
                 
                 <div class="relative">
-                    <button @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="w-full md:w-auto justify-center bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-lg shadow-slate-800/20 transition-all hover:-translate-y-1 flex items-center">
+                    <button @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="w-full md:w-auto justify-center bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 md:py-2.5 px-6 rounded-full shadow-lg shadow-slate-800/20 transition-all hover:-translate-y-1 flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                         Tambah Aturan
                         <svg class="w-4 h-4 ml-2 transition-transform duration-200" :class="dropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
@@ -225,9 +256,23 @@
                                         <div x-show="aiError" class="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100 font-medium" x-text="aiError"></div>
                                         
                                         <div class="mt-5">
-                                            <button @click="generateAi()" :disabled="aiLoading || aiPrompt.trim() === ''" class="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center">
-                                                <svg x-show="aiLoading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                                <span x-text="aiLoading ? 'Sedang meracik...' : 'Generate Rule'"></span>
+                                            <button @click="generateAi()" :disabled="aiLoading || aiPrompt.trim() === ''" 
+                                                class="group relative inline-flex w-full items-center justify-center overflow-hidden rounded-full p-[1px] transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-[0_4px_20px_rgba(99,102,241,0.2)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.35)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                                                <span class="absolute inset-0 rounded-full bg-gradient-to-r from-sky-400 via-indigo-500 to-rose-400 p-[1px]"></span>
+                                                <span class="relative flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 overflow-hidden">
+                                                    <!-- Internal Aurora Glow (from image 1 & 2) -->
+                                                    <span class="absolute -top-3 right-10 h-14 w-20 rounded-full bg-sky-400/50 blur-lg transition-all duration-500 group-hover:scale-125"></span>
+                                                    <span class="absolute -top-2 right-20 h-12 w-16 rounded-full bg-indigo-500/60 blur-md transition-all duration-500 group-hover:scale-125"></span>
+                                                    <span class="absolute -bottom-2 right-4 h-10 w-12 rounded-full bg-rose-400/50 blur-md"></span>
+                                                    
+                                                    <svg x-show="aiLoading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white relative z-10" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                    <span class="relative z-10 tracking-tight flex items-center gap-2">
+                                                        <svg x-show="!aiLoading" class="h-4 w-4 text-sky-300" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 2L14.2 7.8L20 10L14.2 12.2L12 18L9.8 12.2L4 10L9.8 7.8L12 2Z" />
+                                                        </svg>
+                                                        <span x-text="aiLoading ? 'Sedang meracik...' : 'Create Rules With AI'"></span>
+                                                    </span>
+                                                </span>
                                             </button>
                                         </div>
                                     </div>
