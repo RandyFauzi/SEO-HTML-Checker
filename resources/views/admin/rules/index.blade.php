@@ -121,12 +121,6 @@
                          class="absolute right-0 mt-2 w-56 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden divide-y divide-gray-100 border border-slate-100" 
                          style="display: none;">
                         <div class="py-1">
-                            <button @click="showAiModal = true; dropdownOpen = false" class="group flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
-                                <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 mr-3 group-hover:bg-indigo-200 group-hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                </span>
-                                <span class="font-semibold">Buat dengan AI</span>
-                            </button>
                             <a href="{{ route('admin.rules.create') }}" class="group flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
                                 <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 mr-3 group-hover:bg-slate-200 group-hover:text-slate-700">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
