@@ -42,7 +42,7 @@ EOF;
 
         $provider = config('services.ai_provider', 'openai');
         $model = $provider === 'gemini' 
-            ? env('GEMINI_REMEDIATION_MODEL', 'gemini-1.5-flash')
+            ? env('GEMINI_REMEDIATION_MODEL', 'gemini-flash-latest')
             : env('OPENAI_REMEDIATION_MODEL', 'gpt-6-astra');
         
         return $this->client->generateText($model, $prompt);

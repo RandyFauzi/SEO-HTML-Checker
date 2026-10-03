@@ -51,7 +51,7 @@ EOF;
 
         $provider = config('services.ai_provider', 'openai');
         $model = $provider === 'gemini' 
-            ? env('GEMINI_RULE_BUILDER_MODEL', 'gemini-1.5-flash')
+            ? env('GEMINI_RULE_BUILDER_MODEL', 'gemini-flash-latest')
             : env('OPENAI_RULE_BUILDER_MODEL', 'gpt-6-astra');
         
         $prompt = $systemPrompt . "\n\nPermintaan user: " . $userPrompt;
