@@ -3,7 +3,28 @@
     <x-slot name="header">Manajemen Aturan</x-slot>
 
     <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4" x-data="{ showAiModal: false, aiPrompt: '', aiLoading: false, aiResult: null, aiError: null, generateAi() { this.aiLoading = true; this.aiError = null; fetch('{{ route('admin.rules.ai-generate') }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ prompt: this.aiPrompt }) }).then(res => res.json()).then(data => { this.aiLoading = false; if(data.success) { this.aiResult = data.data; } else { this.aiError = data.message; } }).catch(e => { this.aiLoading = false; this.aiError = 'Terjadi kesalahan jaringan.'; }); } }">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4" 
+            x-data="{ 
+                showAiModal: false, 
+                showImportModal: false,
+                importMode: 'file',
+                dropdownOpen: false,
+                aiPrompt: '', 
+                aiLoading: false, 
+                aiResult: null, 
+                aiError: null, 
+                generateAi() { 
+                    this.aiLoading = true; this.aiError = null; 
+                    fetch('{{ route('admin.rules.ai-generate') }}', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, 
+                        body: JSON.stringify({ prompt: this.aiPrompt }) 
+                    })
+                    .then(res => res.json())
+                    .then(data => { this.aiLoading = false; if(data.success) { this.aiResult = data.data; } else { this.aiError = data.message; } })
+                    .catch(e => { this.aiLoading = false; this.aiError = 'Terjadi kesalahan jaringan.'; }); 
+                } 
+            }">
             <div>
                 <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Aturan Pengecekan SEO</h2>
                 <p class="text-sm text-slate-500 mt-1 font-medium">Kelola semua aturan yang digunakan untuk mengecek landing page.</p>
@@ -19,14 +40,113 @@
                     </button>
                 </form>
                 @endif
-                <button @click="showAiModal = true" type="button" class="w-full md:w-auto justify-center bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-lg shadow-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Buat dengan AI
-                </button>
-                <a href="{{ route('admin.rules.create') }}" class="w-full md:w-auto justify-center bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-lg shadow-slate-800/20 transition-all hover:-translate-y-1 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                    Manual
-                </a>
+                
+                <div class="relative">
+                    <button @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="w-full md:w-auto justify-center bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-lg shadow-slate-800/20 transition-all hover:-translate-y-1 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        Tambah Aturan
+                        <svg class="w-4 h-4 ml-2 transition-transform duration-200" :class="dropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    
+                    <div x-show="dropdownOpen" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-56 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden divide-y divide-gray-100 border border-slate-100" 
+                         style="display: none;">
+                        <div class="py-1">
+                            <button @click="showAiModal = true; dropdownOpen = false" class="group flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 mr-3 group-hover:bg-indigo-200 group-hover:text-indigo-700">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                </span>
+                                <span class="font-semibold">Buat dengan AI</span>
+                            </button>
+                            <a href="{{ route('admin.rules.create') }}" class="group flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 mr-3 group-hover:bg-slate-200 group-hover:text-slate-700">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
+                                </span>
+                                <span class="font-semibold">Buat Manual</span>
+                            </a>
+                            <button @click="showImportModal = true; dropdownOpen = false" class="group flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-green-50 hover:text-green-700 transition-colors">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-green-100 text-green-600 mr-3 group-hover:bg-green-200 group-hover:text-green-700">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                </span>
+                                <span class="font-semibold">Impor dari JSON</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import JSON Modal -->
+            <div x-show="showImportModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div x-show="showImportModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="showImportModal = false" aria-hidden="true"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div x-show="showImportModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-100">
+                        <div class="bg-gradient-to-br from-indigo-50 to-white px-6 pt-8 pb-6 sm:px-8 sm:pb-8 relative">
+                            <button @click="showImportModal = false" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                            <div class="sm:flex sm:items-start">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 sm:mx-0 sm:h-12 sm:w-12 shadow-inner border border-indigo-200">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                </div>
+                                <div class="mt-4 text-center sm:mt-0 sm:ml-5 sm:text-left w-full">
+                                    <h3 class="text-xl leading-6 font-extrabold text-slate-900" id="modal-title">Impor Aturan JSON</h3>
+                                    
+                                    <form action="{{ route('admin.rules.import') }}" method="POST" enctype="multipart/form-data" class="mt-4" x-data="{ fileName: '' }">
+                                        @csrf
+                                        
+                                        <!-- Tabs -->
+                                        <div class="flex space-x-1 mb-4 bg-slate-100 p-1 rounded-xl">
+                                            <button type="button" @click="importMode = 'file'" :class="importMode === 'file' ? 'bg-white shadow text-slate-800' : 'text-slate-500 hover:text-slate-700'" class="w-1/2 py-2 text-sm font-medium rounded-lg transition-all">Unggah File</button>
+                                            <button type="button" @click="importMode = 'text'" :class="importMode === 'text' ? 'bg-white shadow text-slate-800' : 'text-slate-500 hover:text-slate-700'" class="w-1/2 py-2 text-sm font-medium rounded-lg transition-all">Tempel Teks</button>
+                                        </div>
+
+                                        <!-- Mode: File Upload -->
+                                        <div x-show="importMode === 'file'" class="flex items-center justify-center w-full relative mb-5">
+                                            <label for="dropzone-file" :class="fileName ? 'border-green-400 bg-green-50/50' : 'border-indigo-200/60 bg-white/30'" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-[1.5rem] cursor-pointer backdrop-blur-sm hover:bg-white/60 transition-all duration-300">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <template x-if="!fileName">
+                                                        <div class="flex flex-col items-center">
+                                                            <svg class="w-8 h-8 mb-2 text-indigo-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                                            </svg>
+                                                            <p class="mb-1 text-sm text-slate-600"><span class="font-bold">Klik untuk unggah</span></p>
+                                                            <p class="text-xs text-slate-400 font-medium">Hanya file JSON</p>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="fileName">
+                                                        <div class="flex flex-col items-center">
+                                                            <svg class="w-8 h-8 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            <p class="text-sm font-bold text-green-700" x-text="fileName"></p>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                                <input id="dropzone-file" type="file" name="json_file" accept=".json" class="hidden" @change="fileName = $event.target.files[0].name" />
+                                            </label>
+                                        </div>
+
+                                        <!-- Mode: Text Paste -->
+                                        <div x-show="importMode === 'text'" class="mb-5">
+                                            <textarea name="json_text" rows="5" class="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-mono text-slate-700 focus:border-indigo-500 focus:ring-0 focus:outline-none transition-colors" placeholder='[{"name": "Aturan Baru", "rule_type": "element_exists"...}]'></textarea>
+                                        </div>
+
+                                        <div class="flex justify-end">
+                                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all flex items-center">
+                                                Simpan Aturan
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- AI Modal -->
@@ -67,14 +187,14 @@
                                             <div class="space-y-4">
                                                 <div class="bg-green-50 text-green-700 p-3 rounded-lg border border-green-200 text-sm font-medium flex items-start">
                                                     <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                                    Berhasil! AI telah merumuskan aturan berikut. Salin JSON ini, lalu tutup popup dan paste di menu "Import Aturan".
+                                                Berhasil! AI telah merumuskan aturan berikut. Salin JSON ini, lalu buka menu <b>Tambah Aturan &gt; Impor dari JSON</b> dan pilih tab <b>Tempel Teks</b>.
                                                 </div>
                                                 <div class="relative group">
                                                     <textarea readonly rows="8" class="w-full font-mono text-xs bg-slate-900 text-green-400 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none" x-text="JSON.stringify([aiResult], null, 2)"></textarea>
                                                 </div>
                                                 <div class="mt-5 flex justify-end gap-3">
                                                     <button @click="aiResult = null" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl transition-all">Ubah Prompt</button>
-                                                    <button @click="navigator.clipboard.writeText(JSON.stringify([aiResult], null, 2)); alert('JSON disalin! Silakan paste di kotak Import di halaman utama.'); showAiModal = false; aiResult = null;" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all">
+                                                    <button @click="navigator.clipboard.writeText(JSON.stringify([aiResult], null, 2)); alert('JSON disalin! Silakan paste di menu Impor dari JSON.'); showAiModal = false; aiResult = null;" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all">
                                                         Salin & Tutup
                                                     </button>
                                                 </div>
@@ -124,7 +244,12 @@
                                 <td class="px-6 py-4">
                                     <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">{{ $rule->rule_type->value ?? $rule->rule_type }}</span>
                                 </td>
-                                <td class="px-6 py-4"><span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded text-xs border border-indigo-100">{{ $rule->category }}</span></td>
+                                <td class="px-6 py-4">
+                                    <span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded text-xs border border-indigo-100">{{ $rule->category }}</span>
+                                    <span class="ml-1 text-slate-600 bg-slate-100 px-2 py-1 rounded text-xs border border-slate-200">
+                                        {{ $rule->target_page === 'lp' ? 'Landing Page' : ($rule->target_page === 'amp' ? 'AMP' : 'LP & AMP') }}
+                                    </span>
+                                </td>
                                 <td class="px-6 py-4">
                                     <span class="px-2.5 py-1 rounded-md text-xs font-semibold border {{ $rule->severity === 'error' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
                                         {{ $rule->severity === 'error' ? 'Kritis' : 'Peringatan' }}
@@ -197,6 +322,7 @@
                         <div class="flex flex-wrap gap-2 text-xs">
                             <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded border border-gray-200">{{ $rule->rule_type->value ?? $rule->rule_type }}</span>
                             <span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded border border-indigo-100">{{ $rule->category }}</span>
+                            <span class="text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-200">{{ $rule->target_page === 'lp' ? 'LP' : ($rule->target_page === 'amp' ? 'AMP' : 'LP & AMP') }}</span>
                         </div>
 
                         <div class="flex justify-between items-center pt-2 border-t border-gray-50 mt-2">
@@ -242,47 +368,6 @@
             </div>
         </div>
 
-        <!-- Import Section as a nice card -->
-        <div class="glass-panel p-6 md:p-8 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] max-w-xl">
-            <div class="flex flex-col sm:flex-row items-start gap-6">
-                <div class="flex-shrink-0 bg-white/60 p-4 rounded-[1.25rem] text-indigo-600 shadow-sm border border-white">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                </div>
-                <div class="flex-1 w-full">
-                    <h3 class="text-xl font-extrabold text-slate-800">Impor Aturan (Format JSON)</h3>
-                    <p class="text-sm text-slate-500 mb-5 mt-1 font-medium">Unggah file JSON untuk memasukkan banyak aturan SEO sekaligus.</p>
-                    
-                    <form action="{{ route('admin.rules.import') }}" method="POST" enctype="multipart/form-data" class="space-y-5" x-data="{ fileName: '' }">
-                        @csrf
-                        <div class="flex items-center justify-center w-full relative">
-                            <label for="dropzone-file" :class="fileName ? 'border-green-400 bg-green-50/50' : 'border-indigo-200/60 bg-white/30'" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-[1.5rem] cursor-pointer backdrop-blur-sm hover:bg-white/60 transition-all duration-300">
-                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <template x-if="!fileName">
-                                        <div class="flex flex-col items-center">
-                                            <svg class="w-8 h-8 mb-2 text-indigo-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                                            </svg>
-                                            <p class="mb-1 text-sm text-slate-600"><span class="font-bold">Klik untuk unggah</span> atau seret file ke sini</p>
-                                            <p class="text-xs text-slate-400 font-medium">Hanya menerima file JSON</p>
-                                        </div>
-                                    </template>
-                                    <template x-if="fileName">
-                                        <div class="flex flex-col items-center">
-                                            <svg class="w-8 h-8 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <p class="text-sm font-bold text-green-700" x-text="fileName"></p>
-                                            <p class="text-xs text-green-600 mt-1">File siap diunggah</p>
-                                        </div>
-                                    </template>
-                                </div>
-                                <input id="dropzone-file" type="file" name="json_file" accept=".json" required class="hidden" @change="fileName = $event.target.files[0].name" />
-                            </label>
-                        </div>
-                        <button type="submit" :disabled="!fileName" :class="!fileName ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-xl'" class="w-full bg-slate-800 text-white font-bold py-3 px-4 rounded-2xl shadow-lg transition-all duration-300">
-                            Unggah & Simpan Aturan
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 </x-admin-layout>
+< / x - a d m i n - l a y o u t >

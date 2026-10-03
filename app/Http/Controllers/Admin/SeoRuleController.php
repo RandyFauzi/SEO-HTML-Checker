@@ -161,14 +161,25 @@ class SeoRuleController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'json_file' => 'required|file|mimetypes:application/json,text/plain|max:2048',
+            'json_file' => 'nullable|file|mimetypes:application/json,text/plain|max:2048',
+            'json_text' => 'nullable|string',
         ]);
 
-        $content = file_get_contents($request->file('json_file')->getRealPath());
+        if (!$request->hasFile('json_file') && empty($request->input('json_text'))) {
+            return back()->with('error', 'Silakan unggah file JSON atau masukkan teks JSON.');
+        }
+
+        $content = '';
+        if ($request->hasFile('json_file')) {
+            $content = file_get_contents($request->file('json_file')->getRealPath());
+        } else {
+            $content = $request->input('json_text');
+        }
+
         $rules = json_decode($content, true);
 
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($rules)) {
-            return back()->with('error', 'Format file JSON tidak valid.');
+            return back()->with('error', 'Format JSON tidak valid.');
         }
 
         $imported = 0;
