@@ -36,6 +36,8 @@ Route::middleware(['auth'])->group(function () {
     // Admin & Super Admin: SEO Rules
     Route::middleware('role:super_admin,admin')->prefix('admin/rules')->name('admin.rules.')->group(function () {
         Route::get('/', [SeoRuleController::class, 'index'])->name('index');
+        Route::get('/bank', [\App\Http\Controllers\Admin\RuleBankController::class, 'index'])->name('bank');
+        Route::post('/bank/install', [\App\Http\Controllers\Admin\RuleBankController::class, 'install'])->name('bank.install');
         Route::get('/create', [SeoRuleController::class, 'create'])->name('create');
         Route::post('/', [SeoRuleController::class, 'store'])->name('store');
         Route::post('/ai-generate', [SeoRuleController::class, 'generateViaAi'])->name('ai-generate');

@@ -1,0 +1,3168 @@
+{
+    "rules": [
+        {
+            "code": "HEAD-001",
+            "name": "Atribut lang pada <html> ada",
+            "selector": "html[lang]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Atribut lang pada <html> ada",
+            "reason_template": "Bahasa dokumen membantu mesin pencari, screen reader, dan browser menentukan bahasa konten.",
+            "recommendation": "Tambahkan <html lang=\"id\"> (atau kode bahasa yang sesuai).",
+            "issue_message": "Masalah pada Atribut lang pada <html> ada"
+        },
+        {
+            "code": "HEAD-002",
+            "name": "Nilai lang valid (BCP 47)",
+            "selector": "html",
+            "attribute": "lang",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$\/"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Nilai lang valid (BCP 47)",
+            "reason_template": "Kode bahasa yang salah (mis. 'indonesia', 'en_US') diabaikan atau menyebabkan salah deteksi bahasa.",
+            "recommendation": "Gunakan format ISO 639-1 + opsional region: id, id-ID, en, en-GB.",
+            "issue_message": "Masalah pada Nilai lang valid (BCP 47)"
+        },
+        {
+            "code": "HEAD-003",
+            "name": "Deklarasi charset ada",
+            "selector": "meta[charset], meta[http-equiv=\"Content-Type\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Deklarasi charset ada",
+            "reason_template": "Tanpa charset, karakter non-ASCII (aksen, emoji) bisa rusak dan parser salah menebak encoding.",
+            "recommendation": "Letakkan <meta charset=\"utf-8\"> di 1024 byte pertama <head>.",
+            "issue_message": "Masalah pada Deklarasi charset ada"
+        },
+        {
+            "code": "HEAD-004",
+            "name": "Charset adalah UTF-8",
+            "selector": "meta[charset]",
+            "attribute": "charset",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^utf-8$\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Charset adalah UTF-8",
+            "reason_template": "UTF-8 adalah standar web; encoding lain memicu masalah tampilan dan indexing.",
+            "recommendation": "Ganti menjadi <meta charset=\"utf-8\"> dan simpan file sebagai UTF-8.",
+            "issue_message": "Masalah pada Charset adalah UTF-8"
+        },
+        {
+            "code": "HEAD-005",
+            "name": "Meta charset hanya satu",
+            "selector": "meta[charset]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Meta charset hanya satu",
+            "reason_template": "Deklarasi ganda bisa saling bertentangan.",
+            "recommendation": "Sisakan satu <meta charset>.",
+            "issue_message": "Masalah pada Meta charset hanya satu"
+        },
+        {
+            "code": "HEAD-006",
+            "name": "Meta viewport ada",
+            "selector": "meta[name=\"viewport\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "error",
+            "is_active": true,
+            "description": "Meta viewport ada",
+            "reason_template": "Tanpa viewport, halaman tidak ramah mobile dan Google (mobile-first indexing) menilai pengalaman mobile buruk.",
+            "recommendation": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+            "issue_message": "Masalah pada Meta viewport ada"
+        },
+        {
+            "code": "HEAD-007",
+            "name": "Viewport memakai width=device-width",
+            "selector": "meta[name=\"viewport\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/width\\s*=\\s*device-width\/i"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Viewport memakai width=device-width",
+            "reason_template": "Lebar tetap (mis. width=1024) membuat halaman tampil seperti desktop yang diperkecil di mobile.",
+            "recommendation": "Gunakan width=device-width.",
+            "issue_message": "Masalah pada Viewport memakai width=device-width"
+        },
+        {
+            "code": "HEAD-008",
+            "name": "Viewport tidak memblokir zoom",
+            "selector": "meta[name=\"viewport\"][content*=\"user-scalable=no\"], meta[name=\"viewport\"][content*=\"user-scalable=0\"], meta[name=\"viewport\"][content*=\"maximum-scale=1.0\"], meta[name=\"viewport\"][content*=\"maximum-scale=1,\"], meta[name=\"viewport\"][content$=\"maximum-scale=1\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Viewport tidak memblokir zoom",
+            "reason_template": "Memblokir zoom melanggar aksesibilitas dan merugikan pengguna dengan gangguan penglihatan.",
+            "recommendation": "Hapus user-scalable=no dan maximum-scale=1.",
+            "issue_message": "Masalah pada Viewport tidak memblokir zoom"
+        },
+        {
+            "code": "HEAD-009",
+            "name": "Hanya satu meta viewport",
+            "selector": "meta[name=\"viewport\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Hanya satu meta viewport",
+            "reason_template": "Viewport ganda berpotensi saling menimpa.",
+            "recommendation": "Hapus duplikat.",
+            "issue_message": "Masalah pada Hanya satu meta viewport"
+        },
+        {
+            "code": "HEAD-010",
+            "name": "Favicon terdeklarasi",
+            "selector": "link[rel~=\"icon\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Favicon terdeklarasi",
+            "reason_template": "Favicon dipakai Google di hasil pencarian mobile dan membantu branding\/tab browser.",
+            "recommendation": "Tambahkan <link rel=\"icon\" href=\"\/favicon.ico\"> (ukuran kelipatan 48px).",
+            "issue_message": "Masalah pada Favicon terdeklarasi"
+        },
+        {
+            "code": "HEAD-011",
+            "name": "Apple touch icon ada",
+            "selector": "link[rel=\"apple-touch-icon\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Apple touch icon ada",
+            "reason_template": "Ikon untuk shortcut iOS\/Safari.",
+            "recommendation": "Tambahkan <link rel=\"apple-touch-icon\" href=\"...\">.",
+            "issue_message": "Masalah pada Apple touch icon ada"
+        },
+        {
+            "code": "HEAD-012",
+            "name": "Web App Manifest ada",
+            "selector": "link[rel=\"manifest\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Web App Manifest ada",
+            "reason_template": "Diperlukan untuk PWA \/ installable site.",
+            "recommendation": "Tambahkan <link rel=\"manifest\" href=\"\/manifest.webmanifest\">.",
+            "issue_message": "Masalah pada Web App Manifest ada"
+        },
+        {
+            "code": "HEAD-013",
+            "name": "theme-color terdeklarasi",
+            "selector": "meta[name=\"theme-color\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "theme-color terdeklarasi",
+            "reason_template": "Mewarnai address bar browser mobile, meningkatkan kesan profesional.",
+            "recommendation": "<meta name=\"theme-color\" content=\"#ffffff\">",
+            "issue_message": "Masalah pada theme-color terdeklarasi"
+        },
+        {
+            "code": "HEAD-014",
+            "name": "Tidak ada meta refresh",
+            "selector": "meta[http-equiv=\"refresh\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada meta refresh",
+            "reason_template": "Meta refresh dipakai sebagai redirect; lambat, membingungkan pengguna dan crawler, dan buruk untuk aksesibilitas.",
+            "recommendation": "Ganti dengan redirect server 301\/302.",
+            "issue_message": "Masalah pada Tidak ada meta refresh"
+        },
+        {
+            "code": "HEAD-015",
+            "name": "Tidak memakai meta keywords",
+            "selector": "meta[name=\"keywords\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Tidak memakai meta keywords",
+            "reason_template": "Google menyatakan tidak menggunakan meta keywords; hanya membuka petunjuk strategi ke kompetitor.",
+            "recommendation": "Hapus tag tersebut.",
+            "issue_message": "Masalah pada Tidak memakai meta keywords"
+        },
+        {
+            "code": "HEAD-016",
+            "name": "Tidak memakai tag HTML usang",
+            "selector": "font, center, marquee, blink, frame, frameset, big, strike, tt, acronym, basefont, nobr",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak memakai tag HTML usang",
+            "reason_template": "Tag obsolete tidak valid di HTML5 dan menandakan markup lama\/kualitas rendah.",
+            "recommendation": "Gantikan dengan CSS dan elemen semantik (span\/strong\/abbr).",
+            "issue_message": "Masalah pada Tidak memakai tag HTML usang"
+        },
+        {
+            "code": "HEAD-017",
+            "name": "Tidak memakai plugin (object\/embed\/applet)",
+            "selector": "embed, applet, object[classid], object[type*=\"flash\"], object[data$=\".swf\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak memakai plugin (object\/embed\/applet)",
+            "reason_template": "Plugin tidak didukung browser modern dan tidak bisa diindeks mesin pencari.",
+            "recommendation": "Ganti dengan HTML5 video\/audio\/canvas.",
+            "issue_message": "Masalah pada Tidak memakai plugin (object\/embed\/applet)"
+        },
+        {
+            "code": "HEAD-018",
+            "name": "Tidak ada URL kosong di src\/href aset",
+            "selector": "script[src=\"\"], link[href=\"\"], img[src=\"\"], iframe[src=\"\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada URL kosong di src\/href aset",
+            "reason_template": "Atribut kosong menyebabkan request tambahan ke halaman itu sendiri atau error.",
+            "recommendation": "Hapus atribut kosong atau isi URL yang benar.",
+            "issue_message": "Masalah pada Tidak ada URL kosong di src\/href aset"
+        },
+        {
+            "code": "HEAD-019",
+            "name": "Meta generator tidak membocorkan versi CMS",
+            "selector": "meta[name=\"generator\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Meta generator tidak membocorkan versi CMS",
+            "reason_template": "Membuka versi CMS memudahkan scanning kerentanan.",
+            "recommendation": "Nonaktifkan generator tag di CMS\/tema.",
+            "issue_message": "Masalah pada Meta generator tidak membocorkan versi CMS"
+        },
+        {
+            "code": "TIT-001",
+            "name": "Title ada",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "error",
+            "is_active": true,
+            "description": "Title ada",
+            "reason_template": "Title adalah sinyal on-page terkuat dan menjadi judul klik di hasil pencarian.",
+            "recommendation": "Tambahkan <title> unik di <head>.",
+            "issue_message": "Masalah pada Title ada"
+        },
+        {
+            "code": "TIT-002",
+            "name": "Title tidak kosong",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "length",
+            "configuration": {
+                "min": 1
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Title tidak kosong",
+            "reason_template": "Title kosong membuat Google menghasilkan judul otomatis yang sering tidak relevan.",
+            "recommendation": "Isi title deskriptif.",
+            "issue_message": "Masalah pada Title tidak kosong"
+        },
+        {
+            "code": "TIT-003",
+            "name": "Panjang title 30\u201360 karakter",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "length",
+            "configuration": {
+                "min": 30,
+                "max": 60
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Panjang title 30\u201360 karakter",
+            "reason_template": "Terlalu pendek = kurang informatif; terlalu panjang = terpotong di SERP (batas sebenarnya berbasis lebar piksel \u00b1580px).",
+            "recommendation": "Tulis ringkas, taruh kata kunci utama di depan, brand di belakang.",
+            "issue_message": "Masalah pada Panjang title 30\u201360 karakter"
+        },
+        {
+            "code": "TIT-004",
+            "name": "Hanya satu <title> di head",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Hanya satu <title> di head",
+            "reason_template": "Title ganda membingungkan crawler. (Selector dibatasi ke head agar <title> di dalam SVG tidak terhitung.)",
+            "recommendation": "Sisakan satu title.",
+            "issue_message": "Masalah pada Hanya satu <title> di head"
+        },
+        {
+            "code": "TIT-005",
+            "name": "Title tidak generik (Home\/Untitled)",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!\\s*(untitled|untitled document|home|homepage|beranda|new page|document|index|default|welcome|page title|halaman baru)\\s*$).+\/is"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Title tidak generik (Home\/Untitled)",
+            "reason_template": "Google menyarankan menghindari judul samar seperti 'Home' untuk halaman utama.",
+            "recommendation": "Tulis judul yang menjelaskan isi halaman + brand.",
+            "issue_message": "Masalah pada Title tidak generik (Home\/Untitled)"
+        },
+        {
+            "code": "TIT-006",
+            "name": "Title bukan teks bawaan\/placeholder",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*(lorem ipsum|dummy text|sample page|just another wordpress site|test page|coming soon)).*$\/is"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Title bukan teks bawaan\/placeholder",
+            "reason_template": "Tagline bawaan CMS atau teks dummy menandakan situs belum selesai dikonfigurasi.",
+            "recommendation": "Ganti dengan judul asli.",
+            "issue_message": "Masalah pada Title bukan teks bawaan\/placeholder"
+        },
+        {
+            "code": "TIT-007",
+            "name": "Title tidak keyword-stuffing (maks 3 pemisah |)",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!(?:[^|]*\\|){4,}).*$\/s"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Title tidak keyword-stuffing (maks 3 pemisah |)",
+            "reason_template": "Banyak pemisah biasanya tanda daftar kata kunci; Google dapat menulis ulang judul seperti ini.",
+            "recommendation": "Pangkas menjadi satu topik + brand.",
+            "issue_message": "Masalah pada Title tidak keyword-stuffing (maks 3 pemisah |)"
+        },
+        {
+            "code": "TIT-008",
+            "name": "Title tidak seluruhnya huruf kapital",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\\p{Ll}\/u"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Title tidak seluruhnya huruf kapital",
+            "reason_template": "Judul ALL CAPS sulit dibaca dan terlihat spam.",
+            "recommendation": "Gunakan Title Case atau sentence case.",
+            "issue_message": "Masalah pada Title tidak seluruhnya huruf kapital"
+        },
+        {
+            "code": "TIT-009",
+            "name": "Title tidak berisi URL",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*(https?:\\\/\\\/|www\\.)).*$\/is"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Title tidak berisi URL",
+            "reason_template": "URL di title membuang ruang dan terlihat tidak natural.",
+            "recommendation": "Hapus URL dari title.",
+            "issue_message": "Masalah pada Title tidak berisi URL"
+        },
+        {
+            "code": "TIT-010",
+            "name": "Title tanpa spasi di awal\/akhir",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^\\S(?:.*\\S)?$\/s"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Title tanpa spasi di awal\/akhir",
+            "reason_template": "Spasi\/enter berlebih sering tanda template bermasalah dan bisa ikut tercetak.",
+            "recommendation": "Trim isi title.",
+            "issue_message": "Masalah pada Title tanpa spasi di awal\/akhir"
+        },
+        {
+            "code": "TIT-011",
+            "name": "Title halaman utama sama dengan AMP",
+            "selector": "head > title",
+            "attribute": null,
+            "type": "compare_amp",
+            "configuration": [],
+            "severity": "error",
+            "is_active": false,
+            "description": "Title halaman utama sama dengan AMP",
+            "reason_template": "Konten AMP harus setara dengan halaman kanonik.",
+            "recommendation": "Samakan title di kedua versi.",
+            "issue_message": "Masalah pada Title halaman utama sama dengan AMP"
+        },
+        {
+            "code": "MD-001",
+            "name": "Meta description ada",
+            "selector": "meta[name=\"description\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Meta description ada",
+            "reason_template": "Tidak ada jaminan dipakai Google, tapi sering menjadi snippet dan memengaruhi CTR.",
+            "recommendation": "Tambahkan <meta name=\"description\" content=\"...\">.",
+            "issue_message": "Masalah pada Meta description ada"
+        },
+        {
+            "code": "MD-002",
+            "name": "Meta description tidak kosong",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "length",
+            "configuration": {
+                "min": 1
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Meta description tidak kosong",
+            "reason_template": "Tag ada tetapi kosong sama dengan tidak ada.",
+            "recommendation": "Isi 1\u20132 kalimat ringkas.",
+            "issue_message": "Masalah pada Meta description tidak kosong"
+        },
+        {
+            "code": "MD-003",
+            "name": "Panjang description 70\u2013160 karakter",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "length",
+            "configuration": {
+                "min": 70,
+                "max": 160
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Panjang description 70\u2013160 karakter",
+            "reason_template": "Snippet dipotong berdasarkan lebar piksel (\u00b1920px desktop). Rentang ini aman untuk sebagian besar bahasa.",
+            "recommendation": "Tulis ringkasan menarik dengan call-to-action.",
+            "issue_message": "Masalah pada Panjang description 70\u2013160 karakter"
+        },
+        {
+            "code": "MD-004",
+            "name": "Panjang description ketat 120\u2013160 (alternatif)",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "length",
+            "configuration": {
+                "min": 120,
+                "max": 160
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Panjang description ketat 120\u2013160 (alternatif)",
+            "reason_template": "Versi ketat untuk tim yang mengejar snippet penuh. Aktifkan salah satu: MD-003 atau MD-004.",
+            "recommendation": "Sesuaikan panjang.",
+            "issue_message": "Masalah pada Panjang description ketat 120\u2013160 (alternatif)"
+        },
+        {
+            "code": "MD-005",
+            "name": "Hanya satu meta description",
+            "selector": "meta[name=\"description\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Hanya satu meta description",
+            "reason_template": "Duplikat tag menyebabkan Google memilih salah satu secara acak.",
+            "recommendation": "Hapus tag ganda (sering dari plugin SEO + tema).",
+            "issue_message": "Masalah pada Hanya satu meta description"
+        },
+        {
+            "code": "MD-006",
+            "name": "Description tanpa tag HTML",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^<>]*$\/"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Description tanpa tag HTML",
+            "reason_template": "Markup di description tampil sebagai teks mentah.",
+            "recommendation": "Gunakan teks polos.",
+            "issue_message": "Masalah pada Description tanpa tag HTML"
+        },
+        {
+            "code": "MD-007",
+            "name": "Description tanpa baris baru",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^\\r\\n]*$\/"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Description tanpa baris baru",
+            "reason_template": "Line break berpotensi merusak snippet.",
+            "recommendation": "Jadikan satu baris.",
+            "issue_message": "Masalah pada Description tanpa baris baru"
+        },
+        {
+            "code": "MD-008",
+            "name": "Description bukan placeholder",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*(lorem ipsum|dummy text|sample page|just another wordpress site|your description here|isi deskripsi)).*$\/is"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Description bukan placeholder",
+            "reason_template": "Deskripsi bawaan menandakan konfigurasi belum selesai.",
+            "recommendation": "Tulis deskripsi asli.",
+            "issue_message": "Masalah pada Description bukan placeholder"
+        },
+        {
+            "code": "MD-009",
+            "name": "Description tidak berakhir dengan '...'",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*(\\.\\.\\.|\\x{2026})\\s*$).*$\/su"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Description tidak berakhir dengan '...'",
+            "reason_template": "Description yang sudah terpotong otomatis (excerpt) kurang meyakinkan.",
+            "recommendation": "Tulis ulang secara manual.",
+            "issue_message": "Masalah pada Description tidak berakhir dengan '...'"
+        },
+        {
+            "code": "MD-010",
+            "name": "Meta description tidak berada di body",
+            "selector": "body meta[name=\"description\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Meta description tidak berada di body",
+            "reason_template": "Meta tag harus berada di <head> agar diproses.",
+            "recommendation": "Pindahkan ke <head>.",
+            "issue_message": "Masalah pada Meta description tidak berada di body"
+        },
+        {
+            "code": "MD-011",
+            "name": "Description halaman utama sama dengan AMP",
+            "selector": "meta[name=\"description\"]",
+            "attribute": "content",
+            "type": "compare_amp",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Description halaman utama sama dengan AMP",
+            "reason_template": "Konsistensi konten antar versi.",
+            "recommendation": "Samakan description.",
+            "issue_message": "Masalah pada Description halaman utama sama dengan AMP"
+        },
+        {
+            "code": "H1-001",
+            "name": "H1 ada",
+            "selector": "h1",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "H1 ada",
+            "reason_template": "H1 menegaskan topik halaman bagi pengguna dan mesin pencari.",
+            "recommendation": "Tambahkan satu <h1> deskriptif.",
+            "issue_message": "Masalah pada H1 ada"
+        },
+        {
+            "code": "H1-002",
+            "name": "Hanya satu H1",
+            "selector": "h1",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Hanya satu H1",
+            "reason_template": "HTML5 mengizinkan lebih dari satu, tetapi satu H1 per halaman tetap konvensi SEO paling aman.",
+            "recommendation": "Turunkan H1 tambahan menjadi H2.",
+            "issue_message": "Masalah pada Hanya satu H1"
+        },
+        {
+            "code": "H1-003",
+            "name": "H1 tidak kosong",
+            "selector": "h1",
+            "attribute": null,
+            "type": "length",
+            "configuration": {
+                "min": 1
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "H1 tidak kosong",
+            "reason_template": "H1 kosong (mis. hanya logo\/background image) tidak memberi sinyal topik.",
+            "recommendation": "Isi teks H1.",
+            "issue_message": "Masalah pada H1 tidak kosong"
+        },
+        {
+            "code": "H1-004",
+            "name": "Panjang H1 10\u201370 karakter",
+            "selector": "h1",
+            "attribute": null,
+            "type": "length",
+            "configuration": {
+                "min": 10,
+                "max": 70
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Panjang H1 10\u201370 karakter",
+            "reason_template": "H1 terlalu panjang kehilangan fokus; terlalu pendek kurang deskriptif.",
+            "recommendation": "Ringkas dan jelas.",
+            "issue_message": "Masalah pada Panjang H1 10\u201370 karakter"
+        },
+        {
+            "code": "H1-005",
+            "name": "H1 bukan teks placeholder",
+            "selector": "h1",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!\\s*(untitled|home|welcome|heading|title|your title here|judul)\\s*$).+\/is"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "H1 bukan teks placeholder",
+            "reason_template": "Heading bawaan template menandakan konten belum diisi.",
+            "recommendation": "Tulis H1 asli.",
+            "issue_message": "Masalah pada H1 bukan teks placeholder"
+        },
+        {
+            "code": "H1-006",
+            "name": "Tidak ada heading kosong",
+            "selector": "h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada heading kosong",
+            "reason_template": "Heading kosong mengganggu navigasi screen reader dan struktur dokumen.",
+            "recommendation": "Hapus atau isi heading.",
+            "issue_message": "Masalah pada Tidak ada heading kosong"
+        },
+        {
+            "code": "H1-007",
+            "name": "H1 bukan satu-satunya gambar",
+            "selector": "h1 > img:only-child",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "H1 bukan satu-satunya gambar",
+            "reason_template": "H1 hanya berisi gambar tanpa teks bergantung pada alt dan lemah sebagai sinyal.",
+            "recommendation": "Pakai teks nyata (boleh disembunyikan visual secara aksesibel).",
+            "issue_message": "Masalah pada H1 bukan satu-satunya gambar"
+        },
+        {
+            "code": "H1-008",
+            "name": "H1 tidak di dalam nav\/footer",
+            "selector": "nav h1, footer h1",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "H1 tidak di dalam nav\/footer",
+            "reason_template": "H1 di area navigasi\/footer biasanya salah semantik (mis. logo dibungkus h1 di semua halaman).",
+            "recommendation": "Gunakan <p>\/<div> untuk logo.",
+            "issue_message": "Masalah pada H1 tidak di dalam nav\/footer"
+        },
+        {
+            "code": "H1-009",
+            "name": "Ada minimal satu H2 (struktur konten)",
+            "selector": "h2",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Ada minimal satu H2 (struktur konten)",
+            "reason_template": "Halaman panjang tanpa subjudul sulit dipindai dan kurang terstruktur.",
+            "recommendation": "Pecah konten dengan H2.",
+            "issue_message": "Masalah pada Ada minimal satu H2 (struktur konten)"
+        },
+        {
+            "code": "H1-010",
+            "name": "H1 halaman utama sama dengan AMP",
+            "selector": "h1",
+            "attribute": null,
+            "type": "compare_amp",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "H1 halaman utama sama dengan AMP",
+            "reason_template": "Konsistensi konten antar versi.",
+            "recommendation": "Samakan H1.",
+            "issue_message": "Masalah pada H1 halaman utama sama dengan AMP"
+        },
+        {
+            "code": "CAN-001",
+            "name": "Canonical ada",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Canonical ada",
+            "reason_template": "Canonical membantu Google memilih URL utama dan menggabungkan sinyal duplikat.",
+            "recommendation": "Tambahkan <link rel=\"canonical\" href=\"https:\/\/...\">.",
+            "issue_message": "Masalah pada Canonical ada"
+        },
+        {
+            "code": "CAN-002",
+            "name": "Hanya satu canonical",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Hanya satu canonical",
+            "reason_template": "Canonical ganda\/bertentangan membuat Google mengabaikan semuanya.",
+            "recommendation": "Hapus duplikat (sering dari plugin ganda).",
+            "issue_message": "Masalah pada Hanya satu canonical"
+        },
+        {
+            "code": "CAN-003",
+            "name": "Canonical berada di <head>",
+            "selector": "head > link[rel=\"canonical\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Canonical berada di <head>",
+            "reason_template": "Google mengabaikan canonical yang berada di body.",
+            "recommendation": "Pindahkan ke <head>.",
+            "issue_message": "Masalah pada Canonical berada di <head>"
+        },
+        {
+            "code": "CAN-004",
+            "name": "Canonical tidak muncul di body",
+            "selector": "body link[rel=\"canonical\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Canonical tidak muncul di body",
+            "reason_template": "Canonical di body tidak diproses.",
+            "recommendation": "Hapus dari body.",
+            "issue_message": "Masalah pada Canonical tidak muncul di body"
+        },
+        {
+            "code": "CAN-005",
+            "name": "Canonical memakai URL absolut",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^https?:\\\/\\\/\/i"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Canonical memakai URL absolut",
+            "reason_template": "Path relatif rawan salah resolve; Google merekomendasikan URL absolut.",
+            "recommendation": "Gunakan URL lengkap.",
+            "issue_message": "Masalah pada Canonical memakai URL absolut"
+        },
+        {
+            "code": "CAN-006",
+            "name": "Canonical memakai HTTPS",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^https:\\\/\\\/\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Canonical memakai HTTPS",
+            "reason_template": "Canonical ke HTTP dapat memindahkan sinyal ke versi tidak aman.",
+            "recommendation": "Ubah ke https:\/\/.",
+            "issue_message": "Masalah pada Canonical memakai HTTPS"
+        },
+        {
+            "code": "CAN-007",
+            "name": "Canonical tanpa fragment (#)",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^#]*$\/"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Canonical tanpa fragment (#)",
+            "reason_template": "Fragment diabaikan dan menandakan salah konfigurasi.",
+            "recommendation": "Hapus bagian #....",
+            "issue_message": "Masalah pada Canonical tanpa fragment (#)"
+        },
+        {
+            "code": "CAN-008",
+            "name": "Canonical tanpa spasi",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^\\S+$\/"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Canonical tanpa spasi",
+            "reason_template": "URL dengan spasi tidak valid.",
+            "recommendation": "Encode spasi (%20) atau perbaiki URL.",
+            "issue_message": "Masalah pada Canonical tanpa spasi"
+        },
+        {
+            "code": "CAN-009",
+            "name": "Canonical bukan localhost\/staging",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!https?:\\\/\\\/(localhost|127\\.|10\\.|192\\.168\\.|[^\\\/]*\\.(local|test|staging|dev)(\\\/|$))).*$\/i"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Canonical bukan localhost\/staging",
+            "reason_template": "Canonical bocor ke domain staging adalah kesalahan migrasi klasik dan dapat menghilangkan halaman dari indeks.",
+            "recommendation": "Set APP_URL \/ base URL produksi.",
+            "issue_message": "Masalah pada Canonical bukan localhost\/staging"
+        },
+        {
+            "code": "CAN-010",
+            "name": "Canonical tanpa query string",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^?]*$\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Canonical tanpa query string",
+            "reason_template": "Untuk situs non-faceted, parameter di canonical biasanya tidak diinginkan.",
+            "recommendation": "Bersihkan parameter tracking.",
+            "issue_message": "Masalah pada Canonical tanpa query string"
+        },
+        {
+            "code": "CAN-011",
+            "name": "Canonical huruf kecil",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^A-Z]*$\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Canonical huruf kecil",
+            "reason_template": "URL case-sensitive; campuran huruf besar memicu duplikat.",
+            "recommendation": "Normalisasi ke lowercase.",
+            "issue_message": "Masalah pada Canonical huruf kecil"
+        },
+        {
+            "code": "ROB-001",
+            "name": "Halaman tidak ter-noindex",
+            "selector": "meta[name=\"robots\"][content*=\"noindex\"], meta[name=\"robots\"][content*=\"NOINDEX\"], meta[name=\"robots\"][content*=\"Noindex\"], meta[name=\"googlebot\"][content*=\"noindex\"], meta[name=\"googlebot\"][content*=\"NOINDEX\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Halaman tidak ter-noindex",
+            "reason_template": "Noindex yang tidak disengaja adalah penyebab paling umum halaman hilang dari Google. Nonaktifkan rule ini untuk halaman yang memang noindex (login, thank-you).",
+            "recommendation": "Hapus noindex atau pastikan memang disengaja.",
+            "issue_message": "Masalah pada Halaman tidak ter-noindex"
+        },
+        {
+            "code": "ROB-002",
+            "name": "Halaman tidak ter-nofollow (meta)",
+            "selector": "meta[name=\"robots\"][content*=\"nofollow\"], meta[name=\"robots\"][content*=\"NOFOLLOW\"], meta[name=\"googlebot\"][content*=\"nofollow\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Halaman tidak ter-nofollow (meta)",
+            "reason_template": "Nofollow di meta menahan aliran PageRank ke semua link di halaman.",
+            "recommendation": "Hapus kecuali disengaja.",
+            "issue_message": "Masalah pada Halaman tidak ter-nofollow (meta)"
+        },
+        {
+            "code": "ROB-003",
+            "name": "Tidak memakai direktif 'none'",
+            "selector": "meta[name=\"robots\"][content=\"none\"], meta[name=\"robots\"][content*=\"none,\"], meta[name=\"robots\"][content$=\", none\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak memakai direktif 'none'",
+            "reason_template": "'none' setara noindex+nofollow.",
+            "recommendation": "Ganti dengan 'index, follow' atau hapus.",
+            "issue_message": "Masalah pada Tidak memakai direktif 'none'"
+        },
+        {
+            "code": "ROB-004",
+            "name": "Snippet tidak diblokir",
+            "selector": "meta[name=\"robots\"][content*=\"nosnippet\"], meta[name=\"robots\"][content*=\"max-snippet:0\"], meta[name=\"googlebot\"][content*=\"nosnippet\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Snippet tidak diblokir",
+            "reason_template": "Nosnippet \/ max-snippet:0 menghilangkan deskripsi di hasil pencarian dan mengurangi CTR.",
+            "recommendation": "Hapus atau atur max-snippet:-1.",
+            "issue_message": "Masalah pada Snippet tidak diblokir"
+        },
+        {
+            "code": "ROB-005",
+            "name": "Direktif robots valid",
+            "selector": "meta[name=\"robots\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^\\s*(?:(?:all|none|noindex|index|nofollow|follow|noarchive|nosnippet|notranslate|noimageindex|indexifembedded|max-snippet:-?\\d+|max-image-preview:(?:none|standard|large)|max-video-preview:-?\\d+|unavailable_after:[^,]+)\\s*(?:,\\s*|$))+$\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Direktif robots valid",
+            "reason_template": "Direktif salah ketik diabaikan Google secara diam-diam (mis. 'noindx').",
+            "recommendation": "Gunakan hanya direktif yang didukung.",
+            "issue_message": "Masalah pada Direktif robots valid"
+        },
+        {
+            "code": "ROB-006",
+            "name": "Meta robots tidak berada di body",
+            "selector": "body meta[name=\"robots\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Meta robots tidak berada di body",
+            "reason_template": "Meta tag di luar head dapat diabaikan.",
+            "recommendation": "Pindahkan ke head.",
+            "issue_message": "Masalah pada Meta robots tidak berada di body"
+        },
+        {
+            "code": "ROB-007",
+            "name": "max-image-preview:large aktif (Discover\/gambar besar)",
+            "selector": "meta[name=\"robots\"][content*=\"max-image-preview:large\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "max-image-preview:large aktif (Discover\/gambar besar)",
+            "reason_template": "Diperlukan agar gambar besar tampil di Google Discover.",
+            "recommendation": "<meta name=\"robots\" content=\"max-image-preview:large\">",
+            "issue_message": "Masalah pada max-image-preview:large aktif (Discover\/gambar besar)"
+        },
+        {
+            "code": "ROB-008",
+            "name": "Gambar tidak diblokir dari indeks",
+            "selector": "meta[name=\"robots\"][content*=\"noimageindex\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Gambar tidak diblokir dari indeks",
+            "reason_template": "noimageindex menghilangkan gambar dari Google Images.",
+            "recommendation": "Hapus kecuali disengaja.",
+            "issue_message": "Masalah pada Gambar tidak diblokir dari indeks"
+        },
+        {
+            "code": "ROB-009",
+            "name": "Tidak ada noarchive tak disengaja",
+            "selector": "meta[name=\"robots\"][content*=\"noarchive\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Tidak ada noarchive tak disengaja",
+            "reason_template": "Mencegah cache\/preview; biasanya bukan pilihan sengaja.",
+            "recommendation": "Hapus bila tak diperlukan.",
+            "issue_message": "Masalah pada Tidak ada noarchive tak disengaja"
+        },
+        {
+            "code": "LNK-001",
+            "name": "Tidak ada <a href=\"\"> kosong",
+            "selector": "a[href=\"\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada <a href=\"\"> kosong",
+            "reason_template": "Link tanpa tujuan tidak bisa di-crawl.",
+            "recommendation": "Isi URL atau ubah menjadi <button>.",
+            "issue_message": "Masalah pada Tidak ada <a href=\"\"> kosong"
+        },
+        {
+            "code": "LNK-002",
+            "name": "Tidak ada link javascript:",
+            "selector": "a[href^=\"javascript:\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada link javascript:",
+            "reason_template": "Google tidak mengikuti link javascript:; PageRank tidak mengalir.",
+            "recommendation": "Gunakan href asli + event listener.",
+            "issue_message": "Masalah pada Tidak ada link javascript:"
+        },
+        {
+            "code": "LNK-003",
+            "name": "Tidak ada link href=\"#\" sebagai navigasi",
+            "selector": "a[href=\"#\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada link href=\"#\" sebagai navigasi",
+            "reason_template": "Anchor kosong tidak bisa di-crawl dan melompat ke atas halaman.",
+            "recommendation": "Ganti dengan URL nyata atau <button>.",
+            "issue_message": "Masalah pada Tidak ada link href=\"#\" sebagai navigasi"
+        },
+        {
+            "code": "LNK-004",
+            "name": "Tidak ada <a> tanpa href yang memakai onclick",
+            "selector": "a:not([href])[onclick]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada <a> tanpa href yang memakai onclick",
+            "reason_template": "Navigasi berbasis onclick tidak terlihat oleh crawler.",
+            "recommendation": "Tambahkan href yang valid.",
+            "issue_message": "Masalah pada Tidak ada <a> tanpa href yang memakai onclick"
+        },
+        {
+            "code": "LNK-005",
+            "name": "target=_blank dilengkapi rel noopener",
+            "selector": "a[target=\"_blank\"]:not([rel*=\"noopener\"]):not([rel*=\"noreferrer\"])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "target=_blank dilengkapi rel noopener",
+            "reason_template": "Tanpa noopener, halaman tujuan berpotensi memegang window.opener (celah keamanan di browser lama).",
+            "recommendation": "Tambahkan rel=\"noopener\".",
+            "issue_message": "Masalah pada target=_blank dilengkapi rel noopener"
+        },
+        {
+            "code": "LNK-006",
+            "name": "Tidak ada link kosong tanpa label",
+            "selector": "a:empty:not([aria-label]):not([aria-labelledby]):not([title])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada link kosong tanpa label",
+            "reason_template": "Link tanpa teks\/label tidak bermakna bagi crawler dan screen reader.",
+            "recommendation": "Beri teks atau aria-label.",
+            "issue_message": "Masalah pada Tidak ada link kosong tanpa label"
+        },
+        {
+            "code": "LNK-007",
+            "name": "Tidak ada link ke http:\/\/ (non-HTTPS)",
+            "selector": "a[href^=\"http:\/\/\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada link ke http:\/\/ (non-HTTPS)",
+            "reason_template": "Link keluar\/dalam ke HTTP mengindikasikan sisa migrasi HTTPS yang belum tuntas.",
+            "recommendation": "Update ke https:\/\/.",
+            "issue_message": "Masalah pada Tidak ada link ke http:\/\/ (non-HTTPS)"
+        },
+        {
+            "code": "LNK-008",
+            "name": "Tidak ada link ke localhost\/IP lokal",
+            "selector": "a[href*=\"localhost\"], a[href*=\"127.0.0.1\"], a[href*=\"192.168.\"], a[href*=\".local\/\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada link ke localhost\/IP lokal",
+            "reason_template": "Sisa URL development di produksi.",
+            "recommendation": "Ganti dengan URL produksi.",
+            "issue_message": "Masalah pada Tidak ada link ke localhost\/IP lokal"
+        },
+        {
+            "code": "LNK-009",
+            "name": "Tidak ada link file:\/\/",
+            "selector": "a[href^=\"file:\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada link file:\/\/",
+            "reason_template": "Link file lokal tidak bekerja bagi pengunjung.",
+            "recommendation": "Perbaiki URL.",
+            "issue_message": "Masalah pada Tidak ada link file:\/\/"
+        },
+        {
+            "code": "LNK-010",
+            "name": "Tidak memakai hashbang (#!)",
+            "selector": "a[href*=\"#!\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak memakai hashbang (#!)",
+            "reason_template": "Skema AJAX crawling lama (#!) sudah usang.",
+            "recommendation": "Gunakan URL bersih + History API.",
+            "issue_message": "Masalah pada Tidak memakai hashbang (#!)"
+        },
+        {
+            "code": "LNK-011",
+            "name": "Tidak memakai rel=prev\/next (usang)",
+            "selector": "link[rel=\"prev\"], link[rel=\"next\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Tidak memakai rel=prev\/next (usang)",
+            "reason_template": "Google berhenti memakai rel prev\/next sebagai sinyal sejak 2019; tidak berbahaya tetapi tidak berguna.",
+            "recommendation": "Opsional dihapus.",
+            "issue_message": "Masalah pada Tidak memakai rel=prev\/next (usang)"
+        },
+        {
+            "code": "LNK-012",
+            "name": "Tidak ada link dengan spasi di awal href",
+            "selector": "a[href^=\" \"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada link dengan spasi di awal href",
+            "reason_template": "Spasi di awal membuat URL salah resolve.",
+            "recommendation": "Trim href.",
+            "issue_message": "Masalah pada Tidak ada link dengan spasi di awal href"
+        },
+        {
+            "code": "LNK-013",
+            "name": "Tidak ada tombol tanpa nama",
+            "selector": "button:empty:not([aria-label]):not([aria-labelledby]):not([title])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada tombol tanpa nama",
+            "reason_template": "Tombol tanpa label tidak bisa dipahami teknologi bantu.",
+            "recommendation": "Beri teks atau aria-label.",
+            "issue_message": "Masalah pada Tidak ada tombol tanpa nama"
+        },
+        {
+            "code": "IMG-001",
+            "name": "Semua <img> punya atribut alt",
+            "selector": "img:not([alt])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Semua <img> punya atribut alt",
+            "reason_template": "Alt adalah sinyal utama Google Images dan syarat aksesibilitas. Gambar dekoratif boleh alt=\"\".",
+            "recommendation": "Tambahkan alt deskriptif (atau alt=\"\" untuk dekoratif).",
+            "issue_message": "Masalah pada Semua <img> punya atribut alt"
+        },
+        {
+            "code": "IMG-002",
+            "name": "Tidak ada <img> tanpa sumber",
+            "selector": "img[src=\"\"], img:not([src]):not([data-src]):not([srcset]):not([data-srcset]):not([data-lazy-src])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada <img> tanpa sumber",
+            "reason_template": "Gambar tanpa sumber = broken image dan request sia-sia.",
+            "recommendation": "Isi src atau hapus elemen.",
+            "issue_message": "Masalah pada Tidak ada <img> tanpa sumber"
+        },
+        {
+            "code": "IMG-003",
+            "name": "Gambar punya width & height (cegah CLS)",
+            "selector": "img:not([width]), img:not([height])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Gambar punya width & height (cegah CLS)",
+            "reason_template": "Dimensi eksplisit mencadangkan ruang sebelum gambar dimuat sehingga menurunkan Cumulative Layout Shift.",
+            "recommendation": "Tambahkan width\/height atau CSS aspect-ratio.",
+            "issue_message": "Masalah pada Gambar punya width & height (cegah CLS)"
+        },
+        {
+            "code": "IMG-004",
+            "name": "Alt bukan nama file",
+            "selector": "img[alt$=\".jpg\"], img[alt$=\".jpeg\"], img[alt$=\".png\"], img[alt$=\".webp\"], img[alt$=\".gif\"], img[alt$=\".svg\"], img[alt^=\"IMG_\"], img[alt^=\"DSC\"], img[alt^=\"Screenshot\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Alt bukan nama file",
+            "reason_template": "Alt berupa nama file tidak mendeskripsikan gambar.",
+            "recommendation": "Tulis deskripsi singkat tentang isi gambar.",
+            "issue_message": "Masalah pada Alt bukan nama file"
+        },
+        {
+            "code": "IMG-005",
+            "name": "Alt bukan kata generik",
+            "selector": "img[alt=\"image\"], img[alt=\"photo\"], img[alt=\"picture\"], img[alt=\"gambar\"], img[alt=\"foto\"], img[alt=\"img\"], img[alt=\"banner\"], img[alt=\"logo\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Alt bukan kata generik",
+            "reason_template": "Alt generik tidak memberi konteks. (Untuk logo gunakan nama brand.)",
+            "recommendation": "Deskripsikan isi atau fungsi gambar.",
+            "issue_message": "Masalah pada Alt bukan kata generik"
+        },
+        {
+            "code": "IMG-006",
+            "name": "Alt tidak diawali 'gambar\/foto dari'",
+            "selector": "img[alt^=\"image of\"], img[alt^=\"picture of\"], img[alt^=\"photo of\"], img[alt^=\"gambar dari\"], img[alt^=\"foto dari\"], img[alt^=\"gambar \"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Alt tidak diawali 'gambar\/foto dari'",
+            "reason_template": "Screen reader sudah mengumumkan 'gambar'; awalan itu redundan.",
+            "recommendation": "Langsung deskripsikan isi.",
+            "issue_message": "Masalah pada Alt tidak diawali 'gambar\/foto dari'"
+        },
+        {
+            "code": "IMG-007",
+            "name": "Tidak ada LCP candidate yang lazy + fetchpriority high",
+            "selector": "img[loading=\"lazy\"][fetchpriority=\"high\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada LCP candidate yang lazy + fetchpriority high",
+            "reason_template": "Dua instruksi saling bertentangan; lazy-load pada gambar LCP memperlambat LCP.",
+            "recommendation": "Hapus loading=lazy dari gambar di atas lipatan.",
+            "issue_message": "Masalah pada Tidak ada LCP candidate yang lazy + fetchpriority high"
+        },
+        {
+            "code": "IMG-008",
+            "name": "Tidak memakai format gambar non-web",
+            "selector": "img[src$=\".bmp\"], img[src$=\".tif\"], img[src$=\".tiff\"], img[src$=\".BMP\"], img[src$=\".TIF\"], img[src$=\".TIFF\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak memakai format gambar non-web",
+            "reason_template": "BMP\/TIFF berukuran sangat besar dan tak didukung luas.",
+            "recommendation": "Konversi ke WebP\/AVIF\/JPEG\/PNG.",
+            "issue_message": "Masalah pada Tidak memakai format gambar non-web"
+        },
+        {
+            "code": "IMG-009",
+            "name": "Tidak ada gambar base64 inline",
+            "selector": "img[src^=\"data:image\"]:not([src^=\"data:image\/svg\"])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Tidak ada gambar base64 inline",
+            "reason_template": "Base64 membengkakkan HTML dan tidak bisa di-cache terpisah (ikon sangat kecil masih wajar).",
+            "recommendation": "Pindahkan ke file terpisah.",
+            "issue_message": "Masalah pada Tidak ada gambar base64 inline"
+        },
+        {
+            "code": "IMG-010",
+            "name": "iframe memakai loading attribute",
+            "selector": "iframe:not([loading])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "iframe memakai loading attribute",
+            "reason_template": "Iframe di bawah lipatan sebaiknya lazy-load.",
+            "recommendation": "Tambahkan loading=\"lazy\".",
+            "issue_message": "Masalah pada iframe memakai loading attribute"
+        },
+        {
+            "code": "IMG-011",
+            "name": "Ikon gambar kosong (input image) punya alt",
+            "selector": "input[type=\"image\"]:not([alt]), area:not([alt])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Ikon gambar kosong (input image) punya alt",
+            "reason_template": "Input image dan area tanpa alt tidak dapat dipahami.",
+            "recommendation": "Tambahkan alt.",
+            "issue_message": "Masalah pada Ikon gambar kosong (input image) punya alt"
+        },
+        {
+            "code": "PERF-001",
+            "name": "Tidak ada script render-blocking di head",
+            "selector": "head script[src]:not([async]):not([defer]):not([type=\"module\"])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada script render-blocking di head",
+            "reason_template": "Script sinkron di head menahan render dan memperburuk FCP\/LCP.",
+            "recommendation": "Tambahkan defer atau async.",
+            "issue_message": "Masalah pada Tidak ada script render-blocking di head"
+        },
+        {
+            "code": "PERF-002",
+            "name": "link preload punya atribut as",
+            "selector": "link[rel=\"preload\"]:not([as])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "link preload punya atribut as",
+            "reason_template": "Preload tanpa 'as' tidak efektif dan dapat diunduh dua kali.",
+            "recommendation": "Tambahkan as=\"script|style|font|image\".",
+            "issue_message": "Masalah pada link preload punya atribut as"
+        },
+        {
+            "code": "PERF-003",
+            "name": "Stylesheet tidak diletakkan di body",
+            "selector": "body link[rel=\"stylesheet\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Stylesheet tidak diletakkan di body",
+            "reason_template": "CSS di body menyebabkan re-render dan flash unstyled content.",
+            "recommendation": "Pindahkan ke head.",
+            "issue_message": "Masalah pada Stylesheet tidak diletakkan di body"
+        },
+        {
+            "code": "PERF-004",
+            "name": "Video autoplay selalu muted",
+            "selector": "video[autoplay]:not([muted])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Video autoplay selalu muted",
+            "reason_template": "Browser memblokir autoplay bersuara dan UX buruk.",
+            "recommendation": "Tambahkan muted atau hapus autoplay.",
+            "issue_message": "Masalah pada Video autoplay selalu muted"
+        },
+        {
+            "code": "PERF-005",
+            "name": "Tidak memakai @import dalam <style>",
+            "selector": "style",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*@import).*$\/s"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Tidak memakai @import dalam <style>",
+            "reason_template": "@import membuat rantai request CSS berurutan.",
+            "recommendation": "Gunakan <link> atau bundler.",
+            "issue_message": "Masalah pada Tidak memakai @import dalam <style>"
+        },
+        {
+            "code": "PERF-006",
+            "name": "Font ukuran inline terlalu kecil (<12px)",
+            "selector": "[style*=\"font-size:8px\"], [style*=\"font-size:9px\"], [style*=\"font-size:10px\"], [style*=\"font-size:11px\"], [style*=\"font-size: 8px\"], [style*=\"font-size: 9px\"], [style*=\"font-size: 10px\"], [style*=\"font-size: 11px\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Font ukuran inline terlalu kecil (<12px)",
+            "reason_template": "Teks <12px sulit dibaca di mobile (audit 'legible font sizes').",
+            "recommendation": "Gunakan minimal 12\u201316px.",
+            "issue_message": "Masalah pada Font ukuran inline terlalu kecil (<12px)"
+        },
+        {
+            "code": "PERF-007",
+            "name": "Font Google Fonts di-self-host (opsional)",
+            "selector": "link[href*=\"fonts.googleapis.com\"][rel=\"stylesheet\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Font Google Fonts di-self-host (opsional)",
+            "reason_template": "Opsional: hosting font lokal lebih cepat & privat.",
+            "recommendation": "Self-host font atau tambah preconnect.",
+            "issue_message": "Masalah pada Font Google Fonts di-self-host (opsional)"
+        },
+        {
+            "code": "OG-001",
+            "name": "og:title ada",
+            "selector": "meta[property=\"og:title\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:title ada",
+            "reason_template": "Judul yang tampil saat link dibagikan di Facebook, WhatsApp, LinkedIn, Telegram, Slack.",
+            "recommendation": "<meta property=\"og:title\" content=\"...\">",
+            "issue_message": "Masalah pada og:title ada"
+        },
+        {
+            "code": "OG-002",
+            "name": "og:description ada",
+            "selector": "meta[property=\"og:description\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:description ada",
+            "reason_template": "Deskripsi kartu pratinjau saat dibagikan.",
+            "recommendation": "<meta property=\"og:description\" content=\"...\">",
+            "issue_message": "Masalah pada og:description ada"
+        },
+        {
+            "code": "OG-003",
+            "name": "og:image ada",
+            "selector": "meta[property=\"og:image\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:image ada",
+            "reason_template": "Tanpa gambar, pratinjau link terlihat polos dan CTR social turun drastis.",
+            "recommendation": "<meta property=\"og:image\" content=\"https:\/\/...\/img.jpg\">",
+            "issue_message": "Masalah pada og:image ada"
+        },
+        {
+            "code": "OG-004",
+            "name": "og:url ada",
+            "selector": "meta[property=\"og:url\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:url ada",
+            "reason_template": "URL kanonik yang dipakai untuk menggabungkan share count.",
+            "recommendation": "<meta property=\"og:url\" content=\"https:\/\/...\">",
+            "issue_message": "Masalah pada og:url ada"
+        },
+        {
+            "code": "OG-005",
+            "name": "og:type ada",
+            "selector": "meta[property=\"og:type\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:type ada",
+            "reason_template": "Menentukan jenis objek (website, article, product).",
+            "recommendation": "<meta property=\"og:type\" content=\"website\">",
+            "issue_message": "Masalah pada og:type ada"
+        },
+        {
+            "code": "OG-006",
+            "name": "og:site_name ada",
+            "selector": "meta[property=\"og:site_name\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:site_name ada",
+            "reason_template": "Nama brand pada kartu pratinjau.",
+            "recommendation": "<meta property=\"og:site_name\" content=\"Nama Situs\">",
+            "issue_message": "Masalah pada og:site_name ada"
+        },
+        {
+            "code": "OG-007",
+            "name": "og:locale ada",
+            "selector": "meta[property=\"og:locale\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:locale ada",
+            "reason_template": "Bahasa\/locale konten untuk platform sosial.",
+            "recommendation": "<meta property=\"og:locale\" content=\"id_ID\">",
+            "issue_message": "Masalah pada og:locale ada"
+        },
+        {
+            "code": "OG-008",
+            "name": "og:title hanya satu",
+            "selector": "meta[property=\"og:title\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:title hanya satu",
+            "reason_template": "Duplikat membuat scraper memilih acak.",
+            "recommendation": "Hapus duplikat.",
+            "issue_message": "Masalah pada og:title hanya satu"
+        },
+        {
+            "code": "OG-009",
+            "name": "og:title maksimal 90 karakter",
+            "selector": "meta[property=\"og:title\"]",
+            "attribute": "content",
+            "type": "length",
+            "configuration": {
+                "min": 1,
+                "max": 90
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:title maksimal 90 karakter",
+            "reason_template": "Judul yang lebih panjang terpotong di kartu pratinjau.",
+            "recommendation": "Ringkas judul.",
+            "issue_message": "Masalah pada og:title maksimal 90 karakter"
+        },
+        {
+            "code": "OG-010",
+            "name": "og:description maksimal 200 karakter",
+            "selector": "meta[property=\"og:description\"]",
+            "attribute": "content",
+            "type": "length",
+            "configuration": {
+                "min": 1,
+                "max": 200
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:description maksimal 200 karakter",
+            "reason_template": "Sebagian platform memotong setelah \u00b1155\u2013200 karakter.",
+            "recommendation": "Ringkas deskripsi.",
+            "issue_message": "Masalah pada og:description maksimal 200 karakter"
+        },
+        {
+            "code": "OG-011",
+            "name": "og:image memakai URL HTTPS absolut",
+            "selector": "meta[property=\"og:image\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^https:\\\/\\\/\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:image memakai URL HTTPS absolut",
+            "reason_template": "Scraper sosial membutuhkan URL absolut, dan HTTPS menghindari mixed-content.",
+            "recommendation": "Gunakan URL penuh https:\/\/.",
+            "issue_message": "Masalah pada og:image memakai URL HTTPS absolut"
+        },
+        {
+            "code": "OG-012",
+            "name": "og:url memakai URL absolut",
+            "selector": "meta[property=\"og:url\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^https?:\\\/\\\/\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:url memakai URL absolut",
+            "reason_template": "og:url relatif tidak valid.",
+            "recommendation": "Gunakan URL penuh.",
+            "issue_message": "Masalah pada og:url memakai URL absolut"
+        },
+        {
+            "code": "OG-013",
+            "name": "og:type bernilai valid",
+            "selector": "meta[property=\"og:type\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(website|article|book|profile|product|business\\.business|place|music\\.(song|album|playlist|radio_station)|video\\.(movie|episode|tv_show|other))$\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "og:type bernilai valid",
+            "reason_template": "Nilai tidak dikenal diabaikan.",
+            "recommendation": "Pakai website \/ article \/ product, dst.",
+            "issue_message": "Masalah pada og:type bernilai valid"
+        },
+        {
+            "code": "OG-014",
+            "name": "og:image:width & height ada",
+            "selector": "meta[property=\"og:image:width\"], meta[property=\"og:image:height\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 2
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:image:width & height ada",
+            "reason_template": "Dimensi eksplisit mempercepat render kartu pada share pertama. Rekomendasi gambar 1200\u00d7630.",
+            "recommendation": "Tambahkan og:image:width dan og:image:height.",
+            "issue_message": "Masalah pada og:image:width & height ada"
+        },
+        {
+            "code": "OG-015",
+            "name": "og:image:alt ada",
+            "selector": "meta[property=\"og:image:alt\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:image:alt ada",
+            "reason_template": "Aksesibilitas gambar pratinjau.",
+            "recommendation": "<meta property=\"og:image:alt\" content=\"...\">",
+            "issue_message": "Masalah pada og:image:alt ada"
+        },
+        {
+            "code": "OG-016",
+            "name": "og:image bukan localhost\/staging",
+            "selector": "meta[property=\"og:image\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!https?:\\\/\\\/(localhost|127\\.|192\\.168\\.|[^\\\/]*\\.(local|test|staging|dev)(\\\/|$))).*$\/i"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "og:image bukan localhost\/staging",
+            "reason_template": "Gambar share menunjuk ke lingkungan development.",
+            "recommendation": "Ganti dengan URL produksi.",
+            "issue_message": "Masalah pada og:image bukan localhost\/staging"
+        },
+        {
+            "code": "OG-017",
+            "name": "og:url tidak berisi spasi\/fragmen",
+            "selector": "meta[property=\"og:url\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^\\s#]+$\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:url tidak berisi spasi\/fragmen",
+            "reason_template": "URL tidak bersih.",
+            "recommendation": "Rapikan URL.",
+            "issue_message": "Masalah pada og:url tidak berisi spasi\/fragmen"
+        },
+        {
+            "code": "TW-001",
+            "name": "twitter:card ada",
+            "selector": "meta[name=\"twitter:card\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "twitter:card ada",
+            "reason_template": "Tanpa twitter:card, X\/Twitter menampilkan link polos.",
+            "recommendation": "<meta name=\"twitter:card\" content=\"summary_large_image\">",
+            "issue_message": "Masalah pada twitter:card ada"
+        },
+        {
+            "code": "TW-002",
+            "name": "twitter:card bernilai valid",
+            "selector": "meta[name=\"twitter:card\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(summary|summary_large_image|app|player)$\/"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "twitter:card bernilai valid",
+            "reason_template": "Nilai tak dikenal menurunkan ke tampilan polos.",
+            "recommendation": "Pakai summary atau summary_large_image.",
+            "issue_message": "Masalah pada twitter:card bernilai valid"
+        },
+        {
+            "code": "TW-003",
+            "name": "twitter:title ada (atau fallback og:title)",
+            "selector": "meta[name=\"twitter:title\"], meta[property=\"og:title\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "twitter:title ada (atau fallback og:title)",
+            "reason_template": "X memakai og:title bila twitter:title tidak ada, jadi minimal salah satu harus ada.",
+            "recommendation": "Tambahkan twitter:title.",
+            "issue_message": "Masalah pada twitter:title ada (atau fallback og:title)"
+        },
+        {
+            "code": "TW-004",
+            "name": "twitter:image ada (atau fallback og:image)",
+            "selector": "meta[name=\"twitter:image\"], meta[property=\"og:image\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "twitter:image ada (atau fallback og:image)",
+            "reason_template": "Gambar kartu.",
+            "recommendation": "Tambahkan twitter:image.",
+            "issue_message": "Masalah pada twitter:image ada (atau fallback og:image)"
+        },
+        {
+            "code": "TW-005",
+            "name": "twitter:site berformat @username",
+            "selector": "meta[name=\"twitter:site\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^@\\w{1,15}$\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "twitter:site berformat @username",
+            "reason_template": "Menghubungkan kartu dengan akun brand.",
+            "recommendation": "Gunakan @namaakun.",
+            "issue_message": "Masalah pada twitter:site berformat @username"
+        },
+        {
+            "code": "TW-006",
+            "name": "twitter:image memakai HTTPS",
+            "selector": "meta[name=\"twitter:image\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^https:\\\/\\\/\/i"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "twitter:image memakai HTTPS",
+            "reason_template": "Gambar non-HTTPS gagal dimuat.",
+            "recommendation": "Gunakan HTTPS.",
+            "issue_message": "Masalah pada twitter:image memakai HTTPS"
+        },
+        {
+            "code": "TW-007",
+            "name": "twitter:image:alt ada",
+            "selector": "meta[name=\"twitter:image:alt\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "twitter:image:alt ada",
+            "reason_template": "Aksesibilitas kartu.",
+            "recommendation": "<meta name=\"twitter:image:alt\" content=\"...\">",
+            "issue_message": "Masalah pada twitter:image:alt ada"
+        },
+        {
+            "code": "SD-001",
+            "name": "JSON-LD ada",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "JSON-LD ada",
+            "reason_template": "Structured data memenuhi syarat rich result dan membantu mesin memahami entitas halaman.",
+            "recommendation": "<script type=\"application\/ld+json\">{...}<\/script>",
+            "issue_message": "Masalah pada JSON-LD ada"
+        },
+        {
+            "code": "SD-002",
+            "name": "JSON-LD tidak kosong",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "length",
+            "configuration": {
+                "min": 20
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "JSON-LD tidak kosong",
+            "reason_template": "Blok JSON-LD kosong tidak berguna dan dapat memicu error di Search Console.",
+            "recommendation": "Isi data atau hapus blok.",
+            "issue_message": "Masalah pada JSON-LD tidak kosong"
+        },
+        {
+            "code": "SD-003",
+            "name": "JSON-LD berawalan { atau [",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^\\s*[\\{\\[]\/"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "JSON-LD berawalan { atau [",
+            "reason_template": "Teks sebelum JSON (mis. komentar, tag) membuat parse gagal.",
+            "recommendation": "Pastikan isi murni JSON.",
+            "issue_message": "Masalah pada JSON-LD berawalan { atau ["
+        },
+        {
+            "code": "SD-004",
+            "name": "JSON-LD mendeklarasikan @context schema.org",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@context\"\\s*:\\s*(?:\\[[^\\]]*)?\"https?:\\\/\\\/schema\\.org\/i"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "JSON-LD mendeklarasikan @context schema.org",
+            "reason_template": "Tanpa @context vocabulary tidak dikenali.",
+            "recommendation": "\"@context\": \"https:\/\/schema.org\"",
+            "issue_message": "Masalah pada JSON-LD mendeklarasikan @context schema.org"
+        },
+        {
+            "code": "SD-005",
+            "name": "JSON-LD memiliki @type",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\/"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "JSON-LD memiliki @type",
+            "reason_template": "Tanpa @type entitas tidak terdefinisi.",
+            "recommendation": "Tambahkan \"@type\": \"Article\" dst.",
+            "issue_message": "Masalah pada JSON-LD memiliki @type"
+        },
+        {
+            "code": "SD-006",
+            "name": "JSON-LD tanpa trailing comma",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*,\\s*[\\}\\]]).*$\/s"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "JSON-LD tanpa trailing comma",
+            "reason_template": "Koma berlebih adalah kesalahan sintaks JSON paling umum dan membatalkan seluruh blok.",
+            "recommendation": "Hapus koma sebelum } atau ].",
+            "issue_message": "Masalah pada JSON-LD tanpa trailing comma"
+        },
+        {
+            "code": "SD-007",
+            "name": "JSON-LD tanpa placeholder",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*(lorem ipsum|example\\.com|yourdomain|your-domain|nama perusahaan|company name here)).*$\/is"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "JSON-LD tanpa placeholder",
+            "reason_template": "Data contoh yang lupa diganti melanggar kebijakan structured data (konten tidak sesuai halaman).",
+            "recommendation": "Ganti dengan data asli.",
+            "issue_message": "Masalah pada JSON-LD tanpa placeholder"
+        },
+        {
+            "code": "SD-008",
+            "name": "Microdata: itemscope punya itemtype",
+            "selector": "[itemscope]:not([itemtype])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Microdata: itemscope punya itemtype",
+            "reason_template": "Itemscope tanpa tipe tidak bermakna.",
+            "recommendation": "Tambahkan itemtype.",
+            "issue_message": "Masalah pada Microdata: itemscope punya itemtype"
+        },
+        {
+            "code": "SD-009",
+            "name": "Entitas Organization \/ WebSite \/ LocalBusiness ada (beranda)",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\\s*\"(Organization|Corporation|LocalBusiness|NGO|OnlineStore|WebSite)\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Entitas Organization \/ WebSite \/ LocalBusiness ada (beranda)",
+            "reason_template": "Untuk beranda, memudahkan Google mengenali brand\/situs (logo, nama situs, sitelinks search).",
+            "recommendation": "Tambahkan JSON-LD Organization & WebSite.",
+            "issue_message": "Masalah pada Entitas Organization \/ WebSite \/ LocalBusiness ada (beranda)"
+        },
+        {
+            "code": "SD-010",
+            "name": "BreadcrumbList ada",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\\s*\"BreadcrumbList\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "BreadcrumbList ada",
+            "reason_template": "Breadcrumb di hasil pencarian memperjelas hirarki halaman.",
+            "recommendation": "Tambahkan BreadcrumbList.",
+            "issue_message": "Masalah pada BreadcrumbList ada"
+        },
+        {
+            "code": "SD-011",
+            "name": "JSON-LD tanpa tanda kutip lengkung",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*[\\x{201C}\\x{201D}]\\s*[:,\\}\\]]).*$\/su"
+            },
+            "severity": "error",
+            "is_active": false,
+            "description": "JSON-LD tanpa tanda kutip lengkung",
+            "reason_template": "Smart quotes sebagai pembatas string (copy-paste dari Word) merusak JSON.",
+            "recommendation": "Ganti dengan tanda kutip lurus \".",
+            "issue_message": "Masalah pada JSON-LD tanpa tanda kutip lengkung"
+        },
+        {
+            "code": "SD-012",
+            "name": "WebSite punya potentialAction\/name (opsional)",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\\s*\"WebSite\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "WebSite punya potentialAction\/name (opsional)",
+            "reason_template": "Nama situs eksplisit membantu tampilan nama situs di SERP.",
+            "recommendation": "Tambahkan WebSite dengan name & url.",
+            "issue_message": "Masalah pada WebSite punya potentialAction\/name (opsional)"
+        },
+        {
+            "code": "I18-001",
+            "name": "Nilai hreflang valid",
+            "selector": "link[rel=\"alternate\"][hreflang]",
+            "attribute": "hreflang",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(x-default|[a-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|\\d{3}))?)$\/"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Nilai hreflang valid",
+            "reason_template": "Hreflang yang salah memutus targeting internasional di seluruh situs.",
+            "recommendation": "Gunakan ISO 639-1 (+ ISO 3166-1 region): en, id-ID, en-GB.",
+            "issue_message": "Masalah pada Nilai hreflang valid"
+        },
+        {
+            "code": "I18-002",
+            "name": "Href hreflang absolut",
+            "selector": "link[rel=\"alternate\"][hreflang]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^https?:\\\/\\\/\/i"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Href hreflang absolut",
+            "reason_template": "Hreflang membutuhkan URL absolut.",
+            "recommendation": "Gunakan URL penuh.",
+            "issue_message": "Masalah pada Href hreflang absolut"
+        },
+        {
+            "code": "I18-003",
+            "name": "Tidak memakai underscore pada hreflang",
+            "selector": "link[rel=\"alternate\"][hreflang*=\"_\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak memakai underscore pada hreflang",
+            "reason_template": "en_US salah; yang benar en-US.",
+            "recommendation": "Ganti _ menjadi -.",
+            "issue_message": "Masalah pada Tidak memakai underscore pada hreflang"
+        },
+        {
+            "code": "I18-004",
+            "name": "Tidak memakai kode negara keliru (en-uk, jp)",
+            "selector": "link[hreflang=\"en-uk\"], link[hreflang=\"en-UK\"], link[hreflang=\"jp\"], link[hreflang=\"JP\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak memakai kode negara keliru (en-uk, jp)",
+            "reason_template": "Kode benar: en-GB (bukan en-UK) dan ja (bahasa Jepang, bukan jp).",
+            "recommendation": "Perbaiki kode.",
+            "issue_message": "Masalah pada Tidak memakai kode negara keliru (en-uk, jp)"
+        },
+        {
+            "code": "I18-005",
+            "name": "Ada hreflang x-default",
+            "selector": "link[rel=\"alternate\"][hreflang=\"x-default\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Ada hreflang x-default",
+            "reason_template": "Menunjuk halaman fallback untuk bahasa\/region tak terdaftar.",
+            "recommendation": "Tambahkan hreflang=\"x-default\".",
+            "issue_message": "Masalah pada Ada hreflang x-default"
+        },
+        {
+            "code": "I18-006",
+            "name": "Hreflang berada di head",
+            "selector": "body link[hreflang]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Hreflang berada di head",
+            "reason_template": "Hreflang di body tidak diproses.",
+            "recommendation": "Pindahkan ke head.",
+            "issue_message": "Masalah pada Hreflang berada di head"
+        },
+        {
+            "code": "I18-007",
+            "name": "Hreflang tanpa fragment",
+            "selector": "link[rel=\"alternate\"][hreflang]",
+            "attribute": "href",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^[^#]*$\/"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Hreflang tanpa fragment",
+            "reason_template": "Fragment tidak valid sebagai alternatif.",
+            "recommendation": "Hapus #....",
+            "issue_message": "Masalah pada Hreflang tanpa fragment"
+        },
+        {
+            "code": "I18-008",
+            "name": "Ada hreflang alternatif (halaman multibahasa)",
+            "selector": "link[rel=\"alternate\"][hreflang]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Ada hreflang alternatif (halaman multibahasa)",
+            "reason_template": "Untuk situs multibahasa\/multiregion.",
+            "recommendation": "Tambahkan <link rel=\"alternate\" hreflang=\"...\" href=\"...\">.",
+            "issue_message": "Masalah pada Ada hreflang alternatif (halaman multibahasa)"
+        },
+        {
+            "code": "CON-001",
+            "name": "Tidak ada Lorem Ipsum",
+            "selector": "body",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*lorem ipsum).*$\/is"
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada Lorem Ipsum",
+            "reason_template": "Teks dummy menandakan halaman belum selesai dan kualitas rendah.",
+            "recommendation": "Ganti dengan konten asli.",
+            "issue_message": "Masalah pada Tidak ada Lorem Ipsum"
+        },
+        {
+            "code": "CON-002",
+            "name": "Tidak ada placeholder TODO\/TBD\/Under Construction",
+            "selector": "body",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?!.*\\b(TODO|TBD|FIXME|under construction|coming soon|sedang dalam pengembangan|segera hadir)\\b).*$\/is"
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada placeholder TODO\/TBD\/Under Construction",
+            "reason_template": "Sisa placeholder menurunkan kepercayaan pengguna.",
+            "recommendation": "Selesaikan atau noindex halaman.",
+            "issue_message": "Masalah pada Tidak ada placeholder TODO\/TBD\/Under Construction"
+        },
+        {
+            "code": "CON-003",
+            "name": "Konten tidak tipis (\u22651000 karakter teks)",
+            "selector": "body",
+            "attribute": null,
+            "type": "length",
+            "configuration": {
+                "min": 1000
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Konten tidak tipis (\u22651000 karakter teks)",
+            "reason_template": "Halaman sangat tipis jarang bermanfaat. 1000 karakter \u2248 150\u2013200 kata; sesuaikan per tipe halaman.",
+            "recommendation": "Tambahkan konten orisinal yang menjawab intent pencarian.",
+            "issue_message": "Masalah pada Konten tidak tipis (\u22651000 karakter teks)"
+        },
+        {
+            "code": "CON-004",
+            "name": "Ada elemen <main>",
+            "selector": "main",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": true,
+            "description": "Ada elemen <main>",
+            "reason_template": "Landmark utama membantu parser dan screen reader menemukan konten inti.",
+            "recommendation": "Bungkus konten utama dengan <main>.",
+            "issue_message": "Masalah pada Ada elemen <main>"
+        },
+        {
+            "code": "CON-005",
+            "name": "Hanya satu <main>",
+            "selector": "main",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 1
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Hanya satu <main>",
+            "reason_template": "Hanya satu main yang terlihat per halaman.",
+            "recommendation": "Hapus main ganda.",
+            "issue_message": "Masalah pada Hanya satu <main>"
+        },
+        {
+            "code": "CON-006",
+            "name": "Tidak ada teks tersembunyi (cloaking)",
+            "selector": "[style*=\"font-size:0\"], [style*=\"font-size: 0\"], [style*=\"text-indent:-9999\"], [style*=\"text-indent: -9999\"], [style*=\"left:-9999\"], [style*=\"left: -9999\"], [style*=\"visibility:hidden\"][style*=\"position:absolute\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada teks tersembunyi (cloaking)",
+            "reason_template": "Teks disembunyikan untuk keyword stuffing adalah pelanggaran spam policy.",
+            "recommendation": "Hapus teks tersembunyi yang tidak untuk pengguna.",
+            "issue_message": "Masalah pada Tidak ada teks tersembunyi (cloaking)"
+        },
+        {
+            "code": "CON-007",
+            "name": "Ada <nav>",
+            "selector": "nav",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Ada <nav>",
+            "reason_template": "Navigasi semantik membantu crawler dan aksesibilitas.",
+            "recommendation": "Bungkus menu dengan <nav>.",
+            "issue_message": "Masalah pada Ada <nav>"
+        },
+        {
+            "code": "CON-008",
+            "name": "Ada <header> dan <footer>",
+            "selector": "header, footer",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Ada <header> dan <footer>",
+            "reason_template": "Struktur semantik halaman.",
+            "recommendation": "Gunakan elemen semantik.",
+            "issue_message": "Masalah pada Ada <header> dan <footer>"
+        },
+        {
+            "code": "CON-009",
+            "name": "Breadcrumb navigasi ada",
+            "selector": "nav[aria-label*=\"readcrumb\"], .breadcrumb, .breadcrumbs, [itemtype*=\"BreadcrumbList\"], ol.breadcrumb",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Breadcrumb navigasi ada",
+            "reason_template": "Memperjelas hirarki, memperkuat internal link.",
+            "recommendation": "Tambahkan breadcrumb.",
+            "issue_message": "Masalah pada Breadcrumb navigasi ada"
+        },
+        {
+            "code": "A11-001",
+            "name": "Tidak ada tabindex positif",
+            "selector": "[tabindex]:not([tabindex=\"0\"]):not([tabindex=\"-1\"])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada tabindex positif",
+            "reason_template": "Tabindex >0 mengacak urutan fokus keyboard.",
+            "recommendation": "Gunakan 0 atau -1.",
+            "issue_message": "Masalah pada Tidak ada tabindex positif"
+        },
+        {
+            "code": "A11-002",
+            "name": "Body tidak aria-hidden",
+            "selector": "body[aria-hidden=\"true\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Body tidak aria-hidden",
+            "reason_template": "Menyembunyikan seluruh halaman dari teknologi bantu.",
+            "recommendation": "Hapus atribut.",
+            "issue_message": "Masalah pada Body tidak aria-hidden"
+        },
+        {
+            "code": "A11-003",
+            "name": "iframe punya title",
+            "selector": "iframe:not([title])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "iframe punya title",
+            "reason_template": "Title menjelaskan isi frame bagi screen reader.",
+            "recommendation": "Tambahkan title.",
+            "issue_message": "Masalah pada iframe punya title"
+        },
+        {
+            "code": "A11-004",
+            "name": "role=img punya label",
+            "selector": "[role=\"img\"]:not([aria-label]):not([aria-labelledby])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "role=img punya label",
+            "reason_template": "Elemen role img tanpa nama tidak bermakna.",
+            "recommendation": "Tambahkan aria-label.",
+            "issue_message": "Masalah pada role=img punya label"
+        },
+        {
+            "code": "A11-005",
+            "name": "Link skip-to-content tersedia",
+            "selector": "a[href=\"#main\"], a[href=\"#content\"], a[href=\"#main-content\"], a.skip-link, a.skip-to-content",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link skip-to-content tersedia",
+            "reason_template": "Memudahkan pengguna keyboard melewati navigasi.",
+            "recommendation": "Tambahkan <a href=\"#main\" class=\"skip-link\">.",
+            "issue_message": "Masalah pada Link skip-to-content tersedia"
+        },
+        {
+            "code": "A11-006",
+            "name": "Form: input punya label\/aria-label",
+            "selector": "input:not([type=\"hidden\"]):not([type=\"submit\"]):not([type=\"button\"]):not([type=\"reset\"]):not([type=\"image\"]):not([aria-label]):not([aria-labelledby]):not([placeholder])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Form: input punya label\/aria-label",
+            "reason_template": "Input tanpa nama sulit dipakai (perkiraan; label[for] tidak terdeteksi oleh selector).",
+            "recommendation": "Tambahkan <label> atau aria-label.",
+            "issue_message": "Masalah pada Form: input punya label\/aria-label"
+        },
+        {
+            "code": "SEC-001",
+            "name": "Tidak ada mixed content aktif (script\/css\/iframe via http)",
+            "selector": "script[src^=\"http:\/\/\"], link[rel=\"stylesheet\"][href^=\"http:\/\/\"], iframe[src^=\"http:\/\/\"], object[data^=\"http:\/\/\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Tidak ada mixed content aktif (script\/css\/iframe via http)",
+            "reason_template": "Browser memblokir sumber aktif HTTP pada halaman HTTPS sehingga halaman rusak.",
+            "recommendation": "Ubah ke https:\/\/.",
+            "issue_message": "Masalah pada Tidak ada mixed content aktif (script\/css\/iframe via http)"
+        },
+        {
+            "code": "SEC-002",
+            "name": "Tidak ada mixed content pasif (gambar\/media via http)",
+            "selector": "img[src^=\"http:\/\/\"], video[src^=\"http:\/\/\"], audio[src^=\"http:\/\/\"], source[src^=\"http:\/\/\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": true,
+            "description": "Tidak ada mixed content pasif (gambar\/media via http)",
+            "reason_template": "Gambar HTTP memicu peringatan 'tidak sepenuhnya aman'.",
+            "recommendation": "Ubah ke https:\/\/.",
+            "issue_message": "Masalah pada Tidak ada mixed content pasif (gambar\/media via http)"
+        },
+        {
+            "code": "SEC-003",
+            "name": "Form tidak mengirim ke http:\/\/",
+            "selector": "form[action^=\"http:\/\/\"]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "error",
+            "is_active": true,
+            "description": "Form tidak mengirim ke http:\/\/",
+            "reason_template": "Data form dikirim tanpa enkripsi.",
+            "recommendation": "Gunakan https:\/\/.",
+            "issue_message": "Masalah pada Form tidak mengirim ke http:\/\/"
+        },
+        {
+            "code": "SEC-004",
+            "name": "Script CDN pihak ketiga memakai SRI",
+            "selector": "script[src*=\"cdnjs.cloudflare.com\"]:not([integrity]), script[src*=\"cdn.jsdelivr.net\"]:not([integrity]), script[src*=\"unpkg.com\"]:not([integrity])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Script CDN pihak ketiga memakai SRI",
+            "reason_template": "Subresource Integrity mencegah script CDN yang disusupi dieksekusi.",
+            "recommendation": "Tambahkan integrity=\"sha384-...\" crossorigin=\"anonymous\".",
+            "issue_message": "Masalah pada Script CDN pihak ketiga memakai SRI"
+        },
+        {
+            "code": "SEC-005",
+            "name": "Tidak ada script inline event handler (onclick=...)",
+            "selector": "[onclick], [onload], [onerror], [onmouseover]",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Tidak ada script inline event handler (onclick=...)",
+            "reason_template": "Inline handler menghalangi Content-Security-Policy ketat.",
+            "recommendation": "Pindahkan ke addEventListener.",
+            "issue_message": "Masalah pada Tidak ada script inline event handler (onclick=...)"
+        },
+        {
+            "code": "SEC-006",
+            "name": "Input password memakai autocomplete",
+            "selector": "input[type=\"password\"]:not([autocomplete])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Input password memakai autocomplete",
+            "reason_template": "Membantu password manager dan UX login.",
+            "recommendation": "Tambahkan autocomplete=\"current-password\" \/ \"new-password\".",
+            "issue_message": "Masalah pada Input password memakai autocomplete"
+        },
+        {
+            "code": "AMP-001",
+            "name": "Halaman utama menautkan amphtml",
+            "selector": "link[rel=\"amphtml\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Halaman utama menautkan amphtml",
+            "reason_template": "Hanya untuk situs yang masih menyediakan AMP. AMP bukan syarat Top Stories lagi, jadi tidak wajib.",
+            "recommendation": "<link rel=\"amphtml\" href=\"...\">",
+            "issue_message": "Masalah pada Halaman utama menautkan amphtml"
+        },
+        {
+            "code": "AMP-002",
+            "name": "Halaman AMP menandai <html amp>",
+            "selector": "html[amp]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "error",
+            "is_active": false,
+            "description": "Halaman AMP menandai <html amp>",
+            "reason_template": "Penanda dokumen AMP.",
+            "recommendation": "Tambahkan atribut amp.",
+            "issue_message": "Masalah pada Halaman AMP menandai <html amp>"
+        },
+        {
+            "code": "AMP-003",
+            "name": "Halaman AMP punya canonical ke versi utama",
+            "selector": "link[rel=\"canonical\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "error",
+            "is_active": false,
+            "description": "Halaman AMP punya canonical ke versi utama",
+            "reason_template": "AMP tanpa canonical = error di Semrush.",
+            "recommendation": "Tambahkan canonical ke halaman non-AMP.",
+            "issue_message": "Masalah pada Halaman AMP punya canonical ke versi utama"
+        },
+        {
+            "code": "AMP-004",
+            "name": "og:title sama dengan AMP",
+            "selector": "meta[property=\"og:title\"]",
+            "attribute": "content",
+            "type": "compare_amp",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:title sama dengan AMP",
+            "reason_template": "Konsistensi metadata sosial.",
+            "recommendation": "Samakan.",
+            "issue_message": "Masalah pada og:title sama dengan AMP"
+        },
+        {
+            "code": "AMP-005",
+            "name": "og:image sama dengan AMP",
+            "selector": "meta[property=\"og:image\"]",
+            "attribute": "content",
+            "type": "compare_amp",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:image sama dengan AMP",
+            "reason_template": "Konsistensi metadata sosial.",
+            "recommendation": "Samakan.",
+            "issue_message": "Masalah pada og:image sama dengan AMP"
+        },
+        {
+            "code": "AMP-006",
+            "name": "Robots meta sama dengan AMP",
+            "selector": "meta[name=\"robots\"]",
+            "attribute": "content",
+            "type": "compare_amp",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Robots meta sama dengan AMP",
+            "reason_template": "Versi AMP tidak boleh lebih permisif\/restriktif tanpa sengaja.",
+            "recommendation": "Samakan.",
+            "issue_message": "Masalah pada Robots meta sama dengan AMP"
+        },
+        {
+            "code": "TRU-001",
+            "name": "Link ke halaman Kontak",
+            "selector": "a[href*=\"contact\"], a[href*=\"kontak\"], a[href*=\"hubungi\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link ke halaman Kontak",
+            "reason_template": "Informasi kontak yang mudah ditemukan adalah sinyal kepercayaan.",
+            "recommendation": "Tambahkan tautan Kontak di header\/footer.",
+            "issue_message": "Masalah pada Link ke halaman Kontak"
+        },
+        {
+            "code": "TRU-002",
+            "name": "Link ke halaman Tentang",
+            "selector": "a[href*=\"about\"], a[href*=\"tentang\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link ke halaman Tentang",
+            "reason_template": "Menjelaskan siapa di balik situs.",
+            "recommendation": "Tambahkan halaman Tentang Kami.",
+            "issue_message": "Masalah pada Link ke halaman Tentang"
+        },
+        {
+            "code": "TRU-003",
+            "name": "Link ke Kebijakan Privasi",
+            "selector": "a[href*=\"privacy\"], a[href*=\"privasi\"], a[href*=\"kebijakan\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link ke Kebijakan Privasi",
+            "reason_template": "Wajib untuk situs yang mengumpulkan data atau memakai iklan.",
+            "recommendation": "Tambahkan halaman kebijakan privasi.",
+            "issue_message": "Masalah pada Link ke Kebijakan Privasi"
+        },
+        {
+            "code": "TRU-004",
+            "name": "Link ke Syarat & Ketentuan",
+            "selector": "a[href*=\"terms\"], a[href*=\"syarat\"], a[href*=\"ketentuan\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link ke Syarat & Ketentuan",
+            "reason_template": "Transparansi legal.",
+            "recommendation": "Tambahkan halaman S&K.",
+            "issue_message": "Masalah pada Link ke Syarat & Ketentuan"
+        },
+        {
+            "code": "TRU-005",
+            "name": "Informasi kontak langsung (mailto\/tel)",
+            "selector": "a[href^=\"mailto:\"], a[href^=\"tel:\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Informasi kontak langsung (mailto\/tel)",
+            "reason_template": "Kontak yang dapat diklik meningkatkan kepercayaan.",
+            "recommendation": "Tambahkan email\/telepon.",
+            "issue_message": "Masalah pada Informasi kontak langsung (mailto\/tel)"
+        },
+        {
+            "code": "TRU-006",
+            "name": "Link rel=sponsored\/ugc untuk link berbayar\/pengguna ditandai",
+            "selector": "a[href*=\"utm_medium=affiliate\"]:not([rel*=\"sponsored\"]), a[href*=\"aff=\"]:not([rel*=\"sponsored\"])",
+            "attribute": null,
+            "type": "count",
+            "configuration": {
+                "expected_count": 0
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link rel=sponsored\/ugc untuk link berbayar\/pengguna ditandai",
+            "reason_template": "Link afiliasi harus ditandai rel=sponsored.",
+            "recommendation": "Tambahkan rel=\"sponsored nofollow\".",
+            "issue_message": "Masalah pada Link rel=sponsored\/ugc untuk link berbayar\/pengguna ditandai"
+        },
+        {
+            "code": "ART-001",
+            "name": "og:type = article",
+            "selector": "meta[property=\"og:type\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^article$\/i"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:type = article",
+            "reason_template": "Penanda jenis konten untuk platform sosial.",
+            "recommendation": "og:type = \"article\"",
+            "issue_message": "Masalah pada og:type = article"
+        },
+        {
+            "code": "ART-002",
+            "name": "article:published_time berformat ISO 8601",
+            "selector": "meta[property=\"article:published_time\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?(Z|[+-]\\d{2}:?\\d{2})?)?$\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "article:published_time berformat ISO 8601",
+            "reason_template": "Tanggal terbit yang valid membantu freshness dan tampilan tanggal.",
+            "recommendation": "Contoh: 2026-10-03T08:00:00+07:00",
+            "issue_message": "Masalah pada article:published_time berformat ISO 8601"
+        },
+        {
+            "code": "ART-003",
+            "name": "article:modified_time ada",
+            "selector": "meta[property=\"article:modified_time\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "article:modified_time ada",
+            "reason_template": "Menunjukkan pembaruan konten.",
+            "recommendation": "Tambahkan tanggal modifikasi.",
+            "issue_message": "Masalah pada article:modified_time ada"
+        },
+        {
+            "code": "ART-004",
+            "name": "Elemen <time datetime> ada",
+            "selector": "time[datetime]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Elemen <time datetime> ada",
+            "reason_template": "Tanggal yang dapat dibaca mesin.",
+            "recommendation": "Gunakan <time datetime=\"2026-10-03\">.",
+            "issue_message": "Masalah pada Elemen <time datetime> ada"
+        },
+        {
+            "code": "ART-005",
+            "name": "JSON-LD Article\/BlogPosting\/NewsArticle",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\\s*\"(Article|BlogPosting|NewsArticle|TechArticle)\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "JSON-LD Article\/BlogPosting\/NewsArticle",
+            "reason_template": "Mendukung rich result artikel dan memperjelas entitas.",
+            "recommendation": "Tambahkan JSON-LD Article.",
+            "issue_message": "Masalah pada JSON-LD Article\/BlogPosting\/NewsArticle"
+        },
+        {
+            "code": "ART-006",
+            "name": "JSON-LD Article memiliki headline, datePublished, author, image",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?=.*\"headline\"\\s*:)(?=.*\"datePublished\"\\s*:)(?=.*\"author\"\\s*:)(?=.*\"image\"\\s*:).*$\/s"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "JSON-LD Article memiliki headline, datePublished, author, image",
+            "reason_template": "Properti yang direkomendasikan Google untuk Article.",
+            "recommendation": "Lengkapi properti.",
+            "issue_message": "Masalah pada JSON-LD Article memiliki headline, datePublished, author, image"
+        },
+        {
+            "code": "ART-007",
+            "name": "Penulis ditampilkan",
+            "selector": "[rel=\"author\"], [itemprop=\"author\"], .author, .byline, meta[name=\"author\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Penulis ditampilkan",
+            "reason_template": "Atribusi penulis memperkuat kredibilitas.",
+            "recommendation": "Tampilkan byline.",
+            "issue_message": "Masalah pada Penulis ditampilkan"
+        },
+        {
+            "code": "ECO-001",
+            "name": "JSON-LD Product ada",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\\s*\"Product\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "JSON-LD Product ada",
+            "reason_template": "Syarat rich result produk (harga, stok, rating).",
+            "recommendation": "Tambahkan Product schema.",
+            "issue_message": "Masalah pada JSON-LD Product ada"
+        },
+        {
+            "code": "ECO-002",
+            "name": "Product memiliki offers: price & priceCurrency",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?=.*\"offers\"\\s*:)(?=.*\"price\"\\s*:)(?=.*\"priceCurrency\"\\s*:).*$\/s"
+            },
+            "severity": "error",
+            "is_active": false,
+            "description": "Product memiliki offers: price & priceCurrency",
+            "reason_template": "Tanpa offers valid, rich result produk tidak muncul.",
+            "recommendation": "Lengkapi offers.",
+            "issue_message": "Masalah pada Product memiliki offers: price & priceCurrency"
+        },
+        {
+            "code": "ECO-003",
+            "name": "availability bernilai valid",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"availability\"\\s*:\\s*\"(https?:\\\/\\\/schema\\.org\\\/)?(InStock|OutOfStock|PreOrder|BackOrder|SoldOut|Discontinued|LimitedAvailability|OnlineOnly|InStoreOnly|PreSale)\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "availability bernilai valid",
+            "reason_template": "Stok tampil di hasil pencarian.",
+            "recommendation": "Gunakan enumerasi schema.org\/ItemAvailability.",
+            "issue_message": "Masalah pada availability bernilai valid"
+        },
+        {
+            "code": "ECO-004",
+            "name": "Identitas produk: sku \/ gtin \/ mpn",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"(sku|gtin\\d*|mpn)\"\\s*:\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Identitas produk: sku \/ gtin \/ mpn",
+            "reason_template": "Identifier membantu pencocokan produk di Google Shopping.",
+            "recommendation": "Tambahkan sku\/gtin\/mpn.",
+            "issue_message": "Masalah pada Identitas produk: sku \/ gtin \/ mpn"
+        },
+        {
+            "code": "ECO-005",
+            "name": "Product memiliki brand",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"brand\"\\s*:\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Product memiliki brand",
+            "reason_template": "Properti yang direkomendasikan.",
+            "recommendation": "Tambahkan brand.",
+            "issue_message": "Masalah pada Product memiliki brand"
+        },
+        {
+            "code": "ECO-006",
+            "name": "og:type produk",
+            "selector": "meta[property=\"og:type\"]",
+            "attribute": "content",
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(og:)?product(\\.item)?$\/i"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:type produk",
+            "reason_template": "Pratinjau sosial untuk halaman produk.",
+            "recommendation": "Set og:type=product.",
+            "issue_message": "Masalah pada og:type produk"
+        },
+        {
+            "code": "ECO-007",
+            "name": "Review\/AggregateRating ada",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"(aggregateRating|review)\"\\s*:\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Review\/AggregateRating ada",
+            "reason_template": "Bintang rating di hasil pencarian (hanya data nyata dari halaman).",
+            "recommendation": "Tambahkan AggregateRating yang sesuai tampilan halaman.",
+            "issue_message": "Masalah pada Review\/AggregateRating ada"
+        },
+        {
+            "code": "LOC-001",
+            "name": "JSON-LD LocalBusiness",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"@type\"\\s*:\\s*\"(LocalBusiness|Restaurant|Store|Hotel|MedicalClinic|ProfessionalService|AutoRepair|HealthAndBeautyBusiness|FoodEstablishment)\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "JSON-LD LocalBusiness",
+            "reason_template": "Mendukung knowledge panel \/ info bisnis.",
+            "recommendation": "Tambahkan LocalBusiness.",
+            "issue_message": "Masalah pada JSON-LD LocalBusiness"
+        },
+        {
+            "code": "LOC-002",
+            "name": "LocalBusiness memiliki address & telephone",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/^(?=.*\"address\"\\s*:)(?=.*\"telephone\"\\s*:).*$\/s"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "LocalBusiness memiliki address & telephone",
+            "reason_template": "NAP (Name, Address, Phone) konsisten adalah dasar SEO lokal.",
+            "recommendation": "Lengkapi address dan telephone.",
+            "issue_message": "Masalah pada LocalBusiness memiliki address & telephone"
+        },
+        {
+            "code": "LOC-003",
+            "name": "Jam operasional",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"openingHours(Specification)?\"\\s*:\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Jam operasional",
+            "reason_template": "Jam buka tampil di hasil pencarian.",
+            "recommendation": "Tambahkan openingHoursSpecification.",
+            "issue_message": "Masalah pada Jam operasional"
+        },
+        {
+            "code": "LOC-004",
+            "name": "Peta tertanam atau link peta",
+            "selector": "iframe[src*=\"google.com\/maps\"], iframe[src*=\"maps.google\"], a[href*=\"maps.app.goo.gl\"], a[href*=\"google.com\/maps\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Peta tertanam atau link peta",
+            "reason_template": "Memudahkan pengunjung dan menguatkan relevansi lokasi.",
+            "recommendation": "Tambahkan peta.",
+            "issue_message": "Masalah pada Peta tertanam atau link peta"
+        },
+        {
+            "code": "LOC-005",
+            "name": "Link telepon (tel:) ada",
+            "selector": "a[href^=\"tel:\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "Link telepon (tel:) ada",
+            "reason_template": "Satu ketukan untuk menelepon di mobile.",
+            "recommendation": "Gunakan <a href=\"tel:+62...\">.",
+            "issue_message": "Masalah pada Link telepon (tel:) ada"
+        },
+        {
+            "code": "LOC-006",
+            "name": "sameAs ke profil resmi",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"sameAs\"\\s*:\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "sameAs ke profil resmi",
+            "reason_template": "Menghubungkan entitas dengan profil sosial\/GBP.",
+            "recommendation": "Tambahkan sameAs.",
+            "issue_message": "Masalah pada sameAs ke profil resmi"
+        },
+        {
+            "code": "IDN-001",
+            "name": "html lang = id",
+            "selector": "html",
+            "attribute": "lang",
+            "type": "text_match",
+            "configuration": {
+                "expected_text": "id",
+                "exact_match": false
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "html lang = id",
+            "reason_template": "Menegaskan bahasa Indonesia (id \/ id-ID).",
+            "recommendation": "Set <html lang=\"id\">.",
+            "issue_message": "Masalah pada html lang = id"
+        },
+        {
+            "code": "IDN-002",
+            "name": "og:locale = id_ID",
+            "selector": "meta[property=\"og:locale\"]",
+            "attribute": "content",
+            "type": "text_match",
+            "configuration": {
+                "expected_text": "id_ID",
+                "exact_match": true
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "og:locale = id_ID",
+            "reason_template": "Locale Open Graph memakai underscore (id_ID).",
+            "recommendation": "<meta property=\"og:locale\" content=\"id_ID\">",
+            "issue_message": "Masalah pada og:locale = id_ID"
+        },
+        {
+            "code": "IDN-003",
+            "name": "JSON-LD addressCountry Indonesia",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"addressCountry\"\\s*:\\s*\"(ID|Indonesia)\"\/i"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "JSON-LD addressCountry Indonesia",
+            "reason_template": "Menegaskan target geografis.",
+            "recommendation": "Tambahkan \"addressCountry\": \"ID\".",
+            "issue_message": "Masalah pada JSON-LD addressCountry Indonesia"
+        },
+        {
+            "code": "IDN-004",
+            "name": "Harga dalam IDR",
+            "selector": "script[type=\"application\/ld+json\"]",
+            "attribute": null,
+            "type": "regex",
+            "configuration": {
+                "pattern": "\/\"priceCurrency\"\\s*:\\s*\"IDR\"\/"
+            },
+            "severity": "warning",
+            "is_active": false,
+            "description": "Harga dalam IDR",
+            "reason_template": "Mata uang konsisten dengan target pasar.",
+            "recommendation": "priceCurrency: \"IDR\".",
+            "issue_message": "Masalah pada Harga dalam IDR"
+        },
+        {
+            "code": "IDN-005",
+            "name": "hreflang id \/ id-ID ada",
+            "selector": "link[rel=\"alternate\"][hreflang=\"id\"], link[rel=\"alternate\"][hreflang=\"id-ID\"], link[rel=\"alternate\"][hreflang=\"id-id\"]",
+            "attribute": null,
+            "type": "exist",
+            "configuration": [],
+            "severity": "warning",
+            "is_active": false,
+            "description": "hreflang id \/ id-ID ada",
+            "reason_template": "Untuk situs multibahasa yang menyasar Indonesia.",
+            "recommendation": "hreflang=\"id-ID\".",
+            "issue_message": "Masalah pada hreflang id \/ id-ID ada"
+        }
+    ]
+}
