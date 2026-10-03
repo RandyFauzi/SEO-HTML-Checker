@@ -14,6 +14,9 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
         $selector = $config['selector'] ?? '';
         $attribute = $config['attribute'] ?? '';
 
+        $skipIfMissing = filter_var($config['skip_if_missing'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $scope = strtolower($config['scope'] ?? 'all'); // Default 'all' for attributes usually
+
         if (empty($selector) || empty($attribute)) {
             return [
                 'passed' => false,
@@ -27,6 +30,19 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
         $nodes = $dom->filter($selector);
 
         if ($nodes->count() === 0) {
+            if ($skipIfMissing) {
+                return [
+                    'passed' => true,
+                    'skipped' => true,
+                    'issue' => null,
+                    'reason' => 'Elemen di-skip karena tidak ditemukan di HTML.',
+                    'expected' => 'Opsional',
+                    'actual' => 'Tidak ditemukan (di-skip)',
+                    'selector' => $selector,
+                    'attribute' => $attribute,
+                    'html_snippet' => null,
+                ];
+            }
             return [
                 'passed' => false,
                 'issue' => 'Elemen tidak ditemukan.',
@@ -42,11 +58,13 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
         $condition = $config['condition'] ?? 'exists'; // exists, not_empty, equals, contains, regex
         $expectedValue = $config['expected_value'] ?? null;
 
-        $passed = true;
+        $passed = ($scope === 'any') ? false : true;
         $failedNodes = [];
         $firstSnippet = null;
 
         foreach ($nodes as $index => $node) {
+            if ($scope === 'first' && $index > 0) break;
+            
             $crawlerNode = new Crawler($node);
             $attrValue = $crawlerNode->attr($attribute);
 
@@ -89,10 +107,17 @@ class AttributeRuleEvaluator implements RuleEvaluatorInterface
                 }
             }
 
-            if (! $nodePassed) {
-                $passed = false;
-                if (count($failedNodes) < 3) {
-                    $failedNodes[] = substr($crawlerNode->outerHtml(), 0, 150);
+            if ($scope === 'any') {
+                if ($nodePassed) {
+                    $passed = true;
+                    break;
+                }
+            } else {
+                if (! $nodePassed) {
+                    $passed = false;
+                    if (count($failedNodes) < 3) {
+                        $failedNodes[] = substr($crawlerNode->outerHtml(), 0, 150);
+                    }
                 }
             }
             if ($index === 0) {

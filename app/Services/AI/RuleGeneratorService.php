@@ -56,6 +56,10 @@ Daftar TIPE_ATURAN yang VALID (harus persis) dan contoh config-nya:
 9. "anchor_href_allowlist" (Cek href tombol/link)
    - config: {"selector": "a.btn-buy", "allowed_target_types": ["canonical", "amphtml", "https://trust.com"]}
 
+MODIFIER CONFIG GLOBAL (Berlaku untuk semua tipe kecuali exist/not_exist/count):
+- "skip_if_missing": boolean. Jika true, abaikan (lulus) jika elemen tidak ada di HTML. Berguna untuk elemen kondisional.
+- "scope": "first" | "all" | "any". Default "first" (kecuali attribute). Gunakan "all" untuk mengecek SEMUA tag yang cocok.
+
 PENTING: Jangan membuat TIPE_ATURAN selain dari daftar di atas! Gunakan tipe yang paling relevan.
 Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Perhatikan apakah user meminta aturan untuk LP atau AMP. Jawab HANYA dengan JSON.
 EOF;

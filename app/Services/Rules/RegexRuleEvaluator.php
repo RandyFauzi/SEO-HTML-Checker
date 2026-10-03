@@ -15,6 +15,8 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? $rule->target_selector ?? '';
         $attribute = $config['attribute'] ?? $rule->attribute ?? null;
+        $skipIfMissing = filter_var($config['skip_if_missing'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $scope = strtolower($config['scope'] ?? 'first'); // 'first', 'all', 'any'
 
         if (empty($selector)) {
             return [
@@ -29,6 +31,19 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
         $nodes = $dom->filter($selector);
 
         if ($nodes->count() === 0) {
+            if ($skipIfMissing) {
+                return [
+                    'passed' => true,
+                    'skipped' => true,
+                    'issue' => null,
+                    'reason' => 'Elemen di-skip karena tidak ditemukan di HTML.',
+                    'expected' => 'Opsional',
+                    'actual' => 'Tidak ditemukan (di-skip)',
+                    'selector' => $selector,
+                    'attribute' => $attribute,
+                    'html_snippet' => null,
+                ];
+            }
             return [
                 'passed' => false,
                 'issue' => 'Elemen tidak ditemukan.',
@@ -38,23 +53,6 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
                 'selector' => $selector,
                 'attribute' => $attribute,
                 'html_snippet' => null,
-            ];
-        }
-
-        $htmlSnippet = substr($nodes->first()->outerHtml(), 0, 500);
-        $text = $this->extractContent($nodes->first(), $rule);
-
-        // Security limit: do not execute regex on extremely large strings to prevent CPU spikes
-        if (strlen($text) > 50000) {
-            return [
-                'passed' => false,
-                'issue' => 'Konten terlalu besar.',
-                'reason' => 'Konten melebihi 50,000 karakter, evaluasi regex dibatalkan untuk mencegah CPU spike.',
-                'expected' => '< 50000 karakter',
-                'actual' => strlen($text).' karakter',
-                'selector' => $selector,
-                'attribute' => $attribute,
-                'html_snippet' => $htmlSnippet,
             ];
         }
 
@@ -69,7 +67,7 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
                 'actual' => 'Kosong',
                 'selector' => $selector,
                 'attribute' => $attribute,
-                'html_snippet' => $htmlSnippet,
+                'html_snippet' => null,
             ];
         }
 
@@ -77,31 +75,65 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
             $regex = '@'.str_replace('@', '\@', $regex).'@u';
         }
 
-        // Set PCRE backtrack limit temporarily to prevent catastrophic backtracking
+        $passed = ($scope === 'any') ? false : true;
+        $failedNodes = [];
+        $firstSnippet = null;
+        $actualSnippet = null;
+
         $originalBacktrack = ini_get('pcre.backtrack_limit');
         ini_set('pcre.backtrack_limit', '10000');
 
         try {
-            $result = @preg_match($regex, $text);
+            foreach ($nodes as $index => $node) {
+                if ($scope === 'first' && $index > 0) break;
+                
+                $crawlerNode = new Crawler($node);
+                $htmlSnippet = substr($crawlerNode->outerHtml(), 0, 500);
+                if ($index === 0) $firstSnippet = $htmlSnippet;
 
-            if ($result === false) {
-                return [
-                    'passed' => false,
-                    'issue' => 'Eksekusi Regex gagal.',
-                    'reason' => 'Pattern Regex invalid atau terjadi catastrophic backtracking.',
-                    'expected' => 'Regex berhasil dieksekusi',
-                    'actual' => 'Error/Timeout',
-                    'selector' => $rule->target_selector,
-                    'attribute' => $rule->attribute,
-                    'html_snippet' => $htmlSnippet,
-                ];
+                $text = $this->extractContent($crawlerNode, $rule);
+
+                if (strlen($text) > 50000) {
+                    $nodePassed = false;
+                } else {
+                    $result = @preg_match($regex, $text);
+                    if ($result === false) {
+                        return [
+                            'passed' => false,
+                            'issue' => 'Eksekusi Regex gagal.',
+                            'reason' => 'Pattern Regex invalid atau terjadi catastrophic backtracking.',
+                            'expected' => 'Regex berhasil dieksekusi',
+                            'actual' => 'Error/Timeout',
+                            'selector' => $selector,
+                            'attribute' => $attribute,
+                            'html_snippet' => $htmlSnippet,
+                        ];
+                    }
+                    $nodePassed = ($result === 1);
+                }
+
+                if ($scope === 'any') {
+                    if ($nodePassed) {
+                        $passed = true;
+                        $actualSnippet = mb_strimwidth($text, 0, 50, '...');
+                        break;
+                    }
+                } else {
+                    if (!$nodePassed) {
+                        $passed = false;
+                        if (count($failedNodes) < 3) {
+                            $failedNodes[] = $htmlSnippet;
+                        }
+                        $actualSnippet = mb_strimwidth($text, 0, 50, '...');
+                    }
+                }
             }
-
-            $passed = $result === 1;
-
         } finally {
-            // Restore original limit
             ini_set('pcre.backtrack_limit', $originalBacktrack);
+        }
+        
+        if ($passed && $actualSnippet === null) {
+            $actualSnippet = 'Semua elemen cocok dengan pola';
         }
 
         return [
@@ -109,10 +141,10 @@ class RegexRuleEvaluator implements RuleEvaluatorInterface
             'issue' => $passed ? null : 'Konten tidak cocok dengan pola regex.',
             'reason' => $passed ? null : 'Teks yang diekstrak tidak memenuhi pola regex yang ditentukan.',
             'expected' => "Cocok dengan: {$regex}",
-            'actual' => mb_strimwidth($text, 0, 50, '...'),
+            'actual' => $actualSnippet,
             'selector' => $selector,
             'attribute' => $attribute,
-            'html_snippet' => $htmlSnippet,
+            'html_snippet' => ! $passed && ! empty($failedNodes) ? implode("\n", $failedNodes) : $firstSnippet,
         ];
     }
 }

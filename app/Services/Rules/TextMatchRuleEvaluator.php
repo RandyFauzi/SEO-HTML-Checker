@@ -15,6 +15,8 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
         $config = $rule->config ?? [];
         $selector = $config['selector'] ?? '';
         $attribute = $config['attribute'] ?? null;
+        $skipIfMissing = filter_var($config['skip_if_missing'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $scope = strtolower($config['scope'] ?? 'first'); // 'first', 'all', 'any'
 
         if (empty($selector)) {
             return [
@@ -28,6 +30,19 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
         $nodes = $dom->filter($selector);
 
         if ($nodes->count() === 0) {
+            if ($skipIfMissing) {
+                return [
+                    'passed' => true,
+                    'skipped' => true,
+                    'issue' => null,
+                    'reason' => 'Elemen di-skip karena tidak ditemukan di HTML.',
+                    'expected' => 'Opsional',
+                    'actual' => 'Tidak ditemukan (di-skip)',
+                    'selector' => $selector,
+                    'attribute' => $attribute,
+                    'html_snippet' => null,
+                ];
+            }
             return [
                 'passed' => false,
                 'issue' => 'Elemen tidak ditemukan.',
@@ -40,29 +55,64 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
             ];
         }
 
-        $htmlSnippet = substr($nodes->first()->outerHtml(), 0, 500);
-        $text = $this->extractContent($nodes->first(), $rule);
-
         $operator = strtolower($config['operator'] ?? 'contains');
         $expected = $config['expected_value'] ?? $config['expected'] ?? '';
-
-        // Case-insensitive comparisons for simplicity
-        $textLower = strtolower($text);
         
+        $expectedStr = '';
         if ($operator === 'in_list' && is_array($expected)) {
-            $passed = in_array($textLower, array_map('strtolower', $expected), true);
             $expectedStr = implode(', ', $expected);
         } else {
-            $expectedLower = strtolower((string) $expected);
             $expectedStr = (string) $expected;
-            $passed = match ($operator) {
-                'equals', '=' => $textLower === $expectedLower,
-                'not_equals', '!=' => $textLower !== $expectedLower,
-                'starts_with' => str_starts_with($textLower, $expectedLower),
-                'ends_with' => str_ends_with($textLower, $expectedLower),
-                'not_contains' => ! str_contains($textLower, $expectedLower),
-                default => str_contains($textLower, $expectedLower),
-            };
+        }
+
+        $passed = ($scope === 'any') ? false : true;
+        $failedNodes = [];
+        $firstSnippet = null;
+        $actualSnippet = null;
+
+        foreach ($nodes as $index => $node) {
+            if ($scope === 'first' && $index > 0) break;
+            
+            $crawlerNode = new Crawler($node);
+            $htmlSnippet = substr($crawlerNode->outerHtml(), 0, 500);
+            if ($index === 0) $firstSnippet = $htmlSnippet;
+
+            $text = $this->extractContent($crawlerNode, $rule);
+            $textLower = strtolower($text);
+
+            if ($operator === 'in_list' && is_array($expected)) {
+                $nodePassed = in_array($textLower, array_map('strtolower', $expected), true);
+            } else {
+                $expectedLower = strtolower((string) $expected);
+                $nodePassed = match ($operator) {
+                    'equals', '=' => $textLower === $expectedLower,
+                    'not_equals', '!=' => $textLower !== $expectedLower,
+                    'starts_with' => str_starts_with($textLower, $expectedLower),
+                    'ends_with' => str_ends_with($textLower, $expectedLower),
+                    'not_contains' => ! str_contains($textLower, $expectedLower),
+                    default => str_contains($textLower, $expectedLower),
+                };
+            }
+
+            if ($scope === 'any') {
+                if ($nodePassed) {
+                    $passed = true;
+                    $actualSnippet = mb_strimwidth($text, 0, 50, '...');
+                    break;
+                }
+            } else {
+                if (!$nodePassed) {
+                    $passed = false;
+                    if (count($failedNodes) < 3) {
+                        $failedNodes[] = $htmlSnippet;
+                    }
+                    $actualSnippet = mb_strimwidth($text, 0, 50, '...');
+                }
+            }
+        }
+
+        if ($passed && $actualSnippet === null) {
+            $actualSnippet = 'Semua elemen sesuai teks';
         }
 
         $issue = null;
@@ -78,10 +128,10 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
             'issue' => $issue,
             'reason' => $reason,
             'expected' => "{$operator} '{$expectedStr}'",
-            'actual' => mb_strimwidth($text, 0, 50, '...'),
+            'actual' => $actualSnippet,
             'selector' => $selector,
             'attribute' => $attribute,
-            'html_snippet' => $htmlSnippet,
+            'html_snippet' => ! $passed && ! empty($failedNodes) ? implode("\n", $failedNodes) : $firstSnippet,
         ];
     }
 }
