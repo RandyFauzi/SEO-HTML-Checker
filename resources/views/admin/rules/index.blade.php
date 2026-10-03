@@ -2,31 +2,53 @@
     <x-slot name="title">Manajemen Aturan SEO</x-slot>
     <x-slot name="header">Manajemen Aturan</x-slot>
 
-    <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4" 
-            x-data="{ 
-                showAiModal: false, 
-                showImportModal: false,
-                importMode: 'file',
-                dropdownOpen: false,
-                aiPrompt: '', 
-                aiLoading: false, 
-                aiResult: null, 
-                aiError: null,
-                showToast: false,
-                toastMessage: '',
-                generateAi() { 
-                    this.aiLoading = true; this.aiError = null; 
-                    fetch('{{ route('admin.rules.ai-generate') }}', { 
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, 
-                        body: JSON.stringify({ prompt: this.aiPrompt }) 
-                    })
-                    .then(res => res.json())
-                    .then(data => { this.aiLoading = false; if(data.success) { this.aiResult = data.data; } else { this.aiError = data.message; } })
-                    .catch(e => { this.aiLoading = false; this.aiError = 'Terjadi kesalahan jaringan.'; }); 
-                } 
-            }">
+    <div class="max-w-7xl mx-auto"
+        x-data="{ 
+            showAiModal: false, 
+            showImportModal: false,
+            importMode: 'file',
+            dropdownOpen: false,
+            aiPrompt: '', 
+            aiLoading: false, 
+            aiResult: null, 
+            aiError: null,
+            showToast: false,
+            toastMessage: '',
+            confirmModal: {
+                show: false,
+                title: '',
+                message: '',
+                confirmText: 'Ya, Lanjutkan',
+                targetForm: null,
+                isSubmitting: false
+            },
+            openConfirm(title, message, formElement, confirmText = 'Ya, Lanjutkan') {
+                this.confirmModal.title = title;
+                this.confirmModal.message = message;
+                this.confirmModal.targetForm = formElement;
+                this.confirmModal.confirmText = confirmText;
+                this.confirmModal.isSubmitting = false;
+                this.confirmModal.show = true;
+            },
+            executeConfirm() {
+                if (this.confirmModal.targetForm) {
+                    this.confirmModal.isSubmitting = true;
+                    this.confirmModal.targetForm.submit();
+                }
+            },
+            generateAi() { 
+                this.aiLoading = true; this.aiError = null; 
+                fetch('{{ route('admin.rules.ai-generate') }}', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, 
+                    body: JSON.stringify({ prompt: this.aiPrompt }) 
+                })
+                .then(res => res.json())
+                .then(data => { this.aiLoading = false; if(data.success) { this.aiResult = data.data; } else { this.aiError = data.message; } })
+                .catch(e => { this.aiLoading = false; this.aiError = 'Terjadi kesalahan jaringan.'; }); 
+            } 
+        }">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
 
             <!-- Toast Notification -->
             <div x-show="showToast" x-transition.opacity.duration.300ms class="fixed top-6 right-6 bg-slate-800 text-white px-5 py-3 rounded-xl shadow-2xl z-[100] flex items-center gap-3 border border-slate-700" style="display: none;">
@@ -39,10 +61,12 @@
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-auto gap-3">
                 @if($rules->count() > 0)
-                <form action="{{ route('admin.rules.destroyAll') }}" method="POST" class="w-full md:w-auto" onsubmit="return confirm('Peringatan: Aksi ini akan menghapus semua aturan SEO milik Anda!\nAnda yakin ingin melanjutkannya?');">
+                <form action="{{ route('admin.rules.destroyAll') }}" method="POST" class="w-full md:w-auto">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full md:w-auto justify-center bg-red-50 hover:bg-red-500 text-red-600 hover:text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-sm hover:-translate-y-1 hover:shadow-md transition-all border border-red-100 hover:border-red-500 flex items-center">
+                    <button type="button" 
+                        @click="openConfirm('Hapus Semua Aturan SEO?', 'Peringatan: Aksi ini akan menghapus semua aturan SEO milik Anda secara permanen. Anda yakin ingin melanjutkannya?', $event.currentTarget.closest('form'), 'Ya, Hapus Semua')"
+                        class="w-full md:w-auto justify-center bg-red-50 hover:bg-red-500 text-red-600 hover:text-white font-bold py-3 md:py-2.5 px-6 rounded-[1.25rem] shadow-sm hover:-translate-y-1 hover:shadow-md transition-all border border-red-100 hover:border-red-500 flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
@@ -298,10 +322,14 @@
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-3 whitespace-nowrap">
                                     <a href="{{ route('admin.rules.edit', $rule) }}" class="text-blue-600 hover:text-blue-900 font-medium transition-colors">Edit</a>
-                                    <form action="{{ route('admin.rules.destroy', $rule) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus aturan ini?');">
+                                    <form action="{{ route('admin.rules.destroy', $rule) }}" method="POST" class="inline-block">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700 font-medium transition-colors">Hapus</button>
+                                        <button type="button" 
+                                            @click="openConfirm('Hapus Aturan?', 'Apakah Anda yakin ingin menghapus aturan &quot;{{ addslashes($rule->name) }}&quot;?', $event.currentTarget.closest('form'), 'Ya, Hapus')"
+                                            class="text-red-500 hover:text-red-700 font-medium transition-colors">
+                                            Hapus
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -365,10 +393,14 @@
                             
                             <div class="flex space-x-3 text-sm">
                                 <a href="{{ route('admin.rules.edit', $rule) }}" class="text-blue-600 font-medium">Edit</a>
-                                <form action="{{ route('admin.rules.destroy', $rule) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus aturan ini?');">
+                                <form action="{{ route('admin.rules.destroy', $rule) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 font-medium">Hapus</button>
+                                    <button type="button" 
+                                        @click="openConfirm('Hapus Aturan?', 'Apakah Anda yakin ingin menghapus aturan &quot;{{ addslashes($rule->name) }}&quot;?', $event.currentTarget.closest('form'), 'Ya, Hapus')"
+                                        class="text-red-500 font-medium">
+                                        Hapus
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -376,6 +408,98 @@
                 @empty
                     <div class="p-8 text-center text-gray-500">Belum ada aturan</div>
                 @endforelse
+            </div>
+        </div>
+
+        <!-- Custom Confirmation Modal (Modern Glassmorphic / Soft Neumorphic) -->
+        <div x-show="confirmModal.show" 
+             style="display: none;" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             aria-labelledby="confirm-modal-title" 
+             role="dialog" 
+             aria-modal="true"
+             @keydown.escape.window="if(confirmModal.show && !confirmModal.isSubmitting) confirmModal.show = false">
+            <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+                <!-- Backdrop -->
+                <div x-show="confirmModal.show" 
+                     x-transition:enter="ease-out duration-300" 
+                     x-transition:enter-start="opacity-0" 
+                     x-transition:enter-end="opacity-100" 
+                     x-transition:leave="ease-in duration-200" 
+                     x-transition:leave-start="opacity-100" 
+                     x-transition:leave-end="opacity-0" 
+                     class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+                     @click="if(!confirmModal.isSubmitting) confirmModal.show = false" 
+                     aria-hidden="true"></div>
+
+                <!-- Modal Dialog Card -->
+                <div x-show="confirmModal.show" 
+                     x-transition:enter="ease-out duration-300" 
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                     x-transition:leave="ease-in duration-200" 
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                     class="relative transform overflow-hidden rounded-[2.5rem] bg-white/95 backdrop-blur-2xl text-left shadow-[0_25px_60px_-15px_rgba(0,0,0,0.25)] transition-all sm:my-8 w-full sm:max-w-md border border-white/80 p-6 sm:p-8">
+                    
+                    <!-- Ambient Glow Orbs -->
+                    <div class="absolute -top-16 -right-16 w-36 h-36 bg-red-100/70 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-amber-100/60 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <!-- Close Button -->
+                    <button type="button" 
+                            @click="confirmModal.show = false" 
+                            :disabled="confirmModal.isSubmitting"
+                            class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100/80 transition-colors focus:outline-none">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <!-- Icon -->
+                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 border border-red-100 text-red-500 shadow-inner mb-5 relative group">
+                        <div class="absolute inset-0 rounded-2xl bg-red-400/20 animate-ping opacity-30"></div>
+                        <svg class="h-8 w-8 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </div>
+
+                    <!-- Title & Message -->
+                    <div class="text-center">
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight" id="confirm-modal-title" x-text="confirmModal.title"></h3>
+                        <p class="mt-3 text-sm text-slate-500 font-medium leading-relaxed px-1" x-text="confirmModal.message"></p>
+                    </div>
+
+                    <!-- Warning Callout -->
+                    <div class="mt-5 p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200/70 text-amber-900 text-xs font-semibold flex items-center gap-2.5 shadow-sm">
+                        <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <span>Tindakan ini tidak dapat dibatalkan setelah diproses.</span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 flex flex-col-reverse sm:flex-row gap-3">
+                        <button type="button" 
+                                @click="confirmModal.show = false" 
+                                :disabled="confirmModal.isSubmitting"
+                                class="w-full sm:w-1/2 py-3 px-5 rounded-[1.25rem] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-all focus:outline-none">
+                            Batal
+                        </button>
+                        <button type="button" 
+                                @click="executeConfirm()" 
+                                :disabled="confirmModal.isSubmitting"
+                                class="w-full sm:w-1/2 py-3 px-5 rounded-[1.25rem] bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold text-sm shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 focus:outline-none disabled:opacity-75 disabled:cursor-not-allowed">
+                            <template x-if="confirmModal.isSubmitting">
+                                <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </template>
+                            <span x-text="confirmModal.confirmText"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
