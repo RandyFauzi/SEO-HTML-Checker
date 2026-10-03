@@ -3,7 +3,7 @@
     <x-slot name="title">Bank Rules SEO</x-slot>
 
     <x-slot name="header">Bank Rules SEO</x-slot>
-<div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto" x-data="{ searchQuery: '', activeCategory: 'all' }">
+<div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto" x-data="{ searchQuery: '', activeCategory: 'all' }" @keydown.window.prevent.slash="$refs.searchInput.focus()" @keydown.window.prevent.ctrl.k="$refs.searchInput.focus()" @keydown.window.prevent.meta.k="$refs.searchInput.focus()">
 
     <!-- Header -->
     <div class="sm:flex sm:justify-between sm:items-center mb-8">
@@ -21,7 +21,19 @@
         </div>
         
         <div class="relative w-full sm:w-72">
-            <input type="text" x-model="searchQuery" placeholder="Cari rule atau selector..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
+            <div class="relative flex items-center w-full">
+                <input type="text" x-ref="searchInput" x-model.debounce.300ms="searchQuery" placeholder="Cari rule atau selector..." class="w-full pl-10 pr-24 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm">
+                <!-- Clear Button -->
+                <button type="button" x-show="searchQuery.length > 0" @click="searchQuery = ''; $refs.searchInput.focus()" class="absolute right-12 text-slate-400 hover:text-slate-600 focus:outline-none" style="display: none;">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <!-- Keyboard Shortcut Hint -->
+                <div class="absolute right-3 hidden sm:flex items-center pointer-events-none">
+                    <kbd class="hidden sm:inline-flex items-center justify-center px-2 py-0.5 text-xs font-sans font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded">
+                        /
+                    </kbd>
+                </div>
+            </div>
             <svg class="w-5 h-5 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
         </div>
     </div>
