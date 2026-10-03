@@ -171,10 +171,13 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.effect(() => {
-            const query = document.querySelector('[x-model="searchQuery"]').__x.$data.searchQuery.toLowerCase();
-            const activeCat = document.querySelector('[x-model="searchQuery"]').__x.$data.activeCategory;
+            const root = document.querySelector('[x-data]');
+            if (!root || !root.__x) return;
+            const query = (root.__x.$data.searchQuery || '').toLowerCase();
+            const activeCat = root.__x.$data.activeCategory || 'all';
             
             let hasVisible = false;
+            const terms = query.split(' ').filter(t => t.trim() !== '');
             
             document.querySelectorAll('.category-group').forEach(group => {
                 const cat = group.getAttribute('data-category');
@@ -186,7 +189,10 @@
                         const code = card.getAttribute('data-code');
                         const selector = card.querySelector('.text-pink-600').textContent.toLowerCase();
                         
-                        if (name.includes(query) || code.includes(query) || selector.includes(query)) {
+                        const textToSearch = name + " " + code + " " + selector;
+                        const isMatch = terms.length === 0 || terms.every(term => textToSearch.includes(term));
+                        
+                        if (isMatch) {
                             card.style.display = 'block';
                             groupVisible = true;
                             hasVisible = true;
