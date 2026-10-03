@@ -56,7 +56,7 @@
         <div class="h-20 flex items-center px-8 border-b border-white/50">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-10 h-10 object-contain drop-shadow-sm">
-                <span class="text-xl font-extrabold text-slate-800 tracking-tight">Checker</span>
+                <span class="text-xl font-extrabold text-slate-800 tracking-tight">SEO Checker</span>
             </div>
         </div>
         <div class="flex-1 overflow-y-auto py-6">
@@ -124,7 +124,7 @@
                 <div class="h-20 flex items-center px-6 border-b border-white/50 justify-between">
                     <div class="flex items-center gap-3">
                         <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-9 h-9 object-contain drop-shadow-sm">
-                        <span class="text-xl font-extrabold text-slate-800">Checker</span>
+                        <span class="text-xl font-extrabold text-slate-800">SEO Checker</span>
                     </div>
                     <button @click="sidebarOpen = false" class="text-slate-500 hover:text-slate-800 bg-white/50 p-2 rounded-full">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
