@@ -181,75 +181,91 @@
                 </div>
             </div>
 
-            <!-- AI Modal -->
-            <div x-show="showAiModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div x-show="showAiModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="showAiModal = false" aria-hidden="true"></div>
-                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                    <div x-show="showAiModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-100">
-                        <div class="bg-gradient-to-br from-purple-50 to-white px-6 pt-8 pb-6 sm:px-8 sm:pb-8 relative">
-                            <button @click="showAiModal = false" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                            <div class="sm:flex sm:items-start">
-                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 text-purple-600 sm:mx-0 sm:h-12 sm:w-12 shadow-inner border border-purple-200">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                </div>
-                                <div class="mt-4 text-center sm:mt-0 sm:ml-5 sm:text-left w-full">
-                                    <h3 class="text-xl leading-6 font-extrabold text-slate-900" id="modal-title">AI Rule Builder</h3>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-slate-500 mb-4">Jelaskan aturan SEO yang Anda inginkan dengan bahasa sehari-hari. AI akan menerjemahkannya menjadi format sistem secara otomatis.</p>
-                                        
-                                        <template x-if="!aiResult">
-                                            <div>
-                                                <textarea x-model="aiPrompt" rows="4" class="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-slate-700 focus:border-purple-500 focus:ring-0 focus:outline-none transition-colors" placeholder="Contoh: 'Tolong pastikan semua gambar punya atribut alt, kalau nggak ada tampilkan pesan error yang bilang gambar harus punya deskripsi'"></textarea>
-                                                
-                                                <div x-show="aiError" class="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100 font-medium" x-text="aiError"></div>
-                                                
-                                                <div class="mt-5 flex justify-end">
-                                                    <button @click="generateAi()" :disabled="aiLoading || aiPrompt.trim() === ''" class="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all flex items-center">
-                                                        <svg x-show="aiLoading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                                        <span x-text="aiLoading ? 'Sedang meracik...' : 'Generate Rule'"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </template>
-                                        
-                                        <template x-if="aiResult">
-                                            <div class="space-y-4" x-data="{ showJson: false }">
-                                                <div class="bg-indigo-50 text-indigo-900 p-4 rounded-xl border border-indigo-100 text-sm font-medium flex items-start">
-                                                    <svg class="w-6 h-6 mr-3 mt-0.5 flex-shrink-0 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    <div x-text="aiResult.explanation" class="leading-relaxed"></div>
-                                                </div>
-                                                
-                                                <div class="text-right">
-                                                    <button @click="showJson = !showJson" class="text-xs text-slate-500 hover:text-slate-700 underline font-medium">Lihat Detail Teknis (JSON)</button>
-                                                </div>
-                                                
-                                                <div x-show="showJson" style="display:none;" class="relative group mt-2">
-                                                    <textarea readonly rows="8" class="w-full font-mono text-xs bg-slate-900 text-green-400 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none" x-text="JSON.stringify([aiResult.rule], null, 2)"></textarea>
-                                                </div>
-                                                
-                                                <div class="mt-5 flex justify-end gap-3">
-                                                    <button @click="aiResult = null" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl transition-all">Revisi</button>
-                                                    <button @click="
-                                                        const f = document.createElement('form');
-                                                        f.method = 'POST';
-                                                        f.action = '{{ route('admin.rules.import') }}';
-                                                        const c = document.createElement('input'); c.name = '_token'; c.value = '{{ csrf_token() }}'; c.type = 'hidden';
-                                                        const t = document.createElement('input'); t.name = 'json_text'; t.value = JSON.stringify([aiResult.rule]); t.type = 'hidden';
-                                                        f.appendChild(c); f.appendChild(t);
-                                                        document.body.appendChild(f);
-                                                        f.submit();
-                                                    " class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md hover:-translate-y-0.5 transition-all flex items-center">
-                                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                                                        Simpan & Terapkan Aturan
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </template>
+            <!-- AI Sidebar (Slide-over) -->
+            <div x-show="showAiModal" style="display: none;" class="fixed inset-0 z-[100] overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+                <div class="absolute inset-0 overflow-hidden">
+                    <!-- Backdrop -->
+                    <div x-show="showAiModal" 
+                         x-transition.opacity.duration.300ms 
+                         class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+                         @click="showAiModal = false" aria-hidden="true"></div>
+
+                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                        <!-- Slide-over panel -->
+                        <div x-show="showAiModal" 
+                             x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" 
+                             x-transition:enter-start="translate-x-full" 
+                             x-transition:enter-end="translate-x-0" 
+                             x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
+                             x-transition:leave-start="translate-x-0" 
+                             x-transition:leave-end="translate-x-full" 
+                             class="pointer-events-auto w-screen max-w-md flex h-full flex-col overflow-y-scroll bg-white shadow-[0_0_40px_rgba(0,0,0,0.1)] border-l border-slate-200">
+                             
+                            <!-- Header -->
+                            <div class="bg-gradient-to-br from-purple-50 to-white px-6 py-6 border-b border-purple-100 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 text-purple-600 shadow-inner border border-purple-200">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                     </div>
+                                    <h3 class="text-lg font-extrabold text-slate-900" id="slide-over-title">AI Rule Builder</h3>
                                 </div>
+                                <button @click="showAiModal = false" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-100">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="p-6 flex-1 bg-slate-50/50">
+                                <p class="text-sm text-slate-500 mb-6">Jelaskan aturan SEO yang Anda inginkan dengan bahasa sehari-hari. AI akan menerjemahkannya menjadi format sistem secara otomatis.</p>
+                                
+                                <template x-if="!aiResult">
+                                    <div>
+                                        <textarea x-model="aiPrompt" rows="5" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-colors" placeholder="Contoh: 'Tolong pastikan semua gambar punya atribut alt, kalau nggak ada tampilkan pesan error yang bilang gambar harus punya deskripsi'"></textarea>
+                                        
+                                        <div x-show="aiError" class="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100 font-medium" x-text="aiError"></div>
+                                        
+                                        <div class="mt-5">
+                                            <button @click="generateAi()" :disabled="aiLoading || aiPrompt.trim() === ''" class="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center">
+                                                <svg x-show="aiLoading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                <span x-text="aiLoading ? 'Sedang meracik...' : 'Generate Rule'"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                                
+                                <template x-if="aiResult">
+                                    <div class="space-y-5" x-data="{ showJson: false }">
+                                        <div class="bg-indigo-50 text-indigo-900 p-4 rounded-xl border border-indigo-100 text-sm font-medium flex items-start shadow-sm">
+                                            <svg class="w-6 h-6 mr-3 mt-0.5 flex-shrink-0 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <div x-text="aiResult.explanation" class="leading-relaxed"></div>
+                                        </div>
+                                        
+                                        <div class="text-right">
+                                            <button @click="showJson = !showJson" class="text-xs text-slate-500 hover:text-indigo-600 underline font-medium transition-colors">Lihat Detail Teknis (JSON)</button>
+                                        </div>
+                                        
+                                        <div x-show="showJson" style="display:none;" class="relative group mt-2">
+                                            <textarea readonly rows="8" class="w-full font-mono text-xs bg-slate-900 text-green-400 border border-slate-700 rounded-xl px-4 py-3 shadow-inner focus:outline-none" x-text="JSON.stringify([aiResult.rule], null, 2)"></textarea>
+                                        </div>
+                                        
+                                        <div class="mt-6 flex flex-col gap-3">
+                                            <button @click="
+                                                const f = document.createElement('form');
+                                                f.method = 'POST';
+                                                f.action = '{{ route('admin.rules.import') }}';
+                                                const c = document.createElement('input'); c.name = '_token'; c.value = '{{ csrf_token() }}'; c.type = 'hidden';
+                                                const t = document.createElement('input'); t.name = 'json_text'; t.value = JSON.stringify([aiResult.rule]); t.type = 'hidden';
+                                                f.appendChild(c); f.appendChild(t);
+                                                document.body.appendChild(f);
+                                                f.submit();
+                                            " class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center">
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                                Simpan & Terapkan Aturan
+                                            </button>
+                                            <button @click="aiResult = null" class="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl transition-all text-sm shadow-sm">Tulis Ulang Prompt</button>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
