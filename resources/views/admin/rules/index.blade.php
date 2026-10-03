@@ -12,7 +12,9 @@
                 aiPrompt: '', 
                 aiLoading: false, 
                 aiResult: null, 
-                aiError: null, 
+                aiError: null,
+                showToast: false,
+                toastMessage: '',
                 generateAi() { 
                     this.aiLoading = true; this.aiError = null; 
                     fetch('{{ route('admin.rules.ai-generate') }}', { 
@@ -25,6 +27,12 @@
                     .catch(e => { this.aiLoading = false; this.aiError = 'Terjadi kesalahan jaringan.'; }); 
                 } 
             }">
+
+            <!-- Toast Notification -->
+            <div x-show="showToast" x-transition.opacity.duration.300ms class="fixed top-6 right-6 bg-slate-800 text-white px-5 py-3 rounded-xl shadow-2xl z-[100] flex items-center gap-3 border border-slate-700" style="display: none;">
+                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <span x-text="toastMessage" class="text-sm font-medium"></span>
+            </div>
             <div>
                 <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Aturan Pengecekan SEO</h2>
                 <p class="text-sm text-slate-500 mt-1 font-medium">Kelola semua aturan yang digunakan untuk mengecek landing page.</p>
@@ -194,7 +202,7 @@
                                                 </div>
                                                 <div class="mt-5 flex justify-end gap-3">
                                                     <button @click="aiResult = null" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl transition-all">Ubah Prompt</button>
-                                                    <button @click="navigator.clipboard.writeText(JSON.stringify([aiResult], null, 2)); alert('JSON disalin! Silakan paste di menu Impor dari JSON.'); showAiModal = false; aiResult = null;" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all">
+                                                    <button @click="navigator.clipboard.writeText(JSON.stringify([aiResult], null, 2)); showAiModal = false; aiResult = null; toastMessage = 'JSON berhasil disalin! Silakan paste di menu Impor.'; showToast = true; setTimeout(() => showToast = false, 3000);" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all">
                                                         Salin & Tutup
                                                     </button>
                                                 </div>
