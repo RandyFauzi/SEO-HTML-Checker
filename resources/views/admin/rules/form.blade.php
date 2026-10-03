@@ -42,10 +42,18 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Kategori *</label>
                             <input type="text" name="category" x-model="formData.category" required class="w-full bg-white/50 backdrop-blur-sm border border-white/60 rounded-xl p-3 focus:ring-2 focus:ring-indigo-300 focus:bg-white/80 transition-all shadow-sm placeholder:text-slate-400 font-medium" placeholder="Contoh: Meta Data">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Target Halaman *</label>
+                            <select name="target_page" x-model="formData.target_page" required class="w-full bg-white/50 backdrop-blur-sm border border-white/60 rounded-xl p-3 focus:ring-2 focus:ring-indigo-300 focus:bg-white/80 transition-all shadow-sm font-medium">
+                                <option value="all">Semua (LP & AMP)</option>
+                                <option value="lp">Landing Page Saja</option>
+                                <option value="amp">AMP Saja</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Tipe Aturan *</label>
@@ -249,6 +257,7 @@
                     code: '{{ old('code', $rule->code) }}',
                     name: '{{ old('name', $rule->name) }}',
                     category: '{{ old('category', $rule->category ?? 'General') }}',
+                    target_page: '{{ old('target_page', $rule->target_page ?? 'all') }}',
                     rule_type: '{{ old('rule_type', $rule->rule_type?->value ?? 'exist') }}',
                     severity: '{{ old('severity', $rule->severity ?? 'warning') }}',
                     issue_message: '{{ old('issue_message', $rule->issue_message) }}',

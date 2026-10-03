@@ -22,6 +22,7 @@ Struktur JSON yang diharapkan:
   "name": "Nama aturan singkat",
   "code": "kode_aturan_snake_case",
   "category": "Kategori (contoh: Meta Tags, Typography, Links, Images)",
+  "target_page": "all", // Bisa "all" (semua), "lp" (Landing Page), atau "amp" (Halaman AMP)
   "rule_type": "TIPE_ATURAN",
   "config": { ... },
   "issue_message": "Pesan error singkat",
@@ -33,6 +34,7 @@ Struktur JSON yang diharapkan:
 Daftar TIPE_ATURAN dan contoh config-nya:
 1. "tag_presence"
    - config: {"selector": "h1", "must_exist": true}
+   - PENTING untuk multi tag (seperti alternate hreflang): Jangan gunakan selector generik seperti "link[rel='alternate']" jika ingin mengecek banyak bahasa spesifik. Gunakan atribut yang tepat: {"selector": "link[rel='alternate'][hreflang='id-id']", "must_exist": true}
 2. "tag_count"
    - config: {"selector": "h1", "min": 1, "max": 1}
 3. "attribute_presence"
@@ -44,7 +46,7 @@ Daftar TIPE_ATURAN dan contoh config-nya:
 6. "regex_match"
    - config: {"selector": "meta[name='robots']", "attribute": "content", "pattern": "/index, follow/i"}
 
-Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Jawab HANYA dengan JSON.
+Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Perhatikan apakah user meminta aturan untuk LP atau AMP. Jawab HANYA dengan JSON.
 EOF;
 
         $model = env('OPENAI_RULE_BUILDER_MODEL', 'gpt-6-astra');

@@ -50,8 +50,26 @@ class RuleEngine
     {
         if ($domOrContext instanceof AuditContext) {
             $context = $domOrContext;
+            
+            // Default to LP DOM
             $dom = $context->dom;
             $ampDom = $context->ampDom ?? $ampDom;
+            
+            // Switch target DOM based on the rule's target_page configuration
+            $targetPage = $rule->target_page ?? 'all';
+            
+            if ($targetPage === 'amp') {
+                if (!$ampDom) {
+                    return new CheckResult(
+                        ruleName: $rule->name,
+                        ruleType: $rule->rule_type,
+                        status: CheckStatus::Passed, // Skip check if no AMP url is provided for an AMP-only rule
+                        issue: 'Dilewati: Aturan ini hanya untuk AMP, tetapi tidak ada URL AMP yang diperiksa.',
+                        ruleId: $rule->id
+                    );
+                }
+                $dom = $ampDom; // Override the target DOM to be AMP
+            }
         } else {
             $dom = $domOrContext;
             $context = $context ?? new AuditContext(

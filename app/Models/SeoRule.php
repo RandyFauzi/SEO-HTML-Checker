@@ -12,6 +12,7 @@ class SeoRule extends Model
         'name',
         'description',
         'category',
+        'target_page',
         'rule_type',
         'config',
         'issue_message',

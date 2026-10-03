@@ -32,6 +32,7 @@ class SeoRuleController extends Controller
             'code' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
+            'target_page' => 'required|in:all,lp,amp',
             'rule_type' => 'required|string|in:' . $typesStr,
             'config' => 'nullable|string', // JSON string from frontend
             'issue_message' => 'nullable|string',
