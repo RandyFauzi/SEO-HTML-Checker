@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class HtmlRemediationService
 {
-    protected OpenAIClientService $client;
+    protected AiClientInterface $client;
 
-    public function __construct(OpenAIClientService $client)
+    public function __construct(AiClientInterface $client)
     {
         $this->client = $client;
     }
@@ -40,7 +40,10 @@ EOF;
 
         $prompt = $systemPrompt . "\n\nHTML Snippet Asli:\n" . $htmlSnippet;
 
-        $model = env('OPENAI_REMEDIATION_MODEL', 'gpt-6-astra');
+        $provider = config('services.ai_provider', 'openai');
+        $model = $provider === 'gemini' 
+            ? env('GEMINI_REMEDIATION_MODEL', 'gemini-1.5-flash')
+            : env('OPENAI_REMEDIATION_MODEL', 'gpt-6-astra');
         
         return $this->client->generateText($model, $prompt);
     }

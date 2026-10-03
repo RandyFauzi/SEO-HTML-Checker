@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Exception;
 use RuntimeException;
 
-class OpenAIClientService
+class OpenAIClientService implements AiClientInterface
 {
     public function generateStructuredOutput(string $model, string $prompt): array
     {

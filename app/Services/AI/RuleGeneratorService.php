@@ -4,9 +4,9 @@ namespace App\Services\AI;
 
 class RuleGeneratorService
 {
-    protected OpenAIClientService $client;
+    protected AiClientInterface $client;
 
-    public function __construct(OpenAIClientService $client)
+    public function __construct(AiClientInterface $client)
     {
         $this->client = $client;
     }
@@ -49,7 +49,10 @@ Daftar TIPE_ATURAN dan contoh config-nya:
 Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Perhatikan apakah user meminta aturan untuk LP atau AMP. Jawab HANYA dengan JSON.
 EOF;
 
-        $model = env('OPENAI_RULE_BUILDER_MODEL', 'gpt-6-astra');
+        $provider = config('services.ai_provider', 'openai');
+        $model = $provider === 'gemini' 
+            ? env('GEMINI_RULE_BUILDER_MODEL', 'gemini-1.5-flash')
+            : env('OPENAI_RULE_BUILDER_MODEL', 'gpt-6-astra');
         
         $prompt = $systemPrompt . "\n\nPermintaan user: " . $userPrompt;
 
