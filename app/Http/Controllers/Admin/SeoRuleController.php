@@ -188,10 +188,25 @@ class SeoRuleController extends Controller
             \Illuminate\Support\Facades\DB::transaction(function () use ($rules, &$imported) {
                 $types = array_map(fn(\App\Enums\RuleType $t) => $t->value, \App\Enums\RuleType::cases());
                 
+                // Peta fallback untuk menoleransi JSON AI versi lama
+                $legacyMap = [
+                    'tag_presence' => 'exist',
+                    'tag_count' => 'count',
+                    'attribute_presence' => 'attribute',
+                    'text_length' => 'length',
+                    'regex_match' => 'regex',
+                ];
+
                 foreach ($rules as $ruleData) {
                     if (empty($ruleData['name']) || empty($ruleData['rule_type'])) {
                         throw new \Exception("Missing required fields in JSON.");
                     }
+                    
+                    // Auto-fix legacy rule types
+                    if (isset($legacyMap[$ruleData['rule_type']])) {
+                        $ruleData['rule_type'] = $legacyMap[$ruleData['rule_type']];
+                    }
+
                     if (!in_array($ruleData['rule_type'], $types)) {
                         throw new \Exception("Invalid rule_type: {$ruleData['rule_type']}");
                     }
