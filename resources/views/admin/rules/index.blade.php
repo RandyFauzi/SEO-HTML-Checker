@@ -348,7 +348,7 @@
                         @forelse($rules as $rule)
                             <tr class="hover:bg-white/50 transition-colors group">
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-900 mb-1 max-w-xs break-words">{{ $rule->name }}</div>
+                                    <div class="font-bold text-slate-900 mb-1 max-w-xs break-words">{{ $rule->name }}</div><div class="text-xs text-slate-500 mb-2 max-w-xs break-words leading-relaxed">{{ $rule->description ?? 'Tidak ada deskripsi' }}</div>
                                     <div class="text-slate-500 font-mono text-[10px] bg-slate-100/50 inline-block px-1.5 py-0.5 rounded border border-slate-200/50">{{ $rule->code ?: '#'.$rule->id }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -428,7 +428,7 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <div class="text-xs font-mono text-gray-500 mb-1">{{ $rule->code ?: '#'.$rule->id }}</div>
-                                <div class="font-bold text-gray-900 text-base leading-tight">{{ $rule->name }}</div>
+                                <div class="font-bold text-gray-900 text-base leading-tight mb-1">{{ $rule->name }}</div><div class="text-xs text-slate-500 mb-2 leading-relaxed">{{ $rule->description ?? 'Tidak ada deskripsi' }}</div>
                             </div>
                             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border {{ $rule->severity === 'error' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
                                 {{ $rule->severity === 'error' ? 'KRITIS' : 'PERINGATAN' }}

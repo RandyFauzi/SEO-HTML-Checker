@@ -26,6 +26,7 @@ Struktur JSON yang diharapkan:
     "category": "Kategori (contoh: Meta Tags, Typography, Links, Images)",
     "target_page": "all", // Bisa "all", "lp", atau "amp"
     "rule_type": "TIPE_ATURAN",
+    "description": "Penjelasan detail mengenai fungsi dan tujuan rule ini",
     "config": { ... },
     "issue_message": "Pesan error singkat",
     "reason_template": "Penjelasan detail kenapa gagal",

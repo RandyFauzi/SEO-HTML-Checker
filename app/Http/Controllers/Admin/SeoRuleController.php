@@ -31,6 +31,7 @@ class SeoRuleController extends Controller
         return $request->validate([
             'code' => 'required|string|max:255',
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'category' => 'required|string|max:255',
             'target_page' => 'required|in:all,lp,amp',
             'rule_type' => 'required|string|in:' . $typesStr,
