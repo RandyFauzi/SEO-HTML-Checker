@@ -216,7 +216,7 @@
                                                 <button type="submit" class="w-full group/btn relative flex items-center justify-center gap-2 py-3 px-4 bg-slate-900 hover:bg-indigo-600 text-white font-medium text-sm rounded-xl transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-indigo-500/20 overflow-hidden">
                                                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
                                                     <svg class="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                                    <span class="relative z-10">Instal Rule Ini</span>
+                                                    <span class="relative z-10">Pasang Rule</span>
                                                 </button>
                                             </form>
                                         @endif
