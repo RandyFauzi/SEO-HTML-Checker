@@ -35,11 +35,13 @@ Struktur JSON yang diharapkan:
 }
 
 Daftar TIPE_ATURAN yang VALID (harus persis) dan contoh config-nya:
-1. "exist" (Cek keberadaan tag)
-   - config: {"selector": "h1", "must_exist": true}
-2. "count" (Cek jumlah tag)
+1. "exist" (Cek keberadaan tag, harus ada minimal 1)
+   - config: {"selector": "h1"}
+2. "not_exist" (Pastikan tag TIDAK ADA di HTML)
+   - config: {"selector": "meta[name='keywords']"}
+3. "count" (Cek jumlah tag)
    - config: {"selector": "h1", "min": 1, "max": 1}
-3. "attribute" (Cek atribut tag)
+4. "attribute" (Cek atribut tag)
    - config: {"selector": "img", "attribute": "alt", "must_exist": true}
 4. "length" (Cek panjang teks/atribut)
    - config: {"selector": "title", "min": 10, "max": 60}

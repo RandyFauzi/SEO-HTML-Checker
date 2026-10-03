@@ -11,6 +11,7 @@ use App\Services\Rules\AttributeRuleEvaluator;
 use App\Services\Rules\CompareAmpRuleEvaluator;
 use App\Services\Rules\CountRuleEvaluator;
 use App\Services\Rules\ExistsRuleEvaluator;
+use App\Services\Rules\NotExistRuleEvaluator;
 use App\Services\Rules\JsonLdRuleEvaluator;
 use App\Services\Rules\LengthRuleEvaluator;
 use App\Services\Rules\LinkRuleEvaluator;
@@ -30,6 +31,7 @@ class RuleEngine
     {
         $this->evaluators = [
             RuleType::Exist->value => new ExistsRuleEvaluator,
+            RuleType::NotExist->value => new NotExistRuleEvaluator,
             RuleType::Count->value => new CountRuleEvaluator,
             RuleType::Length->value => new LengthRuleEvaluator,
             RuleType::TextMatch->value => new TextMatchRuleEvaluator,
@@ -103,7 +105,7 @@ class RuleEngine
             if (isset($result['skipped']) && $result['skipped']) {
                 $status = CheckStatus::Skipped;
             } else {
-                $status = $result['passed'] ? CheckStatus::Passed : CheckStatus::from($rule->severity);
+                $status = $result['passed'] ? CheckStatus::Passed : CheckStatus::from($result['severity_override'] ?? $rule->severity);
             }
 
             return new CheckResult(

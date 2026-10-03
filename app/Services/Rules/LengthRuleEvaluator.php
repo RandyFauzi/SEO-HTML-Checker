@@ -45,7 +45,9 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
         // Trait will read from $rule->config automatically
         $text = $this->extractContent($nodes->first(), $rule);
 
-        $length = mb_strlen(trim($text));
+        // Normalize whitespace (Google counts normalized text)
+        $normalizedText = trim(preg_replace('/\s+/', ' ', $text));
+        $length = mb_strlen($normalizedText);
 
         $operator = $config['operator'] ?? '<=';
         $expectedValue = (int) ($config['expected'] ?? $config['max'] ?? 0);
@@ -91,6 +93,7 @@ class LengthRuleEvaluator implements RuleEvaluatorInterface
             'selector' => $selector,
             'attribute' => $attribute,
             'html_snippet' => $htmlSnippet,
+            'severity_override' => 'warning', // Downgrade length checks to warning (heuristic)
         ];
     }
 }

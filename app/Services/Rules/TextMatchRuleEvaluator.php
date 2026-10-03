@@ -48,30 +48,36 @@ class TextMatchRuleEvaluator implements RuleEvaluatorInterface
 
         // Case-insensitive comparisons for simplicity
         $textLower = strtolower($text);
-        $expectedLower = strtolower($expected);
-
-        $passed = match ($operator) {
-            'equals', '=' => $textLower === $expectedLower,
-            'not_equals', '!=' => $textLower !== $expectedLower,
-            'starts_with' => str_starts_with($textLower, $expectedLower),
-            'ends_with' => str_ends_with($textLower, $expectedLower),
-            'not_contains' => ! str_contains($textLower, $expectedLower),
-            default => str_contains($textLower, $expectedLower),
-        };
+        
+        if ($operator === 'in_list' && is_array($expected)) {
+            $passed = in_array($textLower, array_map('strtolower', $expected), true);
+            $expectedStr = implode(', ', $expected);
+        } else {
+            $expectedLower = strtolower((string) $expected);
+            $expectedStr = (string) $expected;
+            $passed = match ($operator) {
+                'equals', '=' => $textLower === $expectedLower,
+                'not_equals', '!=' => $textLower !== $expectedLower,
+                'starts_with' => str_starts_with($textLower, $expectedLower),
+                'ends_with' => str_ends_with($textLower, $expectedLower),
+                'not_contains' => ! str_contains($textLower, $expectedLower),
+                default => str_contains($textLower, $expectedLower),
+            };
+        }
 
         $issue = null;
         $reason = null;
 
         if (! $passed) {
             $issue = $rule->issue_message ?? "Teks {$rule->name} tidak sesuai ekspektasi.";
-            $reason = $rule->reason_template ?? "Nilai yang diekstrak tidak memenuhi kondisi `{$operator}` terhadap `{$expected}`.";
+            $reason = $rule->reason_template ?? "Nilai yang diekstrak tidak memenuhi kondisi `{$operator}` terhadap `{$expectedStr}`.";
         }
 
         return [
             'passed' => $passed,
             'issue' => $issue,
             'reason' => $reason,
-            'expected' => "{$operator} '{$expected}'",
+            'expected' => "{$operator} '{$expectedStr}'",
             'actual' => mb_strimwidth($text, 0, 50, '...'),
             'selector' => $selector,
             'attribute' => $attribute,

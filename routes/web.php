@@ -11,7 +11,7 @@ Route::view('/tutorial', 'tutorial.index')->name('tutorial.index');
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
-Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
+Route::post('/login', [AuthController::class, 'login'])->middleware(['guest', 'throttle:5,1']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 use App\Http\Controllers\Admin\DashboardController;

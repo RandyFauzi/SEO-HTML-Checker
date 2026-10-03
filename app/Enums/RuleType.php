@@ -5,6 +5,7 @@ namespace App\Enums;
 enum RuleType: string
 {
     case Exist = 'exist';
+    case NotExist = 'not_exist';
     case Count = 'count';
     case Length = 'length';
     case TextMatch = 'text_match';
