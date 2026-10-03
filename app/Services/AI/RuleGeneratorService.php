@@ -31,21 +31,27 @@ Struktur JSON yang diharapkan:
   "severity": "error" atau "warning"
 }
 
-Daftar TIPE_ATURAN dan contoh config-nya:
-1. "tag_presence"
+Daftar TIPE_ATURAN yang VALID (harus persis) dan contoh config-nya:
+1. "exist" (Cek keberadaan tag)
    - config: {"selector": "h1", "must_exist": true}
-   - PENTING untuk multi tag (seperti alternate hreflang): Jangan gunakan selector generik seperti "link[rel='alternate']" jika ingin mengecek banyak bahasa spesifik. Gunakan atribut yang tepat: {"selector": "link[rel='alternate'][hreflang='id-id']", "must_exist": true}
-2. "tag_count"
+2. "count" (Cek jumlah tag)
    - config: {"selector": "h1", "min": 1, "max": 1}
-3. "attribute_presence"
+3. "attribute" (Cek atribut tag)
    - config: {"selector": "img", "attribute": "alt", "must_exist": true}
-4. "text_length"
-   - config: {"selector": "title", "min_length": 10, "max_length": 60}
-5. "anchor_href_allowlist"
-   - config: {"selector": "a.btn-buy", "allowed_target_types": ["canonical", "amphtml", "https://trust.com"]}
-6. "regex_match"
+4. "length" (Cek panjang teks/atribut)
+   - config: {"selector": "title", "min": 10, "max": 60}
+5. "regex" (Pencocokan Regex)
    - config: {"selector": "meta[name='robots']", "attribute": "content", "pattern": "/index, follow/i"}
+6. "text_match" (Pencocokan Teks Persis)
+   - config: {"selector": "title", "expected": "Judul Diharapkan"}
+7. "compare_amp" (Bandingkan LP dan AMP)
+   - config: {"selector": "title"}
+8. "json_ld" (Cek schema.org JSON-LD)
+   - config: {"type": "Product", "required_properties": ["name", "price"]}
+9. "anchor_href_allowlist" (Cek href tombol/link)
+   - config: {"selector": "a.btn-buy", "allowed_target_types": ["canonical", "amphtml", "https://trust.com"]}
 
+PENTING: Jangan membuat TIPE_ATURAN selain dari daftar di atas! Gunakan tipe yang paling relevan.
 Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Perhatikan apakah user meminta aturan untuk LP atau AMP. Jawab HANYA dengan JSON.
 EOF;
 
