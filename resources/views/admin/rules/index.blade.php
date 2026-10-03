@@ -224,33 +224,36 @@
         <div class="glass-panel rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] overflow-hidden mb-8">
             <!-- Desktop Table View -->
             <div class="hidden md:block overflow-x-auto">
-                <table class="min-w-full text-left text-sm whitespace-nowrap">
+                <table class="min-w-full text-left text-sm">
                     <thead class="bg-white/40 border-b border-white/60 text-slate-500 uppercase tracking-wider text-xs font-bold">
                         <tr>
-                            <th class="px-6 py-5">Kode</th>
-                            <th class="px-6 py-5">Nama Aturan</th>
-                            <th class="px-6 py-5">Tipe</th>
-                            <th class="px-6 py-5">Kategori</th>
-                            <th class="px-6 py-5">Status</th>
-                            <th class="px-6 py-5 text-center">Aktif</th>
-                            <th class="px-6 py-5 text-right">Aksi</th>
+                            <th class="px-6 py-5 whitespace-nowrap">Aturan</th>
+                            <th class="px-6 py-5 whitespace-nowrap">Tipe</th>
+                            <th class="px-6 py-5 whitespace-nowrap">Kategori</th>
+                            <th class="px-6 py-5 whitespace-nowrap">Status</th>
+                            <th class="px-6 py-5 text-center whitespace-nowrap">Aktif</th>
+                            <th class="px-6 py-5 text-right whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/40 text-slate-700">
                         @forelse($rules as $rule)
                             <tr class="hover:bg-white/50 transition-colors group">
-                                <td class="px-6 py-4 text-gray-500 font-mono text-xs">{{ $rule->code ?: '#'.$rule->id }}</td>
-                                <td class="px-6 py-4 font-semibold text-gray-900">{{ $rule->name }}</td>
                                 <td class="px-6 py-4">
+                                    <div class="font-bold text-slate-900 mb-1 max-w-xs break-words">{{ $rule->name }}</div>
+                                    <div class="text-slate-500 font-mono text-[10px] bg-slate-100/50 inline-block px-1.5 py-0.5 rounded border border-slate-200/50">{{ $rule->code ?: '#'.$rule->id }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">{{ $rule->rule_type->value ?? $rule->rule_type }}</span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded text-xs border border-indigo-100">{{ $rule->category }}</span>
-                                    <span class="ml-1 text-slate-600 bg-slate-100 px-2 py-1 rounded text-xs border border-slate-200">
-                                        {{ $rule->target_page === 'lp' ? 'Landing Page' : ($rule->target_page === 'amp' ? 'AMP' : 'LP & AMP') }}
-                                    </span>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <span class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded text-xs border border-indigo-100">{{ $rule->category }}</span>
+                                        <span class="text-slate-600 bg-slate-100 px-2 py-1 rounded text-[10px] font-medium border border-slate-200">
+                                            {{ $rule->target_page === 'lp' ? 'Landing Page' : ($rule->target_page === 'amp' ? 'AMP' : 'LP & AMP') }}
+                                        </span>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2.5 py-1 rounded-md text-xs font-semibold border {{ $rule->severity === 'error' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
                                         {{ $rule->severity === 'error' ? 'Kritis' : 'Peringatan' }}
                                     </span>
@@ -285,7 +288,7 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-right space-x-3">
+                                <td class="px-6 py-4 text-right space-x-3 whitespace-nowrap">
                                     <a href="{{ route('admin.rules.edit', $rule) }}" class="text-blue-600 hover:text-blue-900 font-medium transition-colors">Edit</a>
                                     <form action="{{ route('admin.rules.destroy', $rule) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus aturan ini?');">
                                         @csrf
@@ -296,7 +299,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-gray-500 bg-gray-50">
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500 bg-gray-50">
                                     <p class="text-base font-medium text-gray-900">Belum ada aturan</p>
                                 </td>
                             </tr>
@@ -369,5 +372,5 @@
         </div>
 
     </div>
+
 </x-admin-layout>
-< / x - a d m i n - l a y o u t >
