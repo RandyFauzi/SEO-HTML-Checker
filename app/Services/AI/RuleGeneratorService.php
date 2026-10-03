@@ -19,16 +19,19 @@ Output harus HANYA berupa JSON object murni.
 
 Struktur JSON yang diharapkan:
 {
-  "name": "Nama aturan singkat",
-  "code": "kode_aturan_snake_case",
-  "category": "Kategori (contoh: Meta Tags, Typography, Links, Images)",
-  "target_page": "all", // Bisa "all" (semua), "lp" (Landing Page), atau "amp" (Halaman AMP)
-  "rule_type": "TIPE_ATURAN",
-  "config": { ... },
-  "issue_message": "Pesan error singkat",
-  "reason_template": "Penjelasan detail kenapa gagal",
-  "recommendation": "Saran perbaikan",
-  "severity": "error" atau "warning"
+  "explanation": "Penjelasan ramah untuk user (bahasa Indonesia) tentang apa yang akan dicek oleh aturan ini.",
+  "rule": {
+    "name": "Nama aturan singkat",
+    "code": "kode_aturan_snake_case",
+    "category": "Kategori (contoh: Meta Tags, Typography, Links, Images)",
+    "target_page": "all", // Bisa "all", "lp", atau "amp"
+    "rule_type": "TIPE_ATURAN",
+    "config": { ... },
+    "issue_message": "Pesan error singkat",
+    "reason_template": "Penjelasan detail kenapa gagal",
+    "recommendation": "Saran perbaikan",
+    "severity": "error" atau "warning"
+  }
 }
 
 Daftar TIPE_ATURAN yang VALID (harus persis) dan contoh config-nya:

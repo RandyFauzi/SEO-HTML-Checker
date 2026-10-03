@@ -216,18 +216,34 @@
                                         </template>
                                         
                                         <template x-if="aiResult">
-                                            <div class="space-y-4">
-                                                <div class="bg-green-50 text-green-700 p-3 rounded-lg border border-green-200 text-sm font-medium flex items-start">
-                                                    <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                                Berhasil! AI telah merumuskan aturan berikut. Salin JSON ini, lalu buka menu <b>Tambah Aturan &gt; Impor dari JSON</b> dan pilih tab <b>Tempel Teks</b>.
+                                            <div class="space-y-4" x-data="{ showJson: false }">
+                                                <div class="bg-indigo-50 text-indigo-900 p-4 rounded-xl border border-indigo-100 text-sm font-medium flex items-start">
+                                                    <svg class="w-6 h-6 mr-3 mt-0.5 flex-shrink-0 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <div x-text="aiResult.explanation" class="leading-relaxed"></div>
                                                 </div>
-                                                <div class="relative group">
-                                                    <textarea readonly rows="8" class="w-full font-mono text-xs bg-slate-900 text-green-400 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none" x-text="JSON.stringify([aiResult], null, 2)"></textarea>
+                                                
+                                                <div class="text-right">
+                                                    <button @click="showJson = !showJson" class="text-xs text-slate-500 hover:text-slate-700 underline font-medium">Lihat Detail Teknis (JSON)</button>
                                                 </div>
+                                                
+                                                <div x-show="showJson" style="display:none;" class="relative group mt-2">
+                                                    <textarea readonly rows="8" class="w-full font-mono text-xs bg-slate-900 text-green-400 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none" x-text="JSON.stringify([aiResult.rule], null, 2)"></textarea>
+                                                </div>
+                                                
                                                 <div class="mt-5 flex justify-end gap-3">
-                                                    <button @click="aiResult = null" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl transition-all">Ubah Prompt</button>
-                                                    <button @click="navigator.clipboard.writeText(JSON.stringify([aiResult], null, 2)); showAiModal = false; aiResult = null; toastMessage = 'JSON berhasil disalin! Silakan paste di menu Impor.'; showToast = true; setTimeout(() => showToast = false, 3000);" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-all">
-                                                        Salin & Tutup
+                                                    <button @click="aiResult = null" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl transition-all">Revisi</button>
+                                                    <button @click="
+                                                        const f = document.createElement('form');
+                                                        f.method = 'POST';
+                                                        f.action = '{{ route('admin.rules.import') }}';
+                                                        const c = document.createElement('input'); c.name = '_token'; c.value = '{{ csrf_token() }}'; c.type = 'hidden';
+                                                        const t = document.createElement('input'); t.name = 'json_text'; t.value = JSON.stringify([aiResult.rule]); t.type = 'hidden';
+                                                        f.appendChild(c); f.appendChild(t);
+                                                        document.body.appendChild(f);
+                                                        f.submit();
+                                                    " class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md hover:-translate-y-0.5 transition-all flex items-center">
+                                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                                        Simpan & Terapkan Aturan
                                                     </button>
                                                 </div>
                                             </div>
