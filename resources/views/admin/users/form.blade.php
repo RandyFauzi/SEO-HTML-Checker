@@ -3,7 +3,7 @@
     <x-slot name="header">{{ $user->exists ? 'Edit Admin' : 'Tambah Admin' }}</x-slot>
 
     <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl shadow-sm">
-        <form action="{{ $user->exists ? route('admin.users.update', $user) : route('admin.users.store') }}" method="POST" class="space-y-6">
+        <form x-data="{ submitting: false }" @submit="submitting = true" action="{{ $user->exists ? route('admin.users.update', $user) : route('admin.users.store') }}" method="POST" class="space-y-6">
             @csrf
             @if($user->exists)
                 @method('PUT')
@@ -40,8 +40,8 @@
             </div>
 
             <div class="pt-4 flex gap-4">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
-                    Simpan Admin
+                <button type="submit" :disabled="submitting" :class="{'opacity-75 cursor-not-allowed': submitting}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+                    <span x-show="!submitting">Simpan Admin</span><span x-show="submitting" style="display:none;">Menyimpan...</span>
                 </button>
                 <a href="{{ route('admin.users.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-6 rounded-xl transition-colors">
                     Batal
