@@ -40,10 +40,7 @@ EOF;
 
         $prompt = $systemPrompt . "\n\nHTML Snippet Asli:\n" . $htmlSnippet;
 
-        $provider = config('services.ai_provider', 'openai');
-        $model = $provider === 'gemini' 
-            ? env('GEMINI_REMEDIATION_MODEL', 'gemini-flash-latest')
-            : env('OPENAI_REMEDIATION_MODEL', 'gpt-6-astra');
+        $model = env('OPENAI_REMEDIATION_MODEL', 'gpt-4o-mini');
         
         return $this->client->generateText($model, $prompt);
     }

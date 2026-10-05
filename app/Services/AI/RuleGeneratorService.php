@@ -65,10 +65,7 @@ PENTING: Jangan membuat TIPE_ATURAN selain dari daftar di atas! Gunakan tipe yan
 Buatlah aturan yang paling tepat berdasarkan permintaan user berikut. Perhatikan apakah user meminta aturan untuk LP atau AMP. Jawab HANYA dengan JSON.
 EOF;
 
-        $provider = config('services.ai_provider', 'openai');
-        $model = $provider === 'gemini' 
-            ? env('GEMINI_RULE_BUILDER_MODEL', 'gemini-flash-latest')
-            : env('OPENAI_RULE_BUILDER_MODEL', 'gpt-6-astra');
+        $model = env('OPENAI_RULE_BUILDER_MODEL', 'gpt-4o-mini');
         
         $prompt = $systemPrompt . "\n\nPermintaan user: " . $userPrompt;
 

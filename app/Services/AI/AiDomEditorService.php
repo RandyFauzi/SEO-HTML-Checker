@@ -44,7 +44,7 @@ EOF;
         $userPrompt = "Instruksi User:\n" . $prompt . "\n\nHTML Target:\n" . $html;
 
         // In a real app, dynamically resolve the model from config
-        $model = env('OPENAI_REMEDIATION_MODEL', 'gpt-5');
+        $model = env('OPENAI_REMEDIATION_MODEL', 'gpt-4o-mini');
         
         $jsonResponse = $this->aiClient->generateText($model, $systemPrompt . "\n\n" . $userPrompt);
         
