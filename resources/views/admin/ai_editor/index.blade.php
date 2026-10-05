@@ -95,12 +95,12 @@
                 <!-- Manual Mode Form -->
                 <form x-show="editorMode === 'manual'" @submit.prevent="processForm" class="space-y-5 relative z-10">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">URL Target (LP / AMP)</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">URL Target (LP / AMP) - Maks 10</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="absolute top-0 left-0 pt-3.5 pl-3 flex items-start pointer-events-none">
                                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                             </div>
-                            <input type="url" x-model="url" :required="editorMode === 'manual'" placeholder="https://example.com/lp" class="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white transition-colors">
+                            <textarea x-model="urls" :required="editorMode === 'manual'" rows="4" placeholder="https://example.com/lp1&#10;https://example.com/lp2&#10;(Maksimal 10 URL, satu URL per baris)" class="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white transition-colors leading-relaxed"></textarea>
                         </div>
                     </div>
 
@@ -468,7 +468,7 @@
                     type: 'LP',
                     url: ''
                 },
-                url: '',
+                url: '', urls: '', progress: { current: 0, total: 0, percentage: 0, active: false, statusText: '' },
                 prompt: '',
                 autoForm: {
                     template_id: '',
@@ -541,45 +541,101 @@
                         this.savingTemplate = false;
                     }
                 },
-
                 async processForm() {
+                    if (!this.urls || !this.prompt) return;
+                    
+                    let targetUrls = this.urls.split('\n').map(u => u.trim()).filter(u => u !== '');
+                    if (targetUrls.length === 0) return;
+                    if (targetUrls.length > 10) {
+                        alert('Maksimal hanya 10 URL sekaligus!');
+                        return;
+                    }
+
                     this.loading = true;
                     this.errorMsg = '';
                     this.assembledPrompt = '';
+                    this.hasResult = false;
+                    
+                    let batchResults = [];
+                    this.progress.active = true;
+                    this.progress.total = targetUrls.length;
+                    this.progress.current = 0;
+                    this.progress.percentage = 0;
                     
                     try {
-                        const response = await fetch('/admin/ai-editor/process', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                url: this.url,
-                                prompt: this.prompt
-                            })
-                        });
-
-                        const data = await response.json();
-
-                        if (!response.ok) {
-                            throw new Error(data.error || 'Terjadi kesalahan pada server');
+                        for (let i = 0; i < targetUrls.length; i++) {
+                            let currentUrl = targetUrls[i];
+                            this.progress.statusText = 'Memproses URL ' + (i+1) + ' dari ' + targetUrls.length + '... (' + currentUrl.substring(0, 30) + '...)';
+                            
+                            const response = await fetch('/admin/ai-editor/process', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    url: currentUrl,
+                                    prompt: this.prompt
+                                })
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (!response.ok) {
+                                throw new Error(data.error || 'Gagal memproses ' + currentUrl);
+                            }
+                            
+                            batchResults.push({
+                                url: currentUrl,
+                                html: data.modified_html
+                            });
+                            
+                            this.progress.current = i + 1;
+                            this.progress.percentage = Math.round((this.progress.current / this.progress.total) * 100);
+                            
+                            // If only 1 URL, show preview diff
+                            if (targetUrls.length === 1) {
+                                this.originalHtml = data.original_html;
+                                this.modifiedHtml = data.modified_html;
+                                this.operations = data.operations;
+                                this.hasResult = true;
+                                this.activeTab = 'preview';
+                            }
                         }
-
-                        this.originalHtml = data.original_html;
-                        this.modifiedHtml = data.modified_html;
-                        this.operations = data.operations;
                         
-                        this.hasResult = true;
-                        this.activeTab = 'preview';
+                        this.progress.statusText = 'Selesai! Menyiapkan file ZIP...';
+                        
+                        // Download ZIP logic using hidden form post
+                        if (batchResults.length > 0) {
+                            let form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '{{ route(\'admin.ai_editor.download_batch\') }}';
+                            
+                            let csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = '_token';
+                            csrfInput.value = '{{ csrf_token() }}';
+                            form.appendChild(csrfInput);
+                            
+                            let dataInput = document.createElement('input');
+                            dataInput.type = 'hidden';
+                            dataInput.name = 'batch_data';
+                            dataInput.value = JSON.stringify(batchResults);
+                            form.appendChild(dataInput);
+                            
+                            document.body.appendChild(form);
+                            form.submit();
+                            document.body.removeChild(form);
+                        }
 
                     } catch (error) {
                         this.errorMsg = error.message;
                     } finally {
                         this.loading = false;
+                        setTimeout(() => { this.progress.active = false; }, 3000);
                     }
                 },
-
+                
                 async processAutoForm() {
                     this.loading = true;
                     this.errorMsg = '';

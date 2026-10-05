@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/ai-editor/process-auto', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'processAuto'])->name('admin.ai_editor.process_auto');
     Route::get('/admin/ai-editor', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'index'])->name('admin.ai_editor.index');
     Route::post('/admin/ai-editor/process', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'process'])->name('admin.ai_editor.process');
+    Route::post('/admin/ai-editor/download-batch', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'downloadBatch'])->name('admin.ai_editor.download_batch');
     Route::delete('/admin/history-batch', [\App\Http\Controllers\Admin\HistoryController::class, 'batchDestroy'])->name('admin.history.batchDestroy');
     Route::get('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'show'])->name('admin.history.show');
     Route::delete('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'destroy'])->name('admin.history.destroy');
