@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-50 min-h-screen relative overflow-x-hidden antialiased text-slate-800">
     <!-- Header/Navbar -->
-        <header x-data="{ mobileMenuOpen: false }" class="fixed top-0 left-0 w-full z-[100] bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
+        <header x-data="{ mobileMenuOpen: false }" class="fixed top-0 left-0 w-full z-50 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
         <div class="px-4 md:px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-8 h-8 object-contain">
@@ -58,7 +58,7 @@
     </header>
 
 <!-- Main Content -->
-    <main class="relative z-10 flex flex-col items-center min-h-screen px-4 pt-24 pb-10">
+    <main class="relative z-0 flex flex-col items-center min-h-screen px-4 pt-24 pb-10">
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">
