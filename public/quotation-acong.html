@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation - Penawaran Kerja (Acong) - SEO HTML Checker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-size: 13px;
+            line-height: 1.5;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Container untuk tampilan layar & print */
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm 20mm 20mm 20mm;
+            margin: 20px auto;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+            .page-container {
+                width: 100%;
+                min-height: 297mm;
+                margin: 0;
+                padding: 18mm 20mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Tombol Cetak Melayang */
+        .action-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: #0284c7;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(2, 132, 199, 0.3);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        /* Header Style Sesuai Gambar PDF */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .header-logo-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #0284c7; /* Warna biru muda terang persis quotation asli */
+            letter-spacing: -0.5px;
+        }
+
+        .header-meta {
+            text-align: right;
+        }
+
+        .header-meta h2 {
+            font-size: 19px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .header-meta .meta-item {
+            font-size: 12.5px;
+            color: #334155;
+            margin-bottom: 2px;
+        }
+
+        .parties {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .party-box {
+            width: 48%;
+        }
+
+        .party-box .label {
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 3px;
+        }
+
+        .party-box .name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1.5px solid #1e293b;
+            margin: 10px 0 20px 0;
+        }
+
+        /* Konten Penawaran */
+        .job-header {
+            margin-bottom: 14px;
+        }
+
+        .job-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .order-code {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .job-detail-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .job-desc {
+            font-size: 12.5px;
+            color: #334155;
+            margin-bottom: 8px;
+            line-height: 1.45;
+        }
+
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+
+        .checklist li {
+            position: relative;
+            padding-left: 14px;
+            font-size: 12px;
+            color: #334155;
+            margin-bottom: 5px;
+            line-height: 1.45;
+        }
+
+        .checklist li::before {
+            content: "•";
+            position: absolute;
+            left: 2px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        /* Tabel Layanan */
+        .service-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .service-table th {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .service-table td {
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            font-size: 12.5px;
+            color: #1e293b;
+            vertical-align: top;
+        }
+
+        .service-table .col-desc {
+            width: 62%;
+        }
+
+        .service-table .col-qty {
+            width: 13%;
+            text-align: center;
+        }
+
+        .service-table .col-price {
+            width: 25%;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .item-main-title {
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 3px;
+        }
+
+        .item-sub-desc {
+            font-size: 11.5px;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        /* Ketentuan Revisi & Waktu di Bawah Tabel */
+        .table-footer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .terms-left {
+            width: 58%;
+            font-size: 11.5px;
+            color: #334155;
+        }
+
+        .terms-left .item-bullet {
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 4px;
+        }
+
+        .terms-left .sub-text {
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 2px;
+            line-height: 1.35;
+        }
+
+        .summary-right {
+            width: 40%;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .summary-row.clean {
+            font-weight: 700;
+            font-size: 13.5px;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        /* Termin Pembayaran */
+        .payment-box {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #1e293b;
+        }
+
+        .payment-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #0f172a;
+        }
+
+        .payment-box p {
+            margin-bottom: 2px;
+        }
+
+        .due-date {
+            margin-top: 6px;
+            font-size: 11.5px;
+            color: #334155;
+        }
+
+        .comment-label {
+            margin-top: 18px;
+            font-weight: 700;
+            font-size: 13px;
+            color: #0f172a;
+        }
+
+        /* Halaman 2 */
+        .page-2-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: calc(297mm - 40mm);
+        }
+
+        .terms-disclaimer-top {
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #1e293b;
+            text-align: justify;
+        }
+
+        .signature-section {
+            text-align: center;
+            margin: 40px auto 30px auto;
+        }
+
+        .sig-date-label {
+            font-size: 12.5px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .sig-date-val {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 75px;
+        }
+
+        .sig-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            border-top: 1.5px solid #1e293b;
+            display: inline-block;
+            padding-top: 8px;
+            min-width: 380px;
+        }
+
+        .sig-role {
+            font-size: 12px;
+            color: #475569;
+            margin-top: 3px;
+        }
+
+        .legal-notice-bottom {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+            text-align: justify;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tombol Print untuk kemudahan simpan ke PDF -->
+    <div class="action-bar no-print">
+        <button class="btn" onclick="window.print()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Cetak / Simpan PDF
+        </button>
+    </div>
+
+    <!-- HALAMAN 1 -->
+    <div class="page-container">
+        <!-- Header -->
+        <div class="header-top">
+            <div class="header-logo-title">quotation</div>
+            <div class="header-meta">
+                <h2>PENAWARAN KERJA</h2>
+                <div class="meta-item">No: QV-SEO-002</div>
+                <div class="meta-item">Tanggal: 05/10/2026</div>
+            </div>
+        </div>
+
+        <!-- Identitas Freelancer & Pelanggan -->
+        <div class="parties">
+            <div class="party-box">
+                <div class="label">Freelancer</div>
+                <div class="name">Achmad Randy Al Mugni Fauzi</div>
+            </div>
+            <div class="party-box" style="text-align: right;">
+                <div class="label">Pelanggan</div>
+                <div class="name">Acong</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Rincian Pekerjaan -->
+        <div class="job-header">
+            <div class="job-title">Judul Pekerjaan: AI-Powered SEO Rule Builder & HTML Auto-Remediation Engine</div>
+            <div class="order-code">Order Code: SEO-ACONG-2026</div>
+            <div class="job-detail-title">Detil:</div>
+            <p class="job-desc">
+                Pengembangan dan penambahan modul kecerdasan buatan (AI) serta sistem remediasi otomatis pada aplikasi SEO-HTML-Checker dengan rincian cakupan kerja berdasarkan dokumen kesepakatan:
+            </p>
+        </div>
+
+        <!-- Cakupan Kerja -->
+        <ul class="checklist">
+            <li><strong>AI Prompt-to-Rule Translator:</strong> Mengubah instruksi bahasa alami/awam menjadi skema JSON audit SEO yang baku secara otomatis tanpa koding manual.</li>
+            <li><strong>Template URL Fetcher & Safe DOM Parser:</strong> Pengambilan otomatis file HTML dari tautan template eksternal dengan proteksi SSRF dan parsing DOM internal.</li>
+            <li><strong>Hybrid DOM Extraction & Targeted Remediation:</strong> Arsitektur hemat token; hanya mengekstrak teks relevan ke LLM tanpa membakar biaya token untuk markup HTML/CSS/JS mentah.</li>
+            <li><strong>Auto-Remediation Tag Struktural (0 Token):</strong> Otomasi injeksi tag hilang (<code style="font-size:11px;">&lt;link rel="alternate"&gt;</code>, meta tags, kanonikal) langsung via backend PHP DOM Engine.</li>
+            <li><strong>Contextual Content & Alt-Tag Alignment via AI:</strong> Penyesuaian konten teks utama serta atribut alt gambar agar selaras dengan Title & Meta Description tanpa merusak struktur layout, class, dan script.</li>
+            <li><strong>Workspace & Code Viewer:</strong> Antarmuka perbandingan audit sebelum & sesudah perbaikan, dilengkapi fitur interaktif <em>Copy Clean HTML</em> dan <em>Download .html</em> sekali klik.</li>
+        </ul>
+
+        <!-- Tabel Layanan -->
+        <table class="service-table">
+            <thead>
+                <tr>
+                    <th class="col-desc" style="text-align: left;">Detail layanan</th>
+                    <th class="col-qty">Kuantitas</th>
+                    <th class="col-price">Harga (Rupiah)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="item-main-title">Paket Modul AI SEO Rule Builder & Auto-Fixer</div>
+                        <div class="item-sub-desc">
+                            Pengembangan modul full-stack (Backend PHP Engine, AI Translator, DOM Auto-Remediation, dan UI Workspace) yang siap digunakan setelah proses Quality Assurance (QA).
+                        </div>
+                    </td>
+                    <td class="col-qty">1</td>
+                    <td class="col-price">1.350.000,00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Info Tambahan & Ringkasan Biaya -->
+        <div class="table-footer-info">
+            <div class="terms-left">
+                <div class="item-bullet">• Jumlah revisi: 2 Kali</div>
+                <div class="sub-text">
+                    Deskripsi Revisi: Berlaku untuk penyesuaian minor alur atau bug fixing setelah fase QA, bukan untuk penambahan fitur baru di luar lingkup rincian kerja awal.
+                </div>
+                <div class="item-bullet" style="margin-top: 8px;">• Durasi Kerja: 5 - 7 Hari Kerja (Estimasi 06/10/2026 - 13/10/2026)</div>
+            </div>
+
+            <div class="summary-right">
+                <div class="summary-row">
+                    <span>Total</span>
+                    <span style="font-weight: 700;">1.350.000,00</span>
+                </div>
+                <div class="summary-row clean">
+                    <span>Jumlah Bersih</span>
+                    <span style="color: #0f172a;">1.350.000,00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ketentuan Pembayaran -->
+        <div class="payment-box">
+            <div class="payment-title">Ketentuan Pembayaran:</div>
+            <p>- Termin 1 (DP 50%): Rp675.000,00</p>
+            <p>- Termin 2 (Pelunasan 50%): Rp675.000,00</p>
+            <div class="due-date">Tanggal jatuh tempo pembayaran Termin 1: 05/10/2026</div>
+        </div>
+
+        <div class="comment-label">Komentar:</div>
+    </div>
+
+    <!-- HALAMAN 2 -->
+    <div class="page-container">
+        <div class="page-2-content">
+            <div class="terms-disclaimer-top">
+                Sistem bersifat sekali bayar untuk jasa development modul pembaruan sistem. Biaya konsumsi API pihak ketiga (OpenAI / LLM) serta infrastruktur hosting berada di luar quotation ini (berdasarkan kalkulasi arsitektur hybrid ekstraksi DOM yang telah kami rancang, biaya operasional API sangat hemat yaitu berkisar ~Rp15 – Rp25 per landing page atau ~Rp7.000 / bulan untuk 300 landing page). Serah terima (handover) pembaruan modul dan panduan pengoperasian akan diberikan secara penuh setelah kewajiban Termin 2 diselesaikan.
+            </div>
+
+            <div class="signature-section">
+                <div class="sig-date-label">Tanggal</div>
+                <div class="sig-date-val">05/10/2026</div>
+                <div class="sig-name">Achmad Randy Al Mugni Fauzi</div>
+                <div class="sig-role">(Freelancer)</div>
+            </div>
+
+            <div class="legal-notice-bottom">
+                Dokumen penawaran kerja ini dihasilkan khusus untuk kesepakatan antara pihak freelancer dan klien. Harap meninjau seluruh cakupan pekerjaan, jumlah revisi, dan termin pembayaran. Dengan memproses pembayaran Termin 1 (Down Payment), pemberi kerja dianggap telah menyetujui detail ruang lingkup pekerjaan serta penetapan harga yang tercantum di atas agar kedua belah pihak dapat bekerja sama secara efektif.
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
