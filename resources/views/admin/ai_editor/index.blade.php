@@ -609,7 +609,7 @@
                         if (batchResults.length > 0) {
                             let form = document.createElement('form');
                             form.method = 'POST';
-                            form.action = '{{ route(\'admin.ai_editor.download_batch\') }}';
+                            form.action = '{{ route("admin.ai_editor.download_batch") }}';
                             
                             let csrfInput = document.createElement('input');
                             csrfInput.type = 'hidden';
