@@ -14,10 +14,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\AI\AiClientInterface::class, function ($app) {
             $provider = config('services.ai_provider', 'openai');
             
-            if ($provider === 'gemini') {
-                return new \App\Services\AI\GeminiClientService();
-            }
-            
             return new \App\Services\AI\OpenAIClientService();
         });
     }
