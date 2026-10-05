@@ -100,7 +100,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                             </div>
-                            <input type="url" x-model="url" :required="editorMode === 'manual'" placeholder="https://example.com/lp" class="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 hover:bg-white transition-colors">
+                            <input type="url" x-model="url" :required="editorMode === 'manual'" placeholder="https://example.com/lp" class="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white transition-colors">
                         </div>
                     </div>
 
@@ -108,7 +108,7 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between items-center">
                             <span>Instruksi AI (Prompt Bebas)</span>
                         </label>
-                        <textarea x-model="prompt" :required="editorMode === 'manual'" rows="6" placeholder="Ketik perintah modifikasi HTML di sini..." class="w-full p-4 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 hover:bg-white transition-colors resize-none"></textarea>
+                        <textarea x-model="prompt" :required="editorMode === 'manual'" rows="6" placeholder="Ketik perintah modifikasi HTML di sini..." class="w-full p-4 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white transition-colors resize-none"></textarea>
                     </div>
                     
                     <div x-show="errorMsg" style="display: none;" class="p-4 bg-red-50/80 text-red-700 rounded-xl text-sm border border-red-100 flex items-start gap-3 backdrop-blur-sm">
@@ -147,7 +147,7 @@
                         </div>
                                                   <!-- CUSTOM DROPDOWN -->
                           <div x-data="{ openDropdown: false }" class="relative">
-                              <button @click="openDropdown = !openDropdown" @click.away="openDropdown = false" type="button" class="w-full py-2.5 px-4 rounded-xl border border-slate-200 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 bg-slate-50 hover:bg-white transition-all text-sm flex justify-between items-center text-left cursor-pointer">
+                              <button @click="openDropdown = !openDropdown" @click.away="openDropdown = false" type="button" class="w-full py-2.5 px-4 rounded-xl border border-slate-200 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 bg-white transition-all text-sm flex justify-between items-center text-left cursor-pointer">
                                   <span x-text="autoForm.template_id ? dbTemplates.find(t => t.id == autoForm.template_id)?.name : '-- Pilih Template yang Tersimpan --'" :class="autoForm.template_id ? 'text-slate-800 font-semibold' : 'text-slate-500'" class="truncate"></span>
                                   <div class="flex items-center gap-2">
                                       <span x-show="autoForm.template_id" x-text="dbTemplates.find(t => t.id == autoForm.template_id)?.type" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700 hidden sm:inline-block" style="display: none;"></span>
@@ -189,37 +189,37 @@
                                   <option :value="tpl.id"></option>
                               </template>
                           </select>
-                        <button type="button" @click="showModal = true" class="mt-2 text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-lg w-full transition-colors">+ Tambah Template Baru ke DB</button>
+                        <button type="button" @click="showModal = true" class="mt-2 text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 border border-indigo-100 shadow-sm px-3 py-2 rounded-lg w-full transition-colors flex items-center justify-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>Tambah Template Baru ke DB</button>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-2">
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Keyword Topik</label>
-                            <input type="text" x-model="autoForm.keyword" placeholder="Cth: Top Up Game Mobile" :required="editorMode === 'auto'" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 hover:bg-white">
+                            <input type="text" x-model="autoForm.keyword" placeholder="Cth: Top Up Game Mobile" :required="editorMode === 'auto'" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white">
                         </div>
                         <div class="col-span-2">
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Brand</label>
-                            <input type="text" x-model="autoForm.brand" placeholder="Cth: ACONGSTORE" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 hover:bg-white">
+                            <input type="text" x-model="autoForm.brand" placeholder="Cth: ACONGSTORE" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link Canonical</label>
-                            <input type="url" x-model="autoForm.canonical_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-slate-50 hover:bg-white">
+                            <input type="url" x-model="autoForm.canonical_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link AMP</label>
-                            <input type="url" x-model="autoForm.amp_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-slate-50 hover:bg-white">
+                            <input type="url" x-model="autoForm.amp_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link Favicon</label>
-                            <input type="url" x-model="autoForm.favicon_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-slate-50 hover:bg-white">
+                            <input type="url" x-model="autoForm.favicon_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link Logo</label>
-                            <input type="url" x-model="autoForm.logo_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-slate-50 hover:bg-white">
+                            <input type="url" x-model="autoForm.logo_url" placeholder="https://" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white">
                         </div>
                         <div class="col-span-2">
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link Banners (Pisahkan enter)</label>
-                            <textarea x-model="autoForm.banner_urls" rows="2" placeholder="https://.../banner1.png&#10;https://.../banner2.png" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-slate-50 hover:bg-white resize-none"></textarea>
+                            <textarea x-model="autoForm.banner_urls" rows="2" placeholder="https://.../banner1.png&#10;https://.../banner2.png" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white resize-none"></textarea>
                         </div>
                     </div>
 
@@ -351,7 +351,7 @@
                             
                             <div class="space-y-4">
                                 <template x-for="(op, index) in operations" :key="index">
-                                    <div class="flex gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-md transition-all">
+                                    <div class="flex gap-4 p-4 rounded-xl border border-slate-100 bg-white hover:shadow-md transition-all">
                                         <div class="shrink-0">
                                             <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs" x-text="index + 1"></div>
                                         </div>
@@ -420,7 +420,7 @@
                     <div class="px-6 py-5 space-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Template</label>
-                            <input type="text" x-model="newTemplate.name" placeholder="Misal: Template Top Up Mobile LP" class="w-full px-4 py-2.5 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-colors">
+                            <input type="text" x-model="newTemplate.name" placeholder="Misal: Template Top Up Mobile LP" class="w-full px-4 py-2.5 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white transition-colors">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1">Tipe Halaman</label>
@@ -437,7 +437,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1">URL / Link Asli Template</label>
-                            <input type="url" x-model="newTemplate.url" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-colors">
+                            <input type="url" x-model="newTemplate.url" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white transition-colors">
                         </div>
                     </div>
 
