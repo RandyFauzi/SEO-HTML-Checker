@@ -34,7 +34,7 @@
                             <th class="pb-4 pl-4 w-10">
                                 <input type="checkbox" id="select-all" class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500 bg-white">
                             </th>
-                            <th class="pb-4 pl-2">Tanggal Audit</th>
+                            <th class="pb-4 pl-2">Tanggal Audit</th><th class="pb-4">URL Utama</th>
                             <th class="pb-4">Total URL</th>
                             <th class="pb-4 text-right pr-4">Aksi</th>
                         </tr>
@@ -48,6 +48,7 @@
                             <td class="py-4 pl-2 font-medium text-slate-700">
                                 {{ $run->created_at->format('d M Y, H:i') }}
                             </td>
+                            <td class="py-4 text-slate-600"><a href="{{ $run->results->first()->lp_url ?? '#' }}" target="_blank" class="text-indigo-600 hover:underline">{{ Str::limit($run->results->first()->lp_url ?? '-', 50) }}</a></td>
                             <td class="py-4 text-slate-600">
                                 {{ $run->total_urls }}
                             </td>

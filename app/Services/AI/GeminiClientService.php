@@ -49,7 +49,7 @@ class GeminiClientService implements AiClientInterface
         return json_decode($text, true) ?? [];
     }
 
-    public function generateText(string $model, string $prompt): string
+        public function generateText(string $model, string $prompt, int $retries = 3): string
     {
         $apiKey = config('services.gemini.api_key');
         $baseUrl = config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta/models');
@@ -60,23 +60,39 @@ class GeminiClientService implements AiClientInterface
 
         $url = "{$baseUrl}/{$model}:generateContent?key={$apiKey}";
 
-        $response = Http::withoutVerifying()
-            ->acceptJson()
-            ->timeout(60)
-            ->post($url, [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $prompt]
-                        ]
-                    ]
-                ],
-                'generationConfig' => [
-                    'temperature' => 0.1,
-                ]
-            ]);
+        $attempt = 0;
+        $response = null;
 
-        if ($response->failed()) {
+        while ($attempt <= $retries) {
+            $response = Http::withoutVerifying()
+                ->acceptJson()
+                ->timeout(60)
+                ->post($url, [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
+                        ]
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.1,
+                    ]
+                ]);
+
+            if ($response->successful()) {
+                break;
+            }
+
+            $status = $response->status();
+            // Retry only on 429 (Rate Limit), 503 (Service Unavailable), or 500
+            if (in_array($status, [429, 500, 503]) && $attempt < $retries) {
+                $attempt++;
+                // Exponential backoff: 2s, 4s, 8s...
+                sleep((int) pow(2, $attempt));
+                continue;
+            }
+
             $this->handleError($response);
         }
 

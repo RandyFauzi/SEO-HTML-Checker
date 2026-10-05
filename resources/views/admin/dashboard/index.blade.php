@@ -41,7 +41,7 @@
                     <table class="min-w-full divide-y divide-gray-200 bg-white/50 rounded-lg overflow-hidden shadow">
                         <thead class="bg-gray-50/50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL Utama</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah URL</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
@@ -50,6 +50,7 @@
                             @foreach($recentRuns as $run)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $run->created_at->format('d M Y, H:i') }}</td>
+                                  <td class="px-6 py-4 whitespace-nowrap"><a href="{{ $run->results->first()->lp_url ?? '#' }}" target="_blank" class="text-indigo-600 hover:underline">{{ Str::limit($run->results->first()->lp_url ?? '-', 40) }}</a></td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $run->total_urls }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a href="{{ route('admin.history.show', $run) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Lihat Detail</a>

@@ -10,7 +10,7 @@ class HistoryController extends Controller
     public function index()
     {
         $runs = AuditRun::where('user_id', auth()->id())
-            ->withCount('results')
+            ->withCount('results')->with('results')
             ->latest()
             ->paginate(15);
             

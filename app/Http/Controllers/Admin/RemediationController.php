@@ -25,7 +25,7 @@ class RemediationController extends Controller
             $fixedHtml = $service->generateFix($request->html_snippet, $rule, $request->issue ?? '', $request->expected ?? '');
 
             // Store in DB for history/tracking using the available columns
-            $remediation = AuditRemediation::create([
+            \App\Helpers\Logger::log('AI Remediation', 'Menjalankan AI Remediation untuk rule: ' . $rule->name); $remediation = AuditRemediation::create([
                 'audit_run_id' => $request->run_id,
                 'remediation_log' => [
                     'seo_rule_id' => $rule->id,

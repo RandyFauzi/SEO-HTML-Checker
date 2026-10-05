@@ -78,6 +78,7 @@ class SeoCheckerController extends Controller
         $results = $this->auditService->audit($lpUrls, $ampUrls, $activeRules);
 
         // --- Save to History ---
+        \App\Helpers\Logger::log('Audit URL', 'Menjalankan audit SEO pada URL: ' . implode(', ', $lpUrls));
         $run = \App\Models\AuditRun::create([
             'user_id' => auth()->id(),
             'total_urls' => count($lpUrls),

@@ -41,7 +41,7 @@ class DashboardController extends Controller
         }
         
         $recentRuns = AuditRun::where('user_id', $userId)
-            ->latest()
+            ->with('results')->latest()
             ->take(5)
             ->get();
         

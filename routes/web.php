@@ -62,6 +62,15 @@ Route::middleware(['auth'])->group(function () {
 
     // History
     Route::get('/admin/history', [\App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('admin.history.index');
+    Route::get('/admin/activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('admin.activity_logs.index')->middleware('role:super_admin,admin');
+    
+    // AI Editor & Templates
+    Route::get('/admin/ai-templates', [\App\Http\Controllers\Admin\AiTemplateController::class, 'index'])->name('admin.ai_templates.index');
+    Route::post('/admin/ai-templates', [\App\Http\Controllers\Admin\AiTemplateController::class, 'store'])->name('admin.ai_templates.store');
+    Route::delete('/admin/ai-templates/{template}', [\App\Http\Controllers\Admin\AiTemplateController::class, 'destroy'])->name('admin.ai_templates.destroy');
+    Route::post('/admin/ai-editor/process-auto', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'processAuto'])->name('admin.ai_editor.process_auto');
+    Route::get('/admin/ai-editor', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'index'])->name('admin.ai_editor.index');
+    Route::post('/admin/ai-editor/process', [\App\Http\Controllers\Admin\AiHtmlEditorController::class, 'process'])->name('admin.ai_editor.process');
     Route::delete('/admin/history-batch', [\App\Http\Controllers\Admin\HistoryController::class, 'batchDestroy'])->name('admin.history.batchDestroy');
     Route::get('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'show'])->name('admin.history.show');
     Route::delete('/admin/history/{run}', [\App\Http\Controllers\Admin\HistoryController::class, 'destroy'])->name('admin.history.destroy');
@@ -72,4 +81,5 @@ Route::middleware(['auth'])->group(function () {
         return "Cache Cleared";
     });
 });
+
 

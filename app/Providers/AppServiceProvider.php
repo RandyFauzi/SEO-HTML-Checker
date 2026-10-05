@@ -25,8 +25,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+        public function boot(): void
     {
-        //
+        // Force HTTPS if using ngrok or in production
+        if (str_contains(request()->getHost(), 'ngrok') || $this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }

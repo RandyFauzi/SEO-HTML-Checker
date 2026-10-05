@@ -33,21 +33,50 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-gray-100 to-purple-50 min-h-screen relative overflow-x-hidden antialiased text-slate-800">
     <!-- Header/Navbar -->
-    <header class="absolute top-0 w-full p-6 flex justify-between items-center z-20">
-        <div class="flex items-center gap-2">
-            <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-8 h-8 object-contain">
-            <span class="font-extrabold text-xl tracking-tight text-slate-800">SEO Checker</span>
+        <header x-data="{ mobileMenuOpen: false }" class="fixed top-0 left-0 w-full z-[100] bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
+        <div class="px-4 md:px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <img src="{{ asset('Logo.webp') }}" alt="Logo" class="w-8 h-8 object-contain">
+                <span class="font-extrabold text-lg md:text-xl tracking-tight text-slate-800">SEO Checker</span>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-1">
+                @auth
+                    <a href="{{ route('seo.index') }}" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors">SEO Checker</a>
+                    <a href="{{ route('admin.history.index') }}" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors">Riwayat Audit</a>
+                    <a href="{{ route('admin.ai_editor.index') }}" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors">AI HTML Editor</a>
+                    <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors">Panel Admin</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-sm font-bold text-indigo-600 bg-white border border-indigo-200 px-5 py-2.5 rounded-full hover:bg-indigo-50 transition-colors shadow-sm">Masuk</a>
+                @endauth
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2 bg-white rounded-lg border border-slate-200 shadow-sm">
+                    <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <svg x-show="mobileMenuOpen" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
         </div>
-        <div>
-            @auth
-                <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-slate-600 hover:text-purple-600 px-4 py-2">Panel Admin</a>
-            @else
-                <a href="{{ route('login') }}" class="text-sm font-bold text-purple-600 bg-white border border-purple-200 px-5 py-2.5 rounded-full hover:bg-purple-50 transition-colors shadow-sm">Masuk</a>
-            @endauth
+
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenuOpen" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0">
+            <div class="px-4 py-3 flex flex-col gap-2">
+                @auth
+                    <a href="{{ route('seo.index') }}" class="block px-4 py-3 text-sm font-semibold text-slate-700 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors">SEO Checker</a>
+                    <a href="{{ route('admin.history.index') }}" class="block px-4 py-3 text-sm font-semibold text-slate-700 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors">Riwayat Audit</a>
+                    <a href="{{ route('admin.ai_editor.index') }}" class="block px-4 py-3 text-sm font-semibold text-slate-700 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors">AI HTML Editor</a>
+                    <a href="{{ route('dashboard') }}" class="block px-4 py-3 text-sm font-semibold text-slate-700 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors">Panel Admin</a>
+                @else
+                    <a href="{{ route('login') }}" class="block text-center text-sm font-bold text-white bg-indigo-600 px-5 py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm">Masuk</a>
+                @endauth
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
+<!-- Main Content -->
     <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-20">
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-10">
