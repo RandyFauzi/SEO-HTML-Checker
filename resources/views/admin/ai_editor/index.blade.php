@@ -58,7 +58,7 @@
     </header>
 
 <!-- Main Content -->
-    <main class="relative z-0 flex flex-col items-center min-h-screen px-4 pt-24 pb-10">
+    <main class="relative z-0 w-full min-h-screen px-4 sm:px-6 lg:px-8 pt-24 pb-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50 via-slate-50 to-white">
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">
@@ -69,13 +69,13 @@
             </p>
         </div>
 
-        <div class="w-full max-w-7xl mx-auto">
+        <div class="w-full max-w-[1800px] mx-auto">
             
     <!-- Main Editor Grid -->
-    <div x-data="aiEditor()" class="grid grid-cols-1 xl:grid-cols-12 gap-8 relative z-10 h-full">
+    <div x-data="aiEditor()" class="w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-10 h-full">
         
         <!-- Left Panel: Form & Settings -->
-        <div class="xl:col-span-4 flex flex-col gap-6">
+        <div class="lg:col-span-4 flex flex-col gap-6">
             <div class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 p-6 relative overflow-hidden">
                 <!-- Decorative background elements -->
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
@@ -240,7 +240,7 @@
         </div>
 
         <!-- Right Panel: Work Area / Results -->
-        <div class="xl:col-span-8 flex flex-col">
+        <div class="lg:col-span-8 flex flex-col">
             <!-- Empty State -->
             <div x-show="!hasResult && !loading" class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center p-12 text-center flex-1 min-h-[500px]">
                 <div class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
