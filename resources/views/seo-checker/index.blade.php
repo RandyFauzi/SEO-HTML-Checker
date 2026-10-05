@@ -77,7 +77,7 @@
     </header>
 
 <!-- Main Content -->
-    <main class="relative z-0 flex flex-col items-center justify-center min-h-screen px-4 pt-20">
+    <main class="relative z-0 flex flex-col items-center justify-center min-h-screen px-4 pt-32 lg:pt-36">
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-10">
             <h1 class="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
