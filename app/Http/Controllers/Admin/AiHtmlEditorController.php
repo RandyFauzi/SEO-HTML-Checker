@@ -24,7 +24,7 @@ class AiHtmlEditorController extends Controller
     {
         $request->validate([
             'url' => 'required|url',
-            'prompt' => 'required|string|max:1000',
+            'prompt' => 'required|string|max:5000',
         ]);
 
         $url = $request->input('url');
