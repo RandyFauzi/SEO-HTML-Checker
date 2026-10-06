@@ -221,6 +221,14 @@
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link Banners (Pisahkan enter)</label>
                             <textarea x-model="autoForm.banner_urls" rows="2" placeholder="https://.../banner1.png&#10;https://.../banner2.png" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white resize-none"></textarea>
                         </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Variasi Halaman (A/B Testing)</label>
+                            <select x-model="autoForm.variations" class="w-full px-3 py-2 text-sm rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 bg-white">
+                                <option value="1">1 Variasi (Standar)</option>
+                                <option value="2">2 Variasi (A/B Test)</option>
+                                <option value="3">3 Variasi (Multivariate)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div x-show="errorMsg" style="display: none;" class="p-3 bg-red-50/80 text-red-700 rounded-lg text-xs border border-red-100 flex items-start gap-2">
@@ -261,12 +269,75 @@
                 <h3 class="text-xl font-bold text-slate-800 mb-2">Area Kerja Editor</h3>
                 <p class="text-slate-500 max-w-md mx-auto leading-relaxed">Masukkan URL dan instruksi di panel sebelah kiri, lalu tekan tombol Eksekusi untuk melihat keajaiban AI merombak kode HTML Anda secara presisi.</p>
             </div>
-            
+
+            <!-- Loading State (Clean & Bright AI Themed) -->
+            <div x-show="loading && !hasResult" style="display: none;" class="bg-white rounded-3xl border border-indigo-100 shadow-2xl shadow-indigo-100/50 flex flex-col items-center justify-center p-12 text-center flex-1 min-h-[500px] relative overflow-hidden">
+                
+                <!-- Animated Background Blobs -->
+                <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+                    <div class="absolute top-1/4 left-1/4 w-48 h-48 bg-fuchsia-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style="animation-duration: 4s;"></div>
+                    <div class="absolute top-1/3 right-1/4 w-56 h-56 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style="animation-duration: 5s;"></div>
+                    <div class="absolute bottom-1/4 left-1/2 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style="animation-duration: 6s; transform: translateX(-50%);"></div>
+                </div>
+
+                <!-- Central Icon -->
+                <div class="relative z-10 w-24 h-24 mb-6">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-fuchsia-200 to-indigo-200 rounded-full animate-ping opacity-75" style="animation-duration: 2s;"></div>
+                    <div class="relative w-full h-full bg-white rounded-full flex items-center justify-center border-4 border-white shadow-xl shadow-indigo-200/50">
+                        <svg class="w-10 h-10 text-indigo-600 animate-spin" style="animation-duration: 3s;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                    </div>
+                </div>
+                
+                <h3 class="relative z-10 text-3xl font-black tracking-tight text-slate-800 mb-3 flex items-center justify-center gap-2">
+                    <span>AI Sedang Bekerja</span>
+                    <span class="flex gap-1.5 items-end h-4 ml-2">
+                        <span class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0s"></span>
+                        <span class="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
+                        <span class="w-2 h-2 bg-fuchsia-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+                    </span>
+                </h3>
+                
+                <p class="relative z-10 text-slate-500 font-medium max-w-sm mx-auto text-sm leading-relaxed" x-text="progress.statusText || 'Menganalisis struktur DOM, mencari target elemen, dan menerapkan instruksi secara presisi...'"></p>
+                
+                <!-- Progress Bar -->
+                <div class="relative z-10 w-full max-w-xs mt-10" x-show="progress.active">
+                    <div class="flex justify-between text-[11px] font-bold text-indigo-700 uppercase tracking-wider mb-2">
+                        <span>Progress</span>
+                        <span x-text="progress.percentage + '%'"></span>
+                    </div>
+                    <div class="h-2.5 bg-indigo-50 rounded-full overflow-hidden border border-indigo-100 shadow-inner">
+                        <div class="h-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 rounded-full relative shadow-[0_0_10px_rgba(99,102,241,0.4)]" :style="'width: ' + progress.percentage + '%; transition: width 0.3s ease;'">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent to-white opacity-30"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Result State -->
-            <div x-show="hasResult" style="display: none;" class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden flex flex-col flex-1 min-h-[600px]">
+            <div x-show="hasResult" style="display: none;" class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden flex flex-col flex-1 min-h-[900px] lg:min-h-[700px]">
+                
+                <!-- Top Tabs for Multiple Results (URLs or Variants) -->
+                <div x-show="results.length > 1" style="display: none;" class="flex overflow-x-auto bg-slate-800 px-3 py-2 gap-2 border-b border-slate-900 shadow-inner [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <template x-for="(res, index) in results" :key="index">
+                        <button @click="setActiveResult(index)"
+                                :class="activeResultIndex === index ? 'bg-indigo-600 text-white shadow-md border border-indigo-500' : 'bg-slate-900/50 text-slate-400 hover:bg-slate-700 hover:text-white border border-transparent'"
+                                class="px-4 py-2 rounded-lg font-bold text-xs whitespace-nowrap transition-all flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            <span x-text="res.url.length > 40 ? res.url.substring(0, 40) + '...' : res.url"></span>
+                        </button>
+                    </template>
+                    <div class="ml-auto pl-4 flex items-center shrink-0">
+                        <button @click="downloadBatchZip()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Semua (ZIP)
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Tabs Navigation -->
                 <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-2">
-                    <div class="flex overflow-x-auto">
+                    <div class="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full">
                         <button @click="activeTab = 'preview'" :class="{'border-indigo-600 text-indigo-700 bg-white shadow-sm': activeTab === 'preview', 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100': activeTab !== 'preview'}" class="px-5 py-3.5 border-b-2 font-bold text-sm transition-all whitespace-nowrap rounded-t-xl mt-2 mx-1">
                             <div class="flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -292,8 +363,8 @@
                 <div class="flex-1 bg-white relative">
                     
                     <!-- Preview Tab -->
-                    <div x-show="activeTab === 'preview'" class="absolute inset-0 w-full h-full p-4 flex flex-col lg:flex-row gap-4">
-                        <div class="flex-1 flex flex-col h-full">
+                    <div x-show="activeTab === 'preview'" class="lg:absolute lg:inset-0 w-full h-full p-4 flex flex-col lg:flex-row gap-4 overflow-y-auto [scrollbar-width:none]">
+                        <div class="flex-1 flex flex-col min-h-[350px] lg:h-full lg:min-h-0 shrink-0">
                             <div class="bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-widest py-2 px-4 rounded-t-xl border border-b-0 border-slate-200">
                                 Original (Sebelum)
                             </div>
@@ -301,16 +372,16 @@
                                 <iframe :srcdoc="originalHtml" class="w-full h-full absolute inset-0" sandbox="allow-same-origin allow-scripts"></iframe>
                             </div>
                         </div>
-                        <div class="flex-1 flex flex-col h-full">
-                            <div class="bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest py-2 px-4 rounded-t-xl border border-b-0 border-indigo-200 flex items-center gap-2">
+                        <div class="flex-1 flex flex-col min-h-[450px] lg:h-full lg:min-h-0 shrink-0">
+                            <div class="bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest py-2 px-4 rounded-t-xl border border-b-0 border-indigo-200 flex items-center gap-2 shadow-sm">
                                 <span class="relative flex h-2 w-2">
                                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                                   <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
                                 </span>
                                 Modified (Sesudah)
                             </div>
-                            <div class="flex-1 bg-white rounded-b-xl border border-indigo-200 overflow-hidden relative shadow-[inset_0_0_10px_rgba(99,102,241,0.1)]">
-                                <iframe :srcdoc="modifiedHtml" class="w-full h-full absolute inset-0" sandbox="allow-same-origin allow-scripts"></iframe>
+                            <div class="flex-1 bg-white rounded-b-xl border-2 border-indigo-400 overflow-hidden relative shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                                <iframe :srcdoc="previewHtml" class="w-full h-full absolute inset-0" sandbox="allow-same-origin allow-scripts"></iframe>
                             </div>
                         </div>
                     </div>
@@ -468,8 +539,10 @@
                     type: 'LP',
                     url: ''
                 },
-                url: '', urls: '', progress: { current: 0, total: 0, percentage: 0, active: false, statusText: '' },
-                prompt: '',
+                url: '', 
+                urls: new URLSearchParams(window.location.search).get('url') || '', 
+                progress: { current: 0, total: 0, percentage: 0, active: false, statusText: '' },
+                prompt: new URLSearchParams(window.location.search).get('prompt') || '',
                 autoForm: {
                     template_id: '',
                     keyword: '',
@@ -478,20 +551,69 @@
                     amp_url: '',
                     favicon_url: '',
                     logo_url: '',
-                    banner_urls: ''
+                    banner_urls: '',
+                    variations: 1
                 },
                 dbTemplates: [],
                 loading: false,
                 errorMsg: '',
                 hasResult: false,
+                results: [],
+                activeResultIndex: 0,
                 originalHtml: '',
                 modifiedHtml: '',
                 operations: [],
                 assembledPrompt: '',
                 activeTab: 'preview',
 
+                setActiveResult(index) {
+                    this.activeResultIndex = index;
+                    let current = this.results[index];
+                    if (current) {
+                        this.originalHtml = current.originalHtml;
+                        this.modifiedHtml = current.modifiedHtml;
+                        this.operations = current.operations;
+                        this.assembledPrompt = current.assembledPrompt;
+                    }
+                },
+                
+                downloadBatchZip() {
+                    if (this.results.length === 0) return;
+                    let batchResults = this.results.map((r, i) => ({
+                        url: r.url || 'page_' + i,
+                        html: r.modifiedHtml
+                    }));
+                    let form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ route("admin.ai_editor.download_batch") }}';
+                    
+                    let csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfInput);
+                    
+                    let dataInput = document.createElement('input');
+                    dataInput.type = 'hidden';
+                    dataInput.name = 'batch_data';
+                    dataInput.value = JSON.stringify(batchResults);
+                    form.appendChild(dataInput);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                },
+
                 init() {
                     this.fetchTemplates();
+                    
+                    // Auto-Switch to manual if url and prompt are present from query string
+                    if (this.urls && this.prompt) {
+                        this.editorMode = 'manual';
+                        this.$nextTick(() => {
+                            this.processForm();
+                        });
+                    }
                 },
 
                 async fetchTemplates() {
@@ -555,8 +677,9 @@
                     this.errorMsg = '';
                     this.assembledPrompt = '';
                     this.hasResult = false;
+                    this.results = [];
+                    this.activeResultIndex = 0;
                     
-                    let batchResults = [];
                     this.progress.active = true;
                     this.progress.total = targetUrls.length;
                     this.progress.current = 0;
@@ -585,49 +708,26 @@
                                 throw new Error(data.error || 'Gagal memproses ' + currentUrl);
                             }
                             
-                            batchResults.push({
+                            this.results.push({
                                 url: currentUrl,
-                                html: data.modified_html
+                                originalHtml: data.original_html,
+                                modifiedHtml: data.modified_html,
+                                operations: data.operations,
+                                assembledPrompt: ''
                             });
                             
                             this.progress.current = i + 1;
                             this.progress.percentage = Math.round((this.progress.current / this.progress.total) * 100);
-                            
-                            // If only 1 URL, show preview diff
-                            if (targetUrls.length === 1) {
-                                this.originalHtml = data.original_html;
-                                this.modifiedHtml = data.modified_html;
-                                this.operations = data.operations;
-                                this.hasResult = true;
-                                this.activeTab = 'preview';
-                            }
                         }
                         
-                        this.progress.statusText = 'Selesai! Menyiapkan file ZIP...';
+                        this.progress.statusText = 'Selesai!';
                         
-                        // Download ZIP logic using hidden form post
-                        if (batchResults.length > 0) {
-                            let form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '{{ route("admin.ai_editor.download_batch") }}';
-                            
-                            let csrfInput = document.createElement('input');
-                            csrfInput.type = 'hidden';
-                            csrfInput.name = '_token';
-                            csrfInput.value = '{{ csrf_token() }}';
-                            form.appendChild(csrfInput);
-                            
-                            let dataInput = document.createElement('input');
-                            dataInput.type = 'hidden';
-                            dataInput.name = 'batch_data';
-                            dataInput.value = JSON.stringify(batchResults);
-                            form.appendChild(dataInput);
-                            
-                            document.body.appendChild(form);
-                            form.submit();
-                            document.body.removeChild(form);
+                        if (this.results.length > 0) {
+                            this.setActiveResult(0);
+                            this.hasResult = true;
+                            this.activeTab = 'preview';
                         }
-
+                        
                     } catch (error) {
                         this.errorMsg = error.message;
                     } finally {
@@ -635,40 +735,106 @@
                         setTimeout(() => { this.progress.active = false; }, 3000);
                     }
                 },
-                
+                get previewHtml() {
+                    if (!this.modifiedHtml) return '';
+                    
+                    // Inject highlighter script and styles
+                    let selectors = this.operations ? this.operations.map(o => o.selector) : [];
+                    let inject = `
+                    <style>
+                        .seo-ai-highlight {
+                            outline: 3px solid #facc15 !important;
+                            outline-offset: -3px !important;
+                            position: relative !important;
+                        }
+                        .seo-ai-highlight::after {
+                            content: '✨ AI Edited';
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            background: #facc15;
+                            color: #000;
+                            font-size: 10px;
+                            font-family: sans-serif;
+                            font-weight: bold;
+                            padding: 2px 6px;
+                            z-index: 999999;
+                            pointer-events: none;
+                        }
+                    </style>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const selectors = ${JSON.stringify(selectors)};
+                            selectors.forEach(sel => {
+                                try {
+                                    document.querySelectorAll(sel).forEach(el => el.classList.add('seo-ai-highlight'));
+                                } catch(e) {}
+                            });
+                        });
+                    <\/script>
+                    `;
+                    return this.modifiedHtml + inject;
+                },
+
                 async processAutoForm() {
                     this.loading = true;
                     this.errorMsg = '';
                     this.assembledPrompt = '';
+                    this.hasResult = false;
+                    this.results = [];
+                    this.activeResultIndex = 0;
+                    
+                    let numVariations = parseInt(this.autoForm.variations) || 1;
+                    
+                    this.progress.active = true;
+                    this.progress.total = numVariations;
+                    this.progress.current = 0;
+                    this.progress.percentage = 0;
                     
                     try {
-                        const response = await fetch('/admin/ai-editor/process-auto', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify(this.autoForm)
-                        });
+                        for (let i = 1; i <= numVariations; i++) {
+                            this.progress.statusText = 'Membuat Varian ' + i + ' dari ' + numVariations + '...';
+                            let payload = { ...this.autoForm, variation_index: i };
+                            
+                            const response = await fetch('/admin/ai-editor/process-auto', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify(payload)
+                            });
 
-                        const data = await response.json();
+                            const data = await response.json();
 
-                        if (!response.ok) {
-                            throw new Error(data.error || 'Terjadi kesalahan pada server');
+                            if (!response.ok) {
+                                throw new Error(data.error || 'Terjadi kesalahan pada server');
+                            }
+                            
+                            this.results.push({
+                                url: (numVariations === 1) ? 'Auto-Pilot Result' : 'Varian ' + i,
+                                originalHtml: data.original_html,
+                                modifiedHtml: data.modified_html,
+                                operations: data.operations,
+                                assembledPrompt: data.assembled_prompt
+                            });
+                            
+                            this.progress.current = i;
+                            this.progress.percentage = Math.round((this.progress.current / this.progress.total) * 100);
                         }
-
-                        this.originalHtml = data.original_html;
-                        this.modifiedHtml = data.modified_html;
-                        this.operations = data.operations;
-                        this.assembledPrompt = data.assembled_prompt;
                         
-                        this.hasResult = true;
-                        this.activeTab = 'preview';
-
+                        this.progress.statusText = 'Selesai!';
+                        
+                        if (this.results.length > 0) {
+                            this.setActiveResult(0);
+                            this.hasResult = true;
+                            this.activeTab = 'preview';
+                        }
                     } catch (error) {
                         this.errorMsg = error.message;
                     } finally {
                         this.loading = false;
+                        setTimeout(() => { this.progress.active = false; }, 3000);
                     }
                 },
 

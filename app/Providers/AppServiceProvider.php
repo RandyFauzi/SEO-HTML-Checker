@@ -12,9 +12,17 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(\App\Services\AI\AiClientInterface::class, function ($app) {
-            $provider = config('services.ai_provider', 'openai');
+            $provider = env('AI_PROVIDER', 'openai');
             
-            return new \App\Services\AI\OpenAIClientService();
+            $openai = new \App\Services\AI\OpenAIClientService();
+            $gemini = new \App\Services\AI\GeminiClientService();
+            
+            if ($provider === 'gemini') {
+                return new \App\Services\AI\FallbackAiClientService($gemini, $openai);
+            }
+            
+            // Default to openai, fallback to gemini
+            return new \App\Services\AI\FallbackAiClientService($openai, $gemini);
         });
     }
 

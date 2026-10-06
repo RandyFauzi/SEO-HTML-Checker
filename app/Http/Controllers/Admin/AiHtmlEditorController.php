@@ -139,6 +139,14 @@ class AiHtmlEditorController extends Controller
         $prompt .= "- Sesuaikan SEMUA konten topik pendukung (Komentar testimoni, Anchor, FAQ, Schema, dll) dengan keyword '{$keyword}'.\n";
         $prompt .= "- Anchor text harus bervariasi dan maksimal 2 kata.\n";
         $prompt .= "- Ganti komentar HTML di dalam file agar sesuai.\n";
+        $prompt .= "- DATA-DRIVEN SEO: Analisis 'Search Intent' (niat pencarian) untuk keyword '{$keyword}'. Gunakan LSI (Latent Semantic Indexing) keywords yang relevan secara natural di dalam heading dan paragraf untuk meningkatkan relevansi semantik di mata Google.\n";
+
+        $variationIndex = (int) $request->input('variation_index', 1);
+        if ($variationIndex === 2) {
+            $prompt .= "\nVARIAN 2 (A/B TESTING): Buat gaya bahasa copywriting menjadi SANGAT MENDESAK (Urgency/FOMO). Tekankan diskon terbatas, 'hanya hari ini', 'stok sisa sedikit'.\n";
+        } elseif ($variationIndex === 3) {
+            $prompt .= "\nVARIAN 3 (A/B TESTING): Buat gaya bahasa copywriting berfokus pada EMOSI dan TESTIMONI (Social Proof). Tekankan 'banyak yang sudah pakai', 'dipercaya ribuan orang', 'mudah digunakan'.\n";
+        }
 
         try {
             \App\Helpers\Logger::log('AI HTML Editor', "Auto-Pilot Edit: Template {$template->name} ({$type}) - Keyword: {$keyword}");

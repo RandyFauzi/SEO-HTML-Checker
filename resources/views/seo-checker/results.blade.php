@@ -41,13 +41,23 @@
                                     $scoreBg = 'border-emerald-500';
                                     if($score < 80) { $scoreColor = 'text-amber-500'; $scoreBg = 'border-amber-500'; }
                                     if($score < 50) { $scoreColor = 'text-red-500'; $scoreBg = 'border-red-500'; }
+
+                                    $failedIssues = collect($result->checks)->filter(fn($c) => $c->status->value !== 'passed');
+                                    $promptIssues = $failedIssues->map(fn($c) => "- [ATURAN: " . $c->ruleName . "] Masalah: " . str_replace('"', '\"', $c->issue ?? 'Tidak valid'))->implode("\n");
+                                    $aiPrompt = "Kamu adalah pakar Technical SEO & On-Page SEO level Senior. Tugasmu adalah mengaudit dan memperbaiki HTML ini secara menyeluruh untuk mencapai skor SEO 100/100 tanpa merusak layout visual.\n\nFOKUS PADA MASALAH BERIKUT YANG DITEMUKAN OLEH AUDITOR:\n" . $promptIssues . "\n\nLakukan operasi modifikasi DOM (set_attr, set_text, replace_html, remove, append_html, prepend_html, insert_before, insert_after) secara presisi untuk memperbaiki masalah di atas. Jaga validitas HTML dan jangan pernah mengubah atau menghapus class CSS yang sudah ada. Jika ada elemen yang hilang (seperti H1, meta deskripsi, title), buatkan secara otomatis dengan isi copywriting yang relevan dengan isi halaman.";
                                 @endphp
                                 <div class="flex items-center gap-6 md:border-l md:border-slate-100 md:pl-8">
-                                    <div class="text-right">
+                                    <div class="text-right flex flex-col items-end">
                                         <div class="text-sm font-bold text-slate-700">Skor On-page</div>
-                                        <div class="text-xs font-medium text-slate-400 mt-0.5">Berdasarkan {{ $totalChecks }} pengecekan</div>
+                                        <div class="text-xs font-medium text-slate-400 mt-0.5 mb-2">Berdasarkan {{ $totalChecks }} pengecekan</div>
+                                        @if($failedIssues->count() > 0)
+                                            <a href="{{ route('admin.ai_editor.index') }}?url={{ urlencode($result->lpUrl) }}&prompt={{ urlencode($aiPrompt) }}" target="_blank" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                Auto-Fix Halaman
+                                            </a>
+                                        @endif
                                     </div>
-                                    <div class="relative w-20 h-20 flex items-center justify-center rounded-full border-4 border-slate-100 shadow-inner bg-slate-50">
+                                    <div class="relative w-20 h-20 flex items-center justify-center rounded-full border-4 border-slate-100 shadow-inner bg-slate-50 shrink-0">
                                         <!-- Fake circular progress using border coloring for visual effect -->
                                         <div class="absolute inset-0 rounded-full border-4 {{ $scoreBg }} opacity-80" style="clip-path: polygon(0 0, 100% 0, 100% {{ $score }}%, 0 {{ $score }}%);"></div>
                                         <span class="relative text-2xl font-black {{ $scoreColor }}">{{ $score }}<span class="text-sm">%</span></span>

@@ -27,8 +27,11 @@ class HtmlModifierService
         libxml_use_internal_errors(true);
         $dom = new DOMDocument();
         
+        // Remove BOM (Byte Order Mark) which breaks libxml parser
+        $cleanHtml = str_replace("\xEF\xBB\xBF", '', $html);
+        
         // Load HTML with UTF-8 encoding support
-        $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $cleanHtml, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
 
         $xpath = new DOMXPath($dom);
@@ -60,21 +63,53 @@ class HtmlModifierService
                             break;
 
                         case 'replace_html':
-                            // To replace inner HTML, we remove all child nodes and append new parsed ones
                             while ($element->hasChildNodes()) {
                                 $element->removeChild($element->firstChild);
                             }
                             if ($operation->value) {
-                                $tempDom = new DOMDocument();
-                                libxml_use_internal_errors(true);
-                                $tempDom->loadHTML('<?xml encoding="UTF-8"><body>' . $operation->value . '</body>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-                                libxml_clear_errors();
-                                
-                                $body = $tempDom->getElementsByTagName('body')->item(0);
-                                if ($body) {
-                                    foreach ($body->childNodes as $child) {
-                                        $imported = $dom->importNode($child, true);
-                                        $element->appendChild($imported);
+                                foreach ($this->createImportedNodes($operation->value, $dom) as $node) {
+                                    $element->appendChild($node);
+                                }
+                            }
+                            break;
+                            
+                        case 'append_html':
+                            if ($operation->value) {
+                                foreach ($this->createImportedNodes($operation->value, $dom) as $node) {
+                                    $element->appendChild($node);
+                                }
+                            }
+                            break;
+                            
+                        case 'prepend_html':
+                            if ($operation->value) {
+                                $nodes = $this->createImportedNodes($operation->value, $dom);
+                                foreach (array_reverse($nodes) as $node) {
+                                    if ($element->firstChild) {
+                                        $element->insertBefore($node, $element->firstChild);
+                                    } else {
+                                        $element->appendChild($node);
+                                    }
+                                }
+                            }
+                            break;
+                            
+                        case 'insert_before':
+                            if ($operation->value && $element->parentNode) {
+                                foreach ($this->createImportedNodes($operation->value, $dom) as $node) {
+                                    $element->parentNode->insertBefore($node, $element);
+                                }
+                            }
+                            break;
+                            
+                        case 'insert_after':
+                            if ($operation->value && $element->parentNode) {
+                                $nodes = array_reverse($this->createImportedNodes($operation->value, $dom));
+                                foreach ($nodes as $node) {
+                                    if ($element->nextSibling) {
+                                        $element->parentNode->insertBefore($node, $element->nextSibling);
+                                    } else {
+                                        $element->parentNode->appendChild($node);
                                     }
                                 }
                             }
@@ -99,5 +134,34 @@ class HtmlModifierService
         $result = str_replace('<?xml encoding="UTF-8">', '', $result);
         
         return trim($result);
+    }
+    
+    /**
+     * Parses HTML into DOM nodes and imports them into the target DOM.
+     * 
+     * @param string $html
+     * @param DOMDocument $targetDom
+     * @return array
+     */
+    private function createImportedNodes(string $html, DOMDocument $targetDom): array
+    {
+        if (empty(trim($html))) return [];
+        
+        $tempDom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $cleanHtml = str_replace("\xEF\xBB\xBF", '', $html);
+        $tempDom->loadHTML('<?xml encoding="UTF-8"><body>' . $cleanHtml . '</body>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+        
+        $body = $tempDom->getElementsByTagName('body')->item(0);
+        $nodes = [];
+        
+        if ($body) {
+            foreach ($body->childNodes as $child) {
+                $nodes[] = $targetDom->importNode($child, true);
+            }
+        }
+        
+        return $nodes;
     }
 }
