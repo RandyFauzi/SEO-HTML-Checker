@@ -387,7 +387,7 @@
                     </div>
 
                     <!-- Code Tab -->
-                    <div x-show="activeTab === 'code'" class="absolute inset-0 w-full h-full p-4 flex flex-col bg-slate-50">
+                    <div x-show="activeTab === 'code'" class="lg:absolute lg:inset-0 w-full h-full p-4 flex flex-col bg-slate-50 min-h-[600px] lg:min-h-0">
                         <div class="flex justify-between items-center mb-3">
                             <p class="text-sm text-slate-500 font-medium">Kode HTML final yang sudah dimodifikasi oleh AI.</p>
                             <div class="flex gap-2">
@@ -405,7 +405,7 @@
                     </div>
 
                     <!-- Ops Tab -->
-                    <div x-show="activeTab === 'ops'" class="absolute inset-0 w-full h-full p-6 overflow-y-auto bg-slate-50">
+                    <div x-show="activeTab === 'ops'" class="lg:absolute lg:inset-0 w-full h-full p-6 overflow-y-auto bg-slate-50 min-h-[600px] lg:min-h-0">
                         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
                             <template x-if="assembledPrompt">
                                 <div class="mb-6 p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
