@@ -613,6 +613,11 @@
                         this.$nextTick(() => {
                             this.processForm();
                         });
+                        
+                        // Hapus parameter dari URL agar jika user menekan Refresh (F5), 
+                        // AI tidak berjalan otomatis (menghemat penggunaan API).
+                        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                        window.history.replaceState({path: cleanUrl}, '', cleanUrl);
                     }
                 },
 
